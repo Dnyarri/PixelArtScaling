@@ -9,9 +9,11 @@ Apparently useful for scaling up grey text scans with low resolution before OCR.
 Currently **Scale2x** (aka **AdvMAME2x**) and **Scale3x** (aka **AdvMAME3x**) are implemented.
 
 - Scale2xGUI.py - uses AdvMAME2x scaling, equipped with simple GUI for opening and saving PNG files.
-- Scale2xCLI.py - same AdvMAME2x scaling as above, runs with command line *python Scale2xCLI.py input.png output.png*.
+- Scale2xCLI.py - same AdvMAME2x scaling as above, runs with command line
+ *python Scale2xCLI.py input.png output.png*.
 - Scale3xGUI.py - uses AdvMAME3x scaling, equipped with simple GUI for opening and saving PNG files.
-- Scale3xCLI.py - same AdvMAME3x scaling as above, runs with command line *python Scale3xCLI.py input.png output.png*.
+- Scale3xCLI.py - same AdvMAME3x scaling as above, runs with command line
+ *python Scale3xCLI.py input.png output.png*.
 
 *Dependencies:* [PyPNG](https://gitlab.com/drj11/pypng), Tkinter, sys
 
