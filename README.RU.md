@@ -9,11 +9,11 @@
 В настоящий момент поддерживаются методы **Scale2x** (aka **AdvMAME2x**) и **Scale3x** (aka **AdvMAME3x**).
 
 - Scale2xGUI.py - использует масштабирование AdvMAME2x, оснащена простым GUI для открытия и сохранения файлов PNG.
-- Scale2xCLI.py - тот же алгоритм AdvMAME2x, что и выше, работает из командной строки
- *python Scale2xCLI.py input.png output.png*.
+- Scale2xCLI.py - тот же алгоритм AdvMAME2x, что и выше, работает из командной строки:  
+        *python Scale2xCLI.py input.png output.png*.
 - Scale3xGUI.py - использует масштабирование AdvMAME3x, оснащена простым GUI для открытия и сохранения файлов PNG.
-- Scale3xCLI.py - тот же алгоритм AdvMAME3x, что и выше, работает из командной строки
- *python Scale3xCLI.py input.png output.png*.
+- Scale3xCLI.py - тот же алгоритм AdvMAME3x, что и выше, работает из командной строки:  
+        *python Scale3xCLI.py input.png output.png*.
 
 *Внешние зависимости:* [PyPNG](https://gitlab.com/drj11/pypng), Tkinter, sys
 
