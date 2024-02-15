@@ -27,6 +27,6 @@ Currently **Scale2x** (aka **AdvMAME2x**) and **Scale3x** (aka **AdvMAME3x**) ar
 > Moreover, programs contain lists reshaping for PNG I/O purposes, also performed using Python native means only.
 > As a result, programs are slow but quite compatible with anything and don't require large external packages.
 
-Project mirrors:
+Related projects:
 
-[github Dnyarri](https://github.com/Dnyarri/POVmosaic)
+[github Dnyarri](https://github.com/Dnyarri)
