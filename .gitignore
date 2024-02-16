@@ -1,5 +1,6 @@
 backup/
 temp/
+testcases/
 *.png
 *.7z
 *.zip
