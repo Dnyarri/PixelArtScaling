@@ -1,6 +1,8 @@
 backup/
 temp/
 testcases/
+*.json
+*.txt
 *.png
 *.7z
 *.zip
