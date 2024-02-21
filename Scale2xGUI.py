@@ -1,14 +1,30 @@
 # Attempt to write Scale2x aka AdvMAME2x using Python only
 # Created by Ilyich the Toad (mailto: amphisoft@gmail.com)
 # Versions:
-# 01.001    Scale2x (AdvMAME2x) seem to work
-# 01.002    Changed from self-contained to modular, IncSrc and IncScaleNx modules created
-# 01.003    Ultimate modular evil, moving everything possible to IncSrc.py and IncScaleNx.py
+# 01.001    Scale2x (AdvMAME2x) seem to work 
+# 01.002    Changed from self-contained to modular, IncSrc and IncScaleNx modules created 
+# 01.003    Ultimate modular evil, moving everything possible to IncSrc.py and IncScaleNx.py 
+# 01.004    Progress indication added, showing processing stage 
 
-import png  # PNG reading: PyPNG from: https://gitlab.com/drj11/pypng
+from tkinter import Tk
+from tkinter import Label
 from tkinter import filedialog
-import IncSrc
-from IncScaleNx import Scale2x
+
+import png                      # PNG reading: PyPNG from: https://gitlab.com/drj11/pypng
+import IncSrc                   # Image reshaping from: https://github.com/Dnyarri/PixelArtScaling
+from IncScaleNx import Scale2x  # Scale2x and Scale3x from: https://github.com/Dnyarri/PixelArtScaling
+
+# --------------------------------------------------------------
+# Creating dialog
+
+sortir = Tk()
+sortir.title('Scale2x')
+zanyato = Label(sortir, text = 'Starting...', font=("arial", 36), padx=15, pady=10, justify='center')
+zanyato.pack()
+sortir.withdraw()
+
+# Main dialog created and hidden
+# --------------------------------------------------------------
 
 # --------------------------------------------------------------
 # Open source file
@@ -25,16 +41,53 @@ imagedata = tuple((pixels))         # Attempt to fix all bytearrays as something
 # Source file opened as imagedata
 # --------------------------------------------------------------
 
+# --------------------------------------------------------------
+# Updating dialog
+
+sortir.deiconify()
+zanyato.config(text = 'Reading...')
+sortir.update()
+sortir.update_idletasks()
+
+# Dialog shown and updated
+# --------------------------------------------------------------
 
 # Reading image as list
 ImageAsListListList = IncSrc.Img3D(imagedata, X, Y, Z)
 
+# --------------------------------------------------------------
+# Updating dialog
+
+zanyato.config(text = 'Scaling...')
+sortir.update()
+sortir.update_idletasks()
+
+# Dialog updated
+# --------------------------------------------------------------
+
 # Scaling list to 2x image list
 EPXImage,doubleX,doubleY = Scale2x(ImageAsListListList, X, Y)
+
+# --------------------------------------------------------------
+# Updating dialog
+
+zanyato.config(text='Almost there...')
+sortir.update()
+sortir.update_idletasks()
+
+# Dialog updated
+# --------------------------------------------------------------
 
 # Reshaping 2x scaled 3D list into 1D list for PyPNG .write_array method
 ResultImageAsList = IncSrc.Img3Dto1D(EPXImage, doubleX, doubleY, Z)
 
+# --------------------------------------------------------------
+# Hiding dialog
+
+sortir.withdraw()
+
+# Dialog hidden
+# --------------------------------------------------------------
 
 # --------------------------------------------------------------
 # Open export file
@@ -54,4 +107,13 @@ writer.write_array(resultPNG, ResultImageAsList)
 resultPNG.close()
 
 # Export file written and closed
+# --------------------------------------------------------------
+
+# --------------------------------------------------------------
+# Destroying dialog
+
+sortir.destroy()
+sortir.mainloop()
+
+# Dialog destroyed and closed
 # --------------------------------------------------------------

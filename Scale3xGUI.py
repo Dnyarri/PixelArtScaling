@@ -1,14 +1,30 @@
 # Attempt to write Scale3x aka AdvMAME3x using Python only
 # Created by Ilyich the Toad (mailto: amphisoft@gmail.com)
 # Versions:
-# 01.001    Scale3x (AdvMAME3x) seem to work
-# 01.002    Changed from self-contained to modular, IncSrc and IncScaleNx modules created
-# 01.003    Ultimate modular evil, moving everything possible to IncSrc.py and IncScaleNx.py
+# 01.001    Scale3x (AdvMAME3x) seem to work 
+# 01.002    Changed from self-contained to modular, IncSrc and IncScaleNx modules created 
+# 01.003    Ultimate modular evil, moving everything possible to IncSrc.py and IncScaleNx.py 
+# 01.004    Progress indication added, showing processing stage 
 
-import png  # PNG reading: PyPNG from: https://gitlab.com/drj11/pypng
+from tkinter import Tk
+from tkinter import Label
 from tkinter import filedialog
-import IncSrc
-from IncScaleNx import Scale3x
+
+import png                      # PNG reading: PyPNG from: https://gitlab.com/drj11/pypng
+import IncSrc                   # Image reshaping from: https://github.com/Dnyarri/PixelArtScaling
+from IncScaleNx import Scale3x  # Scale2x and Scale3x from: https://github.com/Dnyarri/PixelArtScaling
+
+# --------------------------------------------------------------
+# Creating dialog
+
+sortir = Tk()
+sortir.title('Scale3x')
+zanyato = Label(sortir, text = 'Starting...', font=("arial", 36), padx=15, pady=10, justify='center')
+zanyato.pack()
+sortir.withdraw()
+
+# Main dialog created and hidden
+# --------------------------------------------------------------
 
 # --------------------------------------------------------------
 # Open source file
@@ -22,19 +38,56 @@ X,Y,pixels,info = source.asDirect() # Opening image, iDAT comes to "pixels" as b
 Z = (info['planes'])                # PyPNG returns X,Y directly, but not Z. Z should be extracted from info
 imagedata = tuple((pixels))         # Attempt to fix all bytearrays as something solid
 
-
 # Source file opened as imagedata
+# --------------------------------------------------------------
+
+# --------------------------------------------------------------
+# Updating dialog
+
+sortir.deiconify()
+zanyato.config(text = 'Reading...')
+sortir.update()
+sortir.update_idletasks()
+
+# Dialog shown and updated
 # --------------------------------------------------------------
 
 # Reading image as list
 ImageAsListListList = IncSrc.Img3D(imagedata, X, Y, Z)
 
+# --------------------------------------------------------------
+# Updating dialog
+
+zanyato.config(text = 'Scaling...')
+sortir.update()
+sortir.update_idletasks()
+
+# Dialog updated
+# --------------------------------------------------------------
+
 # Scaling to 3x image list
 EPXImage,tripleX,tripleY = Scale3x(ImageAsListListList, X, Y)
+
+# --------------------------------------------------------------
+# Updating dialog
+
+zanyato.config(text='Almost there...')
+sortir.update()
+sortir.update_idletasks()
+
+# Dialog updated
+# --------------------------------------------------------------
 
 # Reshaping 3x scaled 3D list into 1D list for PyPNG .write_array method
 ResultImageAsList = IncSrc.Img3Dto1D(EPXImage, tripleX, tripleY, Z)
 
+# --------------------------------------------------------------
+# Hiding dialog
+
+sortir.withdraw()
+
+# Dialog hidden
+# --------------------------------------------------------------
 
 # --------------------------------------------------------------
 # Open export file
@@ -54,4 +107,13 @@ writer.write_array(resultPNG, ResultImageAsList)
 resultPNG.close()
 
 # Export file written and closed
+# --------------------------------------------------------------
+
+# --------------------------------------------------------------
+# Destroying dialog
+
+sortir.destroy()
+sortir.mainloop()
+
+# Dialog destroyed and closed
 # --------------------------------------------------------------

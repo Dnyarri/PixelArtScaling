@@ -1,6 +1,7 @@
 backup/
 temp/
 testcases/
+__pycache__/
 *.json
 *.txt
 *.png

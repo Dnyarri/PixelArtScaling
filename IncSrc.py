@@ -6,8 +6,12 @@ Content
 - IncSrc.Img3D          - representation of image as 3D list (image) of lists (rows) of lists (pixels) of integers (channel values)
 - IncSrc.Img3Dto1D      - conversion of .Img3D output into single row list for easy output with PyPNG writer.write_array method
 
+Installation
+--------------
+Simply put module into your program folder
+
 Usage
-------
+-------
 
 Intended to work together with PyPNG from https://gitlab.com/drj11/pypng.
 Main programs should contain something like this:
@@ -38,7 +42,7 @@ Copyright and redistribution
 
 Deleloped by Ilya Razmanov (https://github.com/Dnyarri/)
 
-Last modified 18.02.2024
+Last modified 21.02.2024
 
 May be freely used and included anywhere by anyone who found it useful.
 
@@ -49,6 +53,12 @@ May be freely used and included anywhere by anyone who found it useful.
 #
 
 def src(imagedata, X, Y, Z, x, y, z):
+    """ imagedata is image data tuple from png.py output
+
+        X, Y, Z - int constants for image size
+
+        x, y, z - int cordinates to read x, y pixel, z channel value at
+    """
 
     cx = int(x); cy = int(y)
     cx = max(0,cx); cx = min((X-1),cx)
@@ -69,6 +79,14 @@ def src(imagedata, X, Y, Z, x, y, z):
 #
 
 def Img3D(imagedata, X, Y, Z):
+    """ imagedata is image data tuple from png.py output
+
+        X, Y, Z - constants for image size
+
+        Function constructs image as as list (image) of lists (rows) of lists (pixels) of int (channel values) from raw png output
+
+    """
+
     ImageAsListListList = list()
     for y in range(0, Y, 1):
         RowAsListList = list()
@@ -92,7 +110,12 @@ def Img3D(imagedata, X, Y, Z):
 #
 
 def Img3Dto1D(gotImage, gotX, gotY, Z):
-    
+    """ Takes gotImage as 3D list (image) of lists (rows) of lists (pixels) of int (channel values) 
+        (gotX, gotY are image sizes) 
+        and reshapes into single row list for easy output with PyPNG png.Writer writer.write_array method.
+        
+    """
+
     ResultImageAsList = list()
     for y in range(0, gotY, 1):
         for x in range(0, gotX, 1):

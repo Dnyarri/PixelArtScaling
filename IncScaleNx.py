@@ -20,10 +20,10 @@ where both "Image" are lists, all "X" and "Y" are integer sizes of "Image" along
 
 Copyright and redistribution
 -----------------------------
-Deleloped by Ilya Razmanov (https://github.com/Dnyarri/),
+Python implementation deleloped by Ilya Razmanov (https://github.com/Dnyarri/),
 based on brief algorithm description by Andrea Mazzoleni (https://www.scale2x.it/)
 
-Last modified 18.02.2024
+Last modified 21.02.2024
 
 May be freely used and included anywhere by anyone who found it useful.
 
@@ -35,6 +35,11 @@ May be freely used and included anywhere by anyone who found it useful.
 #
 
 def Scale2x(ImageAsListListList, X, Y):
+    """ Takes ImageAsListListList as 3D list (image) of lists (rows) of lists (pixels) of int (channel values) 
+        of X, Y size (see InSrc.py for detail), 
+
+        and performs Scale2x rescaling, returning (scaled image of similar structure, new X, new Y).
+    """
 
     doubleX = 2*X; doubleY = 2*Y
 
@@ -79,6 +84,11 @@ def Scale2x(ImageAsListListList, X, Y):
 #
 
 def Scale3x(ImageAsListListList, X, Y):
+    """ Takes ImageAsListListList as 3D list (image) of lists (rows) of lists (pixels) of int (channel values) 
+        of X, Y size (see InSrc.py for detail), 
+
+        and performs Scale3x rescaling, returning (scaled image of similar structure, new X, new Y).
+    """
 
     tripleX = 3*X; tripleY = 3*Y
 

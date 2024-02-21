@@ -1,14 +1,15 @@
 # Attempt to write Scale3x aka AdvMAME3x using Python only
 # Created by Ilyich the Toad (mailto: amphisoft@gmail.com)
 # Versions:
-# 01.001    Scale3x (AdvMAME3x) seem to work
-# 01.002    Changed from self-contained to modular, IncSrc and IncScaleNx modules created
-# 01.003    Ultimate modular evil, moving everything possible to IncSrc.py and IncScaleNx.py
+# 01.001    Scale3x (AdvMAME3x) seem to work 
+# 01.002    Changed from self-contained to modular, IncSrc and IncScaleNx modules created 
+# 01.003    Ultimate modular evil, moving everything possible to IncSrc.py and IncScaleNx.py 
 
 from sys import argv
-import png  # PNG reading: PyPNG from: https://gitlab.com/drj11/pypng
-import IncSrc
-from IncScaleNx import Scale3x
+
+import png                      # PNG reading: PyPNG from: https://gitlab.com/drj11/pypng
+import IncSrc                   # Image reshaping from: https://github.com/Dnyarri/PixelArtScaling
+from IncScaleNx import Scale3x  # Scale2x and Scale3x from: https://github.com/Dnyarri/PixelArtScaling
 
 # Taking user input
 
