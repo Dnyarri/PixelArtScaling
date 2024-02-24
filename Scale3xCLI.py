@@ -1,9 +1,28 @@
-# Attempt to write Scale3x aka AdvMAME3x using Python only
-# Created by Ilyich the Toad (mailto: amphisoft@gmail.com)
-# Versions:
-# 01.001    Scale3x (AdvMAME3x) seem to work 
-# 01.002    Changed from self-contained to modular, IncSrc and IncScaleNx modules created 
-# 01.003    Ultimate modular evil, moving everything possible to IncSrc.py and IncScaleNx.py 
+#!/usr/bin/env python
+
+'''
+Scale2x aka AdvMAME2x bitmap image scaling using Python only, command line version
+Created by: Ilya Razmanov (mailto:ilyarazmanov@gmail.com)
+            aka Ilyich the Toad (mailto:amphisoft@gmail.com)
+
+Usage: python Scale2xCLI.py source.png result.png
+
+Versions:
+01.001    Initial working Scale3x (AdvMAME3x) release 
+01.002    Changed from self-contained to modular, IncSrc and IncScaleNx modules created 
+01.003    Ultimate modular evil, moving everything possible to IncSrc.py and IncScaleNx.py 
+2024.02.24  Cleanup, minimizing import, versioning changed to YYYY.MM.DD
+
+'''
+
+__author__ = "Ilya Razmanov"
+__copyright__ = "(c) 2024 Ilya Razmanov"
+__credits__ = "Ilya Razmanov"
+__license__ = "unlicense"
+__version__ = "2024.02.24"
+__maintainer__ = "Ilya Razmanov"
+__email__ = "ilyarazmanov@gmail.com"
+__status__ = "Production"
 
 from sys import argv
 
