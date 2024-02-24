@@ -1,10 +1,26 @@
-# Attempt to write Scale2x aka AdvMAME2x using Python only
-# Created by Ilyich the Toad (mailto: amphisoft@gmail.com)
-# Versions:
-# 01.001    Scale2x (AdvMAME2x) seem to work 
-# 01.002    Changed from self-contained to modular, IncSrc and IncScaleNx modules created 
-# 01.003    Ultimate modular evil, moving everything possible to IncSrc.py and IncScaleNx.py 
-# 01.004    Progress indication added, showing processing stage 
+#!/usr/bin/env python
+
+'''
+Scale2x aka AdvMAME2x bitmap image scaling using Python only
+Created by: Ilya Razmanov (mailto:ilyarazmanov@gmail.com)
+            aka Ilyich the Toad (mailto:amphisoft@gmail.com)
+Versions:
+01.001      Scale2x (AdvMAME2x) seem to work 
+01.002      Changed from self-contained to modular, IncSrc and IncScaleNx modules created 
+01.003      Ultimate modular evil, moving everything possible to IncSrc.py and IncScaleNx.py 
+01.004      Progress indication added, showing processing stage 
+2024.02.24  Cleanup, GUI tweaks, versioning changed to YYYY.MM.DD
+
+'''
+
+__author__ = "Ilya Razmanov"
+__copyright__ = "(c) 2024 Ilya Razmanov"
+__credits__ = "Ilya Razmanov"
+__license__ = "unlicense"
+__version__ = "2024.02.24"
+__maintainer__ = "Ilya Razmanov"
+__email__ = "ilyarazmanov@gmail.com"
+__status__ = "Production"
 
 from tkinter import Tk
 from tkinter import Label
@@ -19,6 +35,7 @@ from IncScaleNx import Scale2x  # Scale2x and Scale3x from: https://github.com/D
 
 sortir = Tk()
 sortir.title('Scale2x')
+sortir.geometry('+200+100')
 zanyato = Label(sortir, text = 'Starting...', font=("arial", 36), padx=15, pady=10, justify='center')
 zanyato.pack()
 sortir.withdraw()
@@ -29,7 +46,7 @@ sortir.withdraw()
 # --------------------------------------------------------------
 # Open source file
 
-sourcefilename = filedialog.askopenfilename(title='Open source PNG file', filetypes=[('PNG','.png')])
+sourcefilename = filedialog.askopenfilename(title='Open source PNG file to reScale2x', filetypes=[('PNG','.png')])
 if (sourcefilename == ''):
     quit()
 
@@ -92,7 +109,7 @@ sortir.withdraw()
 # --------------------------------------------------------------
 # Open export file
 
-resultPNG = filedialog.asksaveasfile(mode='wb', title='Save resulting PNG file', filetypes=[('PNG','.png')], defaultextension = ('PNG file','.png'))
+resultPNG = filedialog.asksaveasfile(mode='wb', title='Save resulting Scale2x PNG file', filetypes=[('PNG','.png')], defaultextension = ('PNG file','.png'))
 if (resultPNG == ''):
     quit()
 

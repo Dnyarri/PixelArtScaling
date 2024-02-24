@@ -1,9 +1,24 @@
-# Batch processing a directory to rescale all PNG files using
-# Scale2x aka AdvMAME2x method
-# Created by Ilyich the Toad (mailto: amphisoft@gmail.com)
-# Versions:
-# 01.000    Seem to work 
-# 01.001    Progress indication added, showing name of file being processed 
+#!/usr/bin/env python
+
+'''
+Batch rescaling of PNG image using Scale2x aka AdvMAME2x
+Created by: Ilya Razmanov (mailto:ilyarazmanov@gmail.com)
+            aka Ilyich the Toad (mailto:amphisoft@gmail.com)
+Versions:
+01.000      Initial working release 
+01.001      Progress indication added, showing name of file being processed
+2024.02.24  Cleanup, GUI tweaks, versioning changed to YYYY.MM.DD
+
+'''
+
+__author__ = "Ilya Razmanov"
+__copyright__ = "(c) 2024 Ilya Razmanov"
+__credits__ = "Ilya Razmanov"
+__license__ = "unlicense"
+__version__ = "2024.02.24"
+__maintainer__ = "Ilya Razmanov"
+__email__ = "ilyarazmanov@gmail.com"
+__status__ = "Production"
 
 from tkinter import Tk
 from tkinter import Label
@@ -20,6 +35,7 @@ from IncScaleNx import Scale2x  # Scale2x and Scale3x from: https://github.com/D
 
 sortir = Tk()
 sortir.title('Processing Scale2x...')
+sortir.geometry('+100+100')
 zanyato = Label(sortir, text = 'Starting...', font=("arial", 12), padx=16, pady=10, justify='center')
 zanyato.pack()
 sortir.withdraw()
@@ -28,7 +44,7 @@ sortir.withdraw()
 # --------------------------------------------------------------
 
 # Open source dir
-sourcedir = filedialog.askdirectory(title='Open DIR to resize PNG images')
+sourcedir = filedialog.askdirectory(title='Open DIR to resize PNG images using scale2x')
 if (sourcedir == ''):
     quit()
 
