@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 '''
 Overview
 ----------
@@ -23,12 +25,20 @@ Copyright and redistribution
 Python implementation deleloped by Ilya Razmanov (https://github.com/Dnyarri/),
 based on brief algorithm description by Andrea Mazzoleni (https://www.scale2x.it/)
 
-Last modified 21.02.2024
+Last modified 24.02.2024
 
 May be freely used and included anywhere by anyone who found it useful.
 
 '''
 
+__author__ = "Ilya Razmanov"
+__copyright__ = "(c) 2024 Ilya Razmanov"
+__credits__ = ["Ilya Razmanov", "Andrea Mazzoleni"]
+__license__ = "unlicense"
+__version__ = "2024.02.24"
+__maintainer__ = "Ilya Razmanov"
+__email__ = "ilyarazmanov@gmail.com"
+__status__ = "Production"
 
 # --------------------------------------------------------------
 # Scaling image list to 2x image list
@@ -36,9 +46,7 @@ May be freely used and included anywhere by anyone who found it useful.
 
 def Scale2x(ImageAsListListList, X, Y):
     """ Takes ImageAsListListList as 3D list (image) of lists (rows) of lists (pixels) of int (channel values) 
-        of X, Y size (see InSrc.py for detail), 
-
-        and performs Scale2x rescaling, returning (scaled image of similar structure, new X, new Y).
+        of X, Y size (see InSrc.py for detail), and performs Scale2x rescaling, returning (scaled image of similar structure, new X, new Y).
     """
 
     doubleX = 2*X; doubleY = 2*Y
@@ -85,9 +93,7 @@ def Scale2x(ImageAsListListList, X, Y):
 
 def Scale3x(ImageAsListListList, X, Y):
     """ Takes ImageAsListListList as 3D list (image) of lists (rows) of lists (pixels) of int (channel values) 
-        of X, Y size (see InSrc.py for detail), 
-
-        and performs Scale3x rescaling, returning (scaled image of similar structure, new X, new Y).
+        of X, Y size (see InSrc.py for detail), and performs Scale3x rescaling, returning (scaled image of similar structure, new X, new Y).
     """
 
     tripleX = 3*X; tripleY = 3*Y

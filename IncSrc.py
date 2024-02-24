@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 '''
 Content
 --------
@@ -42,11 +44,20 @@ Copyright and redistribution
 
 Deleloped by Ilya Razmanov (https://github.com/Dnyarri/)
 
-Last modified 21.02.2024
+Last modified 24.02.2024
 
 May be freely used and included anywhere by anyone who found it useful.
 
 '''
+
+__author__ = "Ilya Razmanov"
+__copyright__ = "(c) 2024 Ilya Razmanov"
+__credits__ = "Ilya Razmanov"
+__license__ = "unlicense"
+__version__ = "2024.02.24"
+__maintainer__ = "Ilya Razmanov"
+__email__ = "ilyarazmanov@gmail.com"
+__status__ = "Production"
 
 # --------------------------------------------------------------
 # src function. Analog of src from FilterMeister, force repeate edge instead of going out of range
@@ -111,8 +122,7 @@ def Img3D(imagedata, X, Y, Z):
 
 def Img3Dto1D(gotImage, gotX, gotY, Z):
     """ Takes gotImage as 3D list (image) of lists (rows) of lists (pixels) of int (channel values) 
-        (gotX, gotY are image sizes) 
-        and reshapes into single row list for easy output with PyPNG png.Writer writer.write_array method.
+        (gotX, gotY are image sizes) and reshapes into single row list for easy output with PyPNG png.Writer writer.write_array method.
         
     """
 
