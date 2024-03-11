@@ -22,7 +22,7 @@ where both "Image" are lists, all "X" and "Y" are integer sizes of "Image" along
 
 Copyright and redistribution
 -----------------------------
-Python implementation deleloped by Ilya Razmanov (https://github.com/Dnyarri/),
+Python implementation developed by Ilya Razmanov (https://github.com/Dnyarri/),
 based on brief algorithm description by Andrea Mazzoleni (https://www.scale2x.it/)
 
 Last modified 24.02.2024

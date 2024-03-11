@@ -35,6 +35,7 @@ from IncScaleNx import Scale3x  # Scale2x and Scale3x from: https://github.com/D
 
 sortir = Tk()
 sortir.title('Scale3x')
+sortir.iconbitmap('3xGUI.ico')
 sortir.geometry('+200+100')
 zanyato = Label(sortir, text = 'Starting...', font=("arial", 36), padx=15, pady=10, justify='center')
 zanyato.pack()

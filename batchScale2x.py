@@ -35,6 +35,7 @@ from IncScaleNx import Scale2x  # Scale2x and Scale3x from: https://github.com/D
 
 sortir = Tk()
 sortir.title('Processing Scale2x...')
+sortir.iconbitmap('2xBATCH.ico')
 sortir.geometry('+100+100')
 zanyato = Label(sortir, text = 'Starting...', font=("arial", 12), padx=16, pady=10, justify='center')
 zanyato.pack()
@@ -44,7 +45,7 @@ sortir.withdraw()
 # --------------------------------------------------------------
 
 # Open source dir
-sourcedir = filedialog.askdirectory(title='Open DIR to resize PNG images using scale2x')
+sourcedir = filedialog.askdirectory(title='Open DIR to resize PNG images using Scale2x')
 if (sourcedir == ''):
     quit()
 
