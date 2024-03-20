@@ -5,6 +5,7 @@ Content
 --------
 
 - IncSrc.src            - src(x,y,z) a-la FilterMeister 
+- IncSrc.srcL           - similar to src(x,y,z) but performs bilinear interpolation 
 - IncSrc.Img3D          - representation of image as 3D list (image) of lists (rows) of lists (pixels) of integers (channel values)
 - IncSrc.Img3Dto1D      - conversion of .Img3D output into single row list for easy output with PyPNG writer.write_array method
 
@@ -27,7 +28,7 @@ Main programs should contain something like this:
 ``Z = (info['planes'])``
 
 Opening image, iDAT comes to "pixels" as bytearray, then tuple'd. 
-Image should be opened as "imagedata" tuple and X, Y, Z set as int by main program/
+Image should be opened as "imagedata" tuple and X, Y, Z set as int by main program.
 
 After that you may use forementioned functions like:
 
@@ -42,11 +43,17 @@ After that you may use forementioned functions like:
 Copyright and redistribution
 -----------------------------
 
-Deleloped by Ilya Razmanov (https://github.com/Dnyarri/)
+Developed by Ilya Razmanov (https://dnyarri.github.io/) 
 
-Last modified 24.02.2024
+May be freely used and included anywhere by anyone who found it useful. 
 
-May be freely used and included anywhere by anyone who found it useful.
+Versions:
+----------
+
+2024.02.24  Initial release 
+
+2024.03.20  Nearest neighbour interpolation added 
+
 
 '''
 
@@ -54,26 +61,29 @@ __author__ = "Ilya Razmanov"
 __copyright__ = "(c) 2024 Ilya Razmanov"
 __credits__ = "Ilya Razmanov"
 __license__ = "unlicense"
-__version__ = "2024.02.24"
+__version__ = "2024.03.20"
 __maintainer__ = "Ilya Razmanov"
 __email__ = "ilyarazmanov@gmail.com"
 __status__ = "Production"
 
 # --------------------------------------------------------------
-# src function. Analog of src from FilterMeister, force repeate edge instead of going out of range
+# src function. Analog of src from FilterMeister, force repeat edge instead of going out of range
 #
 
 def src(imagedata, X, Y, Z, x, y, z):
-    """ imagedata is image data tuple from png.py output
+    """ Image src, nearest neighbour
+
+        imagedata is image data tuple from png.py output
 
         X, Y, Z - int constants for image size
 
-        x, y, z - int cordinates to read x, y pixel, z channel value at
+        x, y, z - int coordinates to read x, y pixel, z channel value at
+
     """
 
-    cx = int(x); cy = int(y)
-    cx = max(0,cx); cx = min((X-1),cx)
-    cy = max(0,cy); cy = min((Y-1),cy)
+    cx = int(x); cy = int(y)            # Converts float input request to int. Actually it does nearest neighbour
+    cx = max(0,cx); cx = min((X-1),cx)  # Repeat edge extrapolation a-la Photoshop
+    cy = max(0,cy); cy = min((Y-1),cy)  # Repeat edge extrapolation a-la Photoshop
 
     position = (cx*Z) + z   # Here is the main magic of turning two x, z into one array position
     channelvalue = int(((imagedata[cy])[position]))
@@ -84,6 +94,41 @@ def src(imagedata, X, Y, Z, x, y, z):
 # end of src function. Returned int channel value of coordinates x,y,z
 # --------------------------------------------------------------
 
+
+# --------------------------------------------------------------
+# srcL function. Analog of src above, based on src above,
+# bilinear interpolation
+#
+
+def srcL(imagedata, X, Y, Z, x, y, z):
+    """ Image src, bilinear interpolation
+
+        imagedata is image data tuple from png.py output
+
+        X, Y, Z - int constants for image size
+
+        x, y - float coordinates to read x, y pixel at
+        
+        z - int channel number
+
+    """
+
+    fx = float(x); fy = float(y)
+    fx = max(0,fx); fx = min((X-1),fx)
+    fy = max(0,fy); fy = min((Y-1),fy)
+
+    # Neighbour pixels
+
+    x0 = int(x); x1 = x0 + 1
+    y0 = int(y); y1 = y0 + 1
+
+    channelvalue = src(imagedata,X,Y,Z,x0,y0,z)*(x1-fx)*(y1-fy) + src(imagedata,X,Y,Z,x0,y1,z)*(x1-fx)*(fy-y0) + src(imagedata,X,Y,Z,x1,y0,z)*(fx-x0)*(y1-fy) + src(imagedata,X,Y,Z,x1,y1,z)*(fx-x0)*(fy-y0)
+    
+    return int(channelvalue)
+
+#
+# end of srcL function. Returned int channel value of coordinates x,y,z
+# --------------------------------------------------------------
 
 # --------------------------------------------------------------
 # Img3D function. Creating image as list (image) of lists (rows) of lists (pixels) of int (channel values)
