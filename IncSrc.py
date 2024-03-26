@@ -43,7 +43,11 @@ After that you may use forementioned functions like:
 Copyright and redistribution
 -----------------------------
 
+<<<<<<< HEAD
 Developed by Ilya Razmanov (https://dnyarri.github.io/) 
+=======
+Deleloped by Ilya Razmanov (https://dnyarri.github.io/) 
+>>>>>>> a0c0940b73a8835f23be9e1ea3d241c7bee5ed01
 
 May be freely used and included anywhere by anyone who found it useful. 
 
@@ -77,7 +81,11 @@ def src(imagedata, X, Y, Z, x, y, z):
 
         X, Y, Z - int constants for image size
 
+<<<<<<< HEAD
         x, y, z - int coordinates to read x, y pixel, z channel value at
+=======
+        x, y, z - int cordinates to read x, y pixel, z channel value at
+>>>>>>> a0c0940b73a8835f23be9e1ea3d241c7bee5ed01
 
     """
 
