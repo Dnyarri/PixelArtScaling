@@ -12,6 +12,7 @@ Versions:
 01.002    Changed from self-contained to modular, IncSrc and IncScaleNx modules created 
 01.003    Ultimate modular evil, moving everything possible to IncSrc.py and IncScaleNx.py 
 2024.02.24  Cleanup, minimizing import, versioning changed to YYYY.MM.DD
+2024.03.30  pHYs chunk editing to keep image print size constant
 
 '''
 
@@ -19,7 +20,7 @@ __author__ = "Ilya Razmanov"
 __copyright__ = "(c) 2024 Ilya Razmanov"
 __credits__ = "Ilya Razmanov"
 __license__ = "unlicense"
-__version__ = "2024.02.24"
+__version__ = "2024.03.30"
 __maintainer__ = "Ilya Razmanov"
 __email__ = "ilyarazmanov@gmail.com"
 __status__ = "Production"
@@ -57,10 +58,27 @@ EPXImage,tripleX,tripleY = Scale3x(ImageAsListListList, X, Y)
 ResultImageAsList = IncSrc.Img3Dto1D(EPXImage, tripleX, tripleY, Z)
 
 # --------------------------------------------------------------
+# Fixing resolution to match original print size.
+# If no pHYs found in original, 96 ppi is assumed as original value.
+if 'physical' in info:
+    res = info['physical']      # Reading resolution as tuple
+    x_pixels_per_unit = res[0]
+    y_pixels_per_unit = res[1]
+    unit_is_meter = res[2]
+else:
+    x_pixels_per_unit = 3780    # 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
+    y_pixels_per_unit = 3780    # 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
+    unit_is_meter = True
+x_pixels_per_unit = 3*x_pixels_per_unit # Triple resolution to keep print size
+y_pixels_per_unit = 3*y_pixels_per_unit # Triple resolution to keep print size
+# Resolution changed
+# --------------------------------------------------------------
+
+# --------------------------------------------------------------
 # Open export file
 resultPNG = open(Dvo, mode='wb')
 # Writing export file
-writer = png.Writer(tripleX, tripleY, greyscale = info['greyscale'], alpha = info['alpha'], bitdepth = info['bitdepth'])
+writer = png.Writer(tripleX, tripleY, greyscale = info['greyscale'], alpha = info['alpha'], bitdepth = info['bitdepth'], physical = [x_pixels_per_unit, y_pixels_per_unit, unit_is_meter])
 writer.write_array(resultPNG, ResultImageAsList)
 resultPNG.close()
 # Export file closed

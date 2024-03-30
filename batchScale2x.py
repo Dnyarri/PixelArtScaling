@@ -8,6 +8,7 @@ Versions:
 01.000      Initial working release 
 01.001      Progress indication added, showing name of file being processed
 2024.02.24  Cleanup, GUI tweaks, versioning changed to YYYY.MM.DD
+2024.03.30  pHYs chunk editing to keep image print size constant
 
 '''
 
@@ -15,7 +16,7 @@ __author__ = "Ilya Razmanov"
 __copyright__ = "(c) 2024 Ilya Razmanov"
 __credits__ = "Ilya Razmanov"
 __license__ = "unlicense"
-__version__ = "2024.02.24"
+__version__ = "2024.03.30"
 __maintainer__ = "Ilya Razmanov"
 __email__ = "ilyarazmanov@gmail.com"
 __status__ = "Production"
@@ -64,7 +65,7 @@ sortir.update_idletasks()
 for runningfilename in glob(sourcedir + "/**/*.png", recursive=True):   # select all PNG files in all subfolders
 
     oldfile = runningfilename
-    newfile = oldfile + '.2x.png'       # If you wish originals to be replaced, set newfile = oldfile
+    newfile = oldfile                   # Previous version used backup newfile = oldfile + '.2x.png'
 
     zanyato.config(text = oldfile)      # Updating label, showing processed file name
     sortir.update()
@@ -85,9 +86,26 @@ for runningfilename in glob(sourcedir + "/**/*.png", recursive=True):   # select
     # Reshaping 2x scaled 3D list into 1D list for PyPNG .write_array method
     ResultImageAsList = IncSrc.Img3Dto1D(EPXImage, newX, newY, Z)
 
+    # --------------------------------------------------------------
+    # Fixing resolution to match original print size.
+    # If no pHYs found in original, 96 ppi is assumed as original value.
+    if 'physical' in info:
+        res = info['physical']      # Reading resolution as tuple
+        x_pixels_per_unit = res[0]
+        y_pixels_per_unit = res[1]
+        unit_is_meter = res[2]
+    else:
+        x_pixels_per_unit = 3780    # 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
+        y_pixels_per_unit = 3780    # 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
+        unit_is_meter = True
+    x_pixels_per_unit = 2*x_pixels_per_unit # Double resolution to keep print size
+    y_pixels_per_unit = 2*y_pixels_per_unit # Double resolution to keep print size
+    # Resolution changed
+    # --------------------------------------------------------------
+
     # Writing new image
     resultPNG = open(newfile, mode='wb')
-    writer = png.Writer(newX, newY, greyscale = info['greyscale'], alpha = info['alpha'], bitdepth = info['bitdepth'])
+    writer = png.Writer(newX, newY, greyscale = info['greyscale'], alpha = info['alpha'], bitdepth = info['bitdepth'], physical = [x_pixels_per_unit, y_pixels_per_unit, unit_is_meter])
     writer.write_array(resultPNG, ResultImageAsList)
     resultPNG.close()
 

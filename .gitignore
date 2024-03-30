@@ -1,4 +1,5 @@
 backup/
+build/
 temp/
 testcases/
 __pycache__/
