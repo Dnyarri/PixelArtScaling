@@ -9,6 +9,7 @@ Versions:
 01.001      Progress indication added, showing name of file being processed
 2024.02.24  Cleanup, GUI tweaks, versioning changed to YYYY.MM.DD
 2024.03.30  pHYs chunk editing to keep image print size constant
+2024.04.03  pathlib Path.exists flightcheck to make GUI Nuitka-proof
 
 '''
 
@@ -16,7 +17,7 @@ __author__ = "Ilya Razmanov"
 __copyright__ = "(c) 2024 Ilya Razmanov"
 __credits__ = "Ilya Razmanov"
 __license__ = "unlicense"
-__version__ = "2024.03.30"
+__version__ = "2024.04.03"
 __maintainer__ = "Ilya Razmanov"
 __email__ = "ilyarazmanov@gmail.com"
 __status__ = "Production"
@@ -24,6 +25,8 @@ __status__ = "Production"
 from tkinter import Tk
 from tkinter import Label
 from tkinter import filedialog
+
+from pathlib import Path
 
 from glob import glob
 
@@ -34,9 +37,15 @@ from IncScaleNx import Scale3x  # Scale2x and Scale3x from: https://github.com/D
 # --------------------------------------------------------------
 # Creating dialog
 
+iconpath = Path.cwd() / '3xBATCH.ico'
+iconpath.resolve()
+iconname = str(iconpath)
+useicon = iconpath.exists() # Check if icon file really exist. If False, it will not be used later.
+
 sortir = Tk()
 sortir.title('Processing Scale3x...')
-sortir.iconbitmap('3xBATCH.ico')
+if useicon:
+    sortir.iconbitmap(iconname)
 sortir.geometry('+100+100')
 zanyato = Label(sortir, text = 'Starting...', font=("arial", 12), padx=16, pady=10, justify='center')
 zanyato.pack()

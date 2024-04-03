@@ -11,6 +11,7 @@ Versions:
 01.004      Progress indication added, showing processing stage 
 2024.02.24  Cleanup, GUI tweaks, versioning changed to YYYY.MM.DD
 2024.03.30  pHYs chunk editing to keep image print size constant
+2024.04.03  pathlib Path.exists flightcheck to make GUI Nuitka-proof
 
 '''
 
@@ -18,7 +19,7 @@ __author__ = "Ilya Razmanov"
 __copyright__ = "(c) 2024 Ilya Razmanov"
 __credits__ = "Ilya Razmanov"
 __license__ = "unlicense"
-__version__ = "2024.03.30"
+__version__ = "2024.04.03"
 __maintainer__ = "Ilya Razmanov"
 __email__ = "ilyarazmanov@gmail.com"
 __status__ = "Production"
@@ -27,6 +28,8 @@ from tkinter import Tk
 from tkinter import Label
 from tkinter import filedialog
 
+from pathlib import Path
+
 import png                      # PNG reading: PyPNG from: https://gitlab.com/drj11/pypng
 import IncSrc                   # Image reshaping from: https://github.com/Dnyarri/PixelArtScaling
 from IncScaleNx import Scale3x  # Scale2x and Scale3x from: https://github.com/Dnyarri/PixelArtScaling
@@ -34,9 +37,15 @@ from IncScaleNx import Scale3x  # Scale2x and Scale3x from: https://github.com/D
 # --------------------------------------------------------------
 # Creating dialog
 
+iconpath = Path.cwd() / '3xGUI.ico'
+iconpath.resolve()
+iconname = str(iconpath)
+useicon = iconpath.exists() # Check if icon file really exist. If False, it will not be used later.
+
 sortir = Tk()
 sortir.title('Scale3x')
-sortir.iconbitmap('3xGUI.ico')
+if useicon:
+    sortir.iconbitmap(iconname)
 sortir.geometry('+200+100')
 zanyato = Label(sortir, text = 'Starting...', font=("arial", 36), padx=15, pady=10, justify='center')
 zanyato.pack()
