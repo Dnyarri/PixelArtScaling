@@ -1,5 +1,6 @@
 backup/
-build/
+build-pyinstaller/
+build-nuitka/
 temp/
 testcases/
 __pycache__/
