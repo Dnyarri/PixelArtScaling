@@ -37,8 +37,7 @@ from IncScaleNx import Scale3x  # Scale2x and Scale3x from: https://github.com/D
 # --------------------------------------------------------------
 # Creating dialog
 
-iconpath = Path.cwd() / '3xBATCH.ico'
-iconpath.resolve()
+iconpath = Path(__file__).resolve().parent / '3xBATCH.ico'
 iconname = str(iconpath)
 useicon = iconpath.exists() # Check if icon file really exist. If False, it will not be used later.
 

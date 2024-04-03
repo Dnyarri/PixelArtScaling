@@ -37,15 +37,14 @@ from IncScaleNx import Scale3x  # Scale2x and Scale3x from: https://github.com/D
 # --------------------------------------------------------------
 # Creating dialog
 
-iconpath = Path.cwd() / '3xGUI.ico'
-iconpath.resolve()
+iconpath = Path(__file__).resolve().parent / '3xGUI.ico'
 iconname = str(iconpath)
 useicon = iconpath.exists() # Check if icon file really exist. If False, it will not be used later.
 
 sortir = Tk()
 sortir.title('Scale3x')
 if useicon:
-    sortir.iconbitmap(iconname)
+    sortir.iconbitmap(iconname) # Replacement for simple sortir.iconbitmap('3xGUI.ico') - ugly but stable.
 sortir.geometry('+200+100')
 zanyato = Label(sortir, text = 'Starting...', font=("arial", 36), padx=15, pady=10, justify='center')
 zanyato.pack()
