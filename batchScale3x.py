@@ -46,7 +46,7 @@ sortir.title('Processing Scale3x...')
 if useicon:
     sortir.iconbitmap(iconname)
 sortir.geometry('+100+100')
-zanyato = Label(sortir, text = 'Starting...', font=("arial", 12), padx=16, pady=10, justify='center')
+zanyato = Label(sortir, text='Starting...', font=("arial", 12), padx=16, pady=10, justify='center')
 zanyato.pack()
 sortir.withdraw()
 
@@ -55,14 +55,14 @@ sortir.withdraw()
 
 # Open source dir
 sourcedir = filedialog.askdirectory(title='Open DIR to resize PNG images using Scale3x')
-if (sourcedir == ''):
+if sourcedir == '':
     quit()
 
 # --------------------------------------------------------------
 # Updating dialog
 
 sortir.deiconify()
-zanyato.config(text = 'Allons-y!')
+zanyato.config(text='Allons-y!')
 sortir.update()
 sortir.update_idletasks()
 
@@ -70,26 +70,25 @@ sortir.update_idletasks()
 # --------------------------------------------------------------
 
 # Process file list
-for runningfilename in glob(sourcedir + "/**/*.png", recursive=True):   # select all PNG files in all subfolders
+for runningfilename in glob(sourcedir + "/**/*.png", recursive=True):  # select all PNG files in all subfolders
 
     oldfile = runningfilename
-    newfile = oldfile                   # Previous version used backup newfile = oldfile + '.3x.png'
+    newfile = oldfile  # Previous version used backup newfile = oldfile + '.3x.png'
 
-    zanyato.config(text = oldfile)      # Updating label, showing processed file name
+    zanyato.config(text=oldfile)  # Updating label, showing processed file name
     sortir.update()
     sortir.update_idletasks()
 
-    source = png.Reader(filename = oldfile)
-    X,Y,pixels,info = source.asDirect() # Opening image, iDAT comes to "pixels" as bytearray, to be tuple'd lated.
-    Z = (info['planes'])                # PyPNG returns X,Y directly, but not Z. Z should be extracted from info
-    imagedata = tuple((pixels))         # Attempt to fix all bytearrays as something solid
-
+    source = png.Reader(filename=oldfile)
+    X, Y, pixels, info = source.asDirect()  # Opening image, iDAT comes to "pixels" as bytearray, to be tuple'd lated.
+    Z = info['planes']                      # PyPNG returns X,Y directly, but not Z. Z should be extracted from info
+    imagedata = tuple((pixels))             # Attempt to fix all bytearrays as something solid
 
     # Reading image as list
     ImageAsListListList = IncSrc.Img3D(imagedata, X, Y, Z)
 
     # Scaling list to 3x image list
-    EPXImage,newX,newY = Scale3x(ImageAsListListList, X, Y)
+    EPXImage, newX, newY = Scale3x(ImageAsListListList, X, Y)
 
     # Reshaping 3x scaled 3D list into 1D list for PyPNG .write_array method
     ResultImageAsList = IncSrc.Img3Dto1D(EPXImage, newX, newY, Z)
@@ -106,14 +105,21 @@ for runningfilename in glob(sourcedir + "/**/*.png", recursive=True):   # select
         x_pixels_per_unit = 3780    # 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
         y_pixels_per_unit = 3780    # 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
         unit_is_meter = True
-    x_pixels_per_unit = 3*x_pixels_per_unit # Triple resolution to keep print size
-    y_pixels_per_unit = 3*y_pixels_per_unit # Triple resolution to keep print size
+    x_pixels_per_unit = 3 * x_pixels_per_unit   # Triple resolution to keep print size
+    y_pixels_per_unit = 3 * y_pixels_per_unit   # Triple resolution to keep print size
     # Resolution changed
     # --------------------------------------------------------------
 
     # Writing new image
     resultPNG = open(newfile, mode='wb')
-    writer = png.Writer(newX, newY, greyscale = info['greyscale'], alpha = info['alpha'], bitdepth = info['bitdepth'], physical = [x_pixels_per_unit, y_pixels_per_unit, unit_is_meter])
+    writer = png.Writer(
+        newX,
+        newY,
+        greyscale=info['greyscale'],
+        alpha=info['alpha'],
+        bitdepth=info['bitdepth'],
+        physical=[x_pixels_per_unit, y_pixels_per_unit, unit_is_meter],
+    )
     writer.write_array(resultPNG, ResultImageAsList)
     resultPNG.close()
 

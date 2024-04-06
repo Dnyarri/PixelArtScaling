@@ -37,12 +37,11 @@ Rez = argv[1]
 Dvo = argv[2]
 
 # Open source file
-source = png.Reader(filename = Rez)
+source = png.Reader(filename=Rez)
 
-X,Y,pixels,info = source.asDirect() # Opening image, iDAT comes to "pixels" as bytearray, to be tuple'd lated.
-Z = (info['planes'])            # Maximum CHANNEL NUMBER
-imagedata = tuple((pixels))     # Attempt to fix all bytearrays
-
+X, Y, pixels, info = source.asDirect()  # Opening image, iDAT comes to "pixels" as bytearray, to be tuple'd lated.
+Z = info['planes']                      # Maximum CHANNEL NUMBER
+imagedata = tuple((pixels))             # Attempt to fix all bytearrays
 
 
 # Source file opened as imagedata
@@ -52,7 +51,7 @@ imagedata = tuple((pixels))     # Attempt to fix all bytearrays
 ImageAsListListList = IncSrc.Img3D(imagedata, X, Y, Z)
 
 # Scaling to 3x image list
-EPXImage,tripleX,tripleY = Scale3x(ImageAsListListList, X, Y)
+EPXImage, tripleX, tripleY = Scale3x(ImageAsListListList, X, Y)
 
 # Reshaping 3x scaled 3D list into 1D list for PyPNG .write_array method
 ResultImageAsList = IncSrc.Img3Dto1D(EPXImage, tripleX, tripleY, Z)
@@ -69,8 +68,8 @@ else:
     x_pixels_per_unit = 3780    # 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
     y_pixels_per_unit = 3780    # 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
     unit_is_meter = True
-x_pixels_per_unit = 3*x_pixels_per_unit # Triple resolution to keep print size
-y_pixels_per_unit = 3*y_pixels_per_unit # Triple resolution to keep print size
+x_pixels_per_unit = 3 * x_pixels_per_unit   # Triple resolution to keep print size
+y_pixels_per_unit = 3 * y_pixels_per_unit   # Triple resolution to keep print size
 # Resolution changed
 # --------------------------------------------------------------
 
@@ -78,7 +77,14 @@ y_pixels_per_unit = 3*y_pixels_per_unit # Triple resolution to keep print size
 # Open export file
 resultPNG = open(Dvo, mode='wb')
 # Writing export file
-writer = png.Writer(tripleX, tripleY, greyscale = info['greyscale'], alpha = info['alpha'], bitdepth = info['bitdepth'], physical = [x_pixels_per_unit, y_pixels_per_unit, unit_is_meter])
+writer = png.Writer(
+    tripleX,
+    tripleY,
+    greyscale=info['greyscale'],
+    alpha=info['alpha'],
+    bitdepth=info['bitdepth'],
+    physical=[x_pixels_per_unit, y_pixels_per_unit, unit_is_meter],
+)
 writer.write_array(resultPNG, ResultImageAsList)
 resultPNG.close()
 # Export file closed

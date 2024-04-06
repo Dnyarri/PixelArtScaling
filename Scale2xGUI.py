@@ -39,14 +39,14 @@ from IncScaleNx import Scale2x  # Scale2x and Scale3x from: https://github.com/D
 
 iconpath = Path(__file__).resolve().parent / '2xGUI.ico'
 iconname = str(iconpath)
-useicon = iconpath.exists() # Check if icon file really exist. If False, it will not be used later.
+useicon = iconpath.exists()     # Check if icon file really exist. If False, it will not be used later.
 
 sortir = Tk()
 sortir.title('Scale2x')
 if useicon:
     sortir.iconbitmap(iconname) # Replacement for simple sortir.iconbitmap('2xGUI.ico') - ugly but stable.
 sortir.geometry('+200+100')
-zanyato = Label(sortir, text = 'Starting...', font=("arial", 36), padx=15, pady=10, justify='center')
+zanyato = Label(sortir, text='Starting...', font=("arial", 36), padx=15, pady=10, justify='center')
 zanyato.pack()
 sortir.withdraw()
 
@@ -56,14 +56,14 @@ sortir.withdraw()
 # --------------------------------------------------------------
 # Open source file
 
-sourcefilename = filedialog.askopenfilename(title='Open source PNG file to reScale2x', filetypes=[('PNG','.png')])
-if (sourcefilename == ''):
+sourcefilename = filedialog.askopenfilename(title='Open source PNG file to reScale2x', filetypes=[('PNG', '.png')])
+if sourcefilename == '':
     quit()
 
-source = png.Reader(filename = sourcefilename)
-X,Y,pixels,info = source.asDirect() # Opening image, iDAT comes to "pixels" as bytearray, to be tuple'd lated.
-Z = (info['planes'])                # PyPNG returns X,Y directly, but not Z. Z should be extracted from info
-imagedata = tuple((pixels))         # Attempt to fix all bytearrays as something solid
+source = png.Reader(filename=sourcefilename)
+X, Y, pixels, info = source.asDirect()  # Opening image, iDAT comes to "pixels" as bytearray, to be tuple'd lated.
+Z = info['planes']                      # PyPNG returns X,Y directly, but not Z. Z should be extracted from info
+imagedata = tuple((pixels))             # Attempt to fix all bytearrays as something solid
 
 # Source file opened as imagedata
 # --------------------------------------------------------------
@@ -72,7 +72,7 @@ imagedata = tuple((pixels))         # Attempt to fix all bytearrays as something
 # Updating dialog
 
 sortir.deiconify()
-zanyato.config(text = 'Reading...')
+zanyato.config(text='Reading...')
 sortir.update()
 sortir.update_idletasks()
 
@@ -85,7 +85,7 @@ ImageAsListListList = IncSrc.Img3D(imagedata, X, Y, Z)
 # --------------------------------------------------------------
 # Updating dialog
 
-zanyato.config(text = 'Scaling...')
+zanyato.config(text='Scaling...')
 sortir.update()
 sortir.update_idletasks()
 
@@ -93,7 +93,7 @@ sortir.update_idletasks()
 # --------------------------------------------------------------
 
 # Scaling list to 2x image list
-EPXImage,doubleX,doubleY = Scale2x(ImageAsListListList, X, Y)
+EPXImage, doubleX, doubleY = Scale2x(ImageAsListListList, X, Y)
 
 # --------------------------------------------------------------
 # Updating dialog
@@ -119,8 +119,13 @@ sortir.withdraw()
 # --------------------------------------------------------------
 # Open export file
 
-resultPNG = filedialog.asksaveasfile(mode='wb', title='Save resulting Scale2x PNG file', filetypes=[('PNG','.png')], defaultextension = ('PNG file','.png'))
-if (resultPNG == ''):
+resultPNG = filedialog.asksaveasfile(
+    mode='wb',
+    title='Save resulting Scale2x PNG file',
+    filetypes=[('PNG', '.png')],
+    defaultextension=('PNG file', '.png'),
+)
+if resultPNG == '':
     quit()
 
 # Export file opened
@@ -138,15 +143,22 @@ else:
     x_pixels_per_unit = 3780    # 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
     y_pixels_per_unit = 3780    # 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
     unit_is_meter = True
-x_pixels_per_unit = 2*x_pixels_per_unit # Double resolution to keep print size
-y_pixels_per_unit = 2*y_pixels_per_unit # Double resolution to keep print size
+x_pixels_per_unit = 2 * x_pixels_per_unit   # Double resolution to keep print size
+y_pixels_per_unit = 2 * y_pixels_per_unit   # Double resolution to keep print size
 # Resolution changed
 # --------------------------------------------------------------
 
 # --------------------------------------------------------------
 # Writing export file
 
-writer = png.Writer(doubleX, doubleY, greyscale = info['greyscale'], alpha = info['alpha'], bitdepth = info['bitdepth'], physical = [x_pixels_per_unit, y_pixels_per_unit, unit_is_meter])
+writer = png.Writer(
+    doubleX,
+    doubleY,
+    greyscale=info['greyscale'],
+    alpha=info['alpha'],
+    bitdepth=info['bitdepth'],
+    physical=[x_pixels_per_unit, y_pixels_per_unit, unit_is_meter],
+)
 writer.write_array(resultPNG, ResultImageAsList)
 resultPNG.close()
 
