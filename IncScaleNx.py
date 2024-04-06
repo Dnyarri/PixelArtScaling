@@ -25,7 +25,7 @@ Copyright and redistribution
 Python implementation developed by Ilya Razmanov (https://github.com/Dnyarri/),
 based on brief algorithm description by Andrea Mazzoleni (https://www.scale2x.it/)
 
-Last modified 24.02.2024
+Last modified 06.04.2024
 
 May be freely used and included anywhere by anyone who found it useful.
 
@@ -35,7 +35,7 @@ __author__ = "Ilya Razmanov"
 __copyright__ = "(c) 2024 Ilya Razmanov"
 __credits__ = ["Ilya Razmanov", "Andrea Mazzoleni"]
 __license__ = "unlicense"
-__version__ = "2024.02.24"
+__version__ = "2024.04.06"
 __maintainer__ = "Ilya Razmanov"
 __email__ = "ilyarazmanov@gmail.com"
 __status__ = "Production"
@@ -44,12 +44,15 @@ __status__ = "Production"
 # Scaling image list to 2x image list
 #
 
+
 def Scale2x(ImageAsListListList, X, Y):
-    """ Takes ImageAsListListList as 3D list (image) of lists (rows) of lists (pixels) of int (channel values) 
-        of X, Y size (see InSrc.py for detail), and performs Scale2x rescaling, returning (scaled image of similar structure, new X, new Y).
+    """
+    Takes ImageAsListListList as 3D list (image) of lists (rows) of lists (pixels) of int (channel values)
+    of X, Y size (see InSrc.py for detail), and performs Scale2x rescaling, returning (scaled image of similar structure, new X, new Y).
+
     """
 
-    doubleX = 2*X; doubleY = 2*Y
+    doubleX = 2 * X; doubleY = 2 * Y    # New list (image) size
 
     EPXImage = list()
 
@@ -58,29 +61,30 @@ def Scale2x(ImageAsListListList, X, Y):
         for x in range(0, X, 1):
 
             P = ImageAsListListList[y][x]
-            A = ImageAsListListList[max(y-1, 0)][x]
-            B = ImageAsListListList[y][min(x+1, X-1)]
-            C = ImageAsListListList[y][max(x-1, 0)]
-            D = ImageAsListListList[min(y+1, Y-1)][x]
+            A = ImageAsListListList[max(y - 1, 0)][x]
+            B = ImageAsListListList[y][min(x + 1, X - 1)]
+            C = ImageAsListListList[y][max(x - 1, 0)]
+            D = ImageAsListListList[min(y + 1, Y - 1)][x]
 
             r1 = P; r2 = P; r3 = P; r4 = P
-        
-            if ((C==A) and (C!=D) and (A!=B)):
+
+            if (C == A) and (C != D) and (A != B):
                 r1 = A
-            if ((A==B) and (A!=C) and (B!=D)):
+            if (A == B) and (A != C) and (B != D):
                 r2 = B
-            if ((D==C) and (D!=B) and (C!=A)):
+            if (D == C) and (D != B) and (C != A):
                 r3 = C
-            if ((B==D) and (B!=A) and (D!=C)):
+            if (B == D) and (B != A) and (D != C):
                 r4 = D
 
             RowRez.append(r1); RowRez.append(r2)
             RowDvo.append(r3); RowDvo.append(r4)
-    
+
         EPXImage.append(RowRez)
         EPXImage.append(RowDvo)
 
-    return(EPXImage, doubleX, doubleY)
+    return (EPXImage, doubleX, doubleY)
+
 
 #
 # rescaling two times finished
@@ -91,12 +95,15 @@ def Scale2x(ImageAsListListList, X, Y):
 # Scaling to 3x image list
 #
 
+
 def Scale3x(ImageAsListListList, X, Y):
-    """ Takes ImageAsListListList as 3D list (image) of lists (rows) of lists (pixels) of int (channel values) 
-        of X, Y size (see InSrc.py for detail), and performs Scale3x rescaling, returning (scaled image of similar structure, new X, new Y).
+    """
+    Takes ImageAsListListList as 3D list (image) of lists (rows) of lists (pixels) of int (channel values)
+    of X, Y size (see InSrc.py for detail), and performs Scale3x rescaling, returning (scaled image of similar structure, new X, new Y).
+
     """
 
-    tripleX = 3*X; tripleY = 3*Y
+    tripleX = 3*X; tripleY = 3*Y    # New list (image) size
 
     EPXImage = list()
 
@@ -104,38 +111,46 @@ def Scale3x(ImageAsListListList, X, Y):
         RowRez = list(); RowDvo = list(); RowTre = list()
         for x in range(0, X, 1):
 
-            E = ImageAsListListList[y][x]   # E is a center of 3x3 square
+            E = ImageAsListListList[y][x]  # E is a center of 3x3 square
 
-            A = ImageAsListListList[max(y-1, 0)][max(x-1, 0)]
-            B = ImageAsListListList[max(y-1, 0)][x]
-            C = ImageAsListListList[max(y-1, 0)][min(x+1, X-1)]
+            A = ImageAsListListList[max(y - 1, 0)][max(x - 1, 0)]
+            B = ImageAsListListList[max(y - 1, 0)][x]
+            C = ImageAsListListList[max(y - 1, 0)][min(x + 1, X - 1)]
 
-            D = ImageAsListListList[y][max(x-1, 0)]
+            D = ImageAsListListList[y][max(x - 1, 0)]
             # central pixel E = ImageAsListListList[y][x] calculated already
-            F = ImageAsListListList[y][min(x+1, X-1)]
+            F = ImageAsListListList[y][min(x + 1, X - 1)]
 
-            G = ImageAsListListList[min(y+1, Y-1)][max(x-1, 0)]
-            H = ImageAsListListList[min(y+1, Y-1)][x]
-            I = ImageAsListListList[min(y+1, Y-1)][min(x+1, X-1)]
+            G = ImageAsListListList[min(y + 1, Y - 1)][max(x - 1, 0)]
+            H = ImageAsListListList[min(y + 1, Y - 1)][x]
+            I = ImageAsListListList[min(y + 1, Y - 1)][min(x + 1, X - 1)]
 
-            r1 = E; r2 = E; r3 = E; r4 = E; r5 = E; r6 = E; r7 = E; r8 = E; r9 = E
+            r1 = E
+            r2 = E
+            r3 = E
+            r4 = E
+            r5 = E
+            r6 = E
+            r7 = E
+            r8 = E
+            r9 = E
 
-            if ((D==B) and (D!=H) and (B!=F)):
+            if (D == B) and (D != H) and (B != F):
                 r1 = D
-            if (((D==B) and (D!=H) and (B!=F) and (E!=C)) or ((B==F) and (B!=D) and (F!=H) and (E!=A))):
+            if ((D == B) and (D != H) and (B != F) and (E != C)) or ((B == F) and (B != D) and (F != H) and (E != A)):
                 r2 = B
-            if ((B==F) and (B!=D) and (F!=H)):
+            if (B == F) and (B != D) and (F != H):
                 r3 = F
-            if  (((H==D) and (H!=F) and (D!=B) and (E!=A)) or ((D==B) and (D!=H) and (B!=F) and (E!=G))):
+            if ((H == D) and (H != F) and (D != B) and (E != A)) or ((D == B) and (D != H) and (B != F) and (E != G)):
                 r4 = D
             # r5 = E already
-            if  (((B==F) and (B!=D) and (F!=H) and (E!=I)) or ((F==H) and (F!=B) and (H!=D) and (E!=C))):
+            if ((B == F) and (B != D) and (F != H) and (E != I)) or ((F == H) and (F != B) and (H != D) and (E != C)):
                 r6 = F
-            if  ((H==D) and (H!=F) and (D!=B)):
+            if (H == D) and (H != F) and (D != B):
                 r7 = D
-            if  (((F==H) and (F!=B) and (H!=D) and (E!=G)) or ((H==D) and (H!=F) and (D!=B) and (E!=I))):
+            if ((F == H) and (F != B) and (H != D) and (E != G)) or ((H == D) and (H != F) and (D != B) and (E != I)):
                 r8 = H
-            if  ((F==H) and (F!=B) and (H!=D)):
+            if (F == H) and (F != B) and (H != D):
                 r9 = F
 
             RowRez.append(r1); RowRez.append(r2); RowRez.append(r3)
@@ -146,7 +161,8 @@ def Scale3x(ImageAsListListList, X, Y):
         EPXImage.append(RowDvo)
         EPXImage.append(RowTre)
 
-    return(EPXImage, tripleX, tripleY)
+    return (EPXImage, tripleX, tripleY)
+
 
 #
 # rescaling three times finished
