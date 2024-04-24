@@ -14,6 +14,7 @@ Versions:
 2024.04.23  Multiprocessing!!!
             pool.map version
             Unfortunately, GUI went to hell (mostly)
+2024.04.24  pool.map_async will go to production
 
 '''
 
@@ -21,12 +22,13 @@ __author__ = "Ilya Razmanov"
 __copyright__ = "(c) 2024 Ilya Razmanov"
 __credits__ = "Ilya Razmanov"
 __license__ = "unlicense"
-__version__ = "2024.04.23"
+__version__ = "2024.04.24"
 __maintainer__ = "Ilya Razmanov"
 __email__ = "ilyarazmanov@gmail.com"
 __status__ = "Production"
 
-from tkinter import filedialog
+from tkinter import Tk, Label, filedialog
+from pathlib import Path
 from glob import glob
 from multiprocessing import Pool
 
@@ -89,15 +91,43 @@ def scalefile(runningfilename):
 # end scalefile, no return
 
 if __name__ == '__main__':
+
+    # Creating dialog
+    iconpath = Path(__file__).resolve().parent / '2xBATCH.ico'
+    iconname = str(iconpath)
+    useicon = iconpath.exists() # Check if icon file really exist. If False, it will not be used later.
+
+    sortir = Tk()
+    sortir.title('Processing Scale2x...')
+    if useicon:
+        sortir.iconbitmap(iconname)
+    sortir.geometry('+100+100')
+    zanyato = Label(sortir, text='Allons-y!', font=("Arial", 16), state='disabled', padx=12, pady=10, justify='center')
+    zanyato.pack()
+    sortir.withdraw()
+    # Main dialog created and hidden
     
     # Open source dir
     sourcedir = filedialog.askdirectory(title='Open DIR to resize PNG images using Scale2x')
     if sourcedir == '' or sourcedir == None:
         quit()
 
+    # Updating dialog
+    sortir.deiconify()
+    zanyato.config(text='Asynchronous processes in action, just wait...')
+    sortir.update()
+    sortir.update_idletasks()
+    
     # Creating pool
-
     scalepool = Pool()
+
+    # Feeding pool (no pun!)
     scalepool.map_async(scalefile,glob(sourcedir + "/**/*.png", recursive=True))
+
+    # Everything fed into the pool, waiting and closing
     scalepool.close()
     scalepool.join()
+
+    # Destroying dialog
+    sortir.destroy()
+    sortir.mainloop()
