@@ -14,7 +14,8 @@ Versions:
 2024.04.23  Multiprocessing!!!
             pool.map version
             Unfortunately, GUI went to hell (mostly)
-2024.04.24  pool.map_async will go to production
+2024.04.24  Async variants halve processing time, pool.map_async will go to production
+2024.04.26  GUI still sucks and not updated, but now it apologize
 
 '''
 
@@ -22,12 +23,12 @@ __author__ = "Ilya Razmanov"
 __copyright__ = "(c) 2024 Ilya Razmanov"
 __credits__ = "Ilya Razmanov"
 __license__ = "unlicense"
-__version__ = "2024.04.24"
+__version__ = "2024.04.26"
 __maintainer__ = "Ilya Razmanov"
 __email__ = "ilyarazmanov@gmail.com"
 __status__ = "Production"
 
-from tkinter import Tk, Label, filedialog
+from tkinter import Tk, Label, filedialog, X
 from pathlib import Path
 from glob import glob
 from multiprocessing import Pool
@@ -102,8 +103,10 @@ if __name__ == '__main__':
     if useicon:
         sortir.iconbitmap(iconname)
     sortir.geometry('+100+100')
-    zanyato = Label(sortir, text='Allons-y!', font=("Arial", 16), state='disabled', padx=12, pady=10, justify='center')
+    zanyato = Label(sortir, text='Allons-y!', font=("Arial", 16), state='normal', padx=12, pady=10, justify='center')
     zanyato.pack()
+    small = Label(sortir, text='At 100% CPU load GUI tend to become unresponsive.\nWe apologize for making image processing as fast as possible.', font=("Courier", 10), state='disabled', padx=12, pady=10, justify='center')
+    small.pack(fill=X)
     sortir.withdraw()
     # Main dialog created and hidden
     
@@ -114,7 +117,7 @@ if __name__ == '__main__':
 
     # Updating dialog
     sortir.deiconify()
-    zanyato.config(text='Asynchronous processes in action, just wait...')
+    zanyato.config(text='Asynchronous processes ensued, pronto!')
     sortir.update()
     sortir.update_idletasks()
     
