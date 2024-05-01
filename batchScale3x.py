@@ -30,7 +30,6 @@ __status__ = "Production"
 
 from tkinter import Tk, Label, filedialog, X
 from pathlib import Path
-from glob import glob
 from multiprocessing import Pool
 
 import png                      # PNG reading: PyPNG from:  https://gitlab.com/drj11/pypng
@@ -103,7 +102,7 @@ if __name__ == '__main__':
     sortir.title('Processing Scale3x...')
     if useicon:
         sortir.iconbitmap(iconname)
-    sortir.geometry('+100+100')
+    sortir.geometry('+200+100')
     zanyato = Label(sortir, text='Allons-y!', font=("Arial", 16), state='normal', padx=12, pady=10, justify='center')
     zanyato.pack()
     small = Label(sortir, text='At 100% CPU load GUI tend to become unresponsive.\nWe apologize for making image processing as fast as possible.', font=("Courier", 10), state='disabled', padx=12, pady=10, justify='center')
@@ -115,6 +114,7 @@ if __name__ == '__main__':
     sourcedir = filedialog.askdirectory(title='Open DIR to resize PNG images using Scale3x')
     if sourcedir == '' or sourcedir == None:
         quit()
+    path=Path(sourcedir)
 
     # Updating dialog
     sortir.deiconify()
@@ -126,7 +126,7 @@ if __name__ == '__main__':
     scalepool = Pool()
 
     # Feeding pool (no pun!)
-    scalepool.map_async(scalefile,glob(sourcedir + "/**/*.png", recursive=True))
+    scalepool.map_async(scalefile,path.rglob('*.png', case_sensitive=False))
 
     # Everything fed into the pool, waiting and closing
     scalepool.close()

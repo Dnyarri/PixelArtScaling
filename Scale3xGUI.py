@@ -19,7 +19,7 @@ __author__ = "Ilya Razmanov"
 __copyright__ = "(c) 2024 Ilya Razmanov"
 __credits__ = "Ilya Razmanov"
 __license__ = "unlicense"
-__version__ = "2024.04.03"
+__version__ = "2024.05.01"
 __maintainer__ = "Ilya Razmanov"
 __email__ = "ilyarazmanov@gmail.com"
 __status__ = "Production"
@@ -36,7 +36,6 @@ from IncScaleNx import Scale3x  # Scale2x and Scale3x from: https://github.com/D
 
 # --------------------------------------------------------------
 # Creating dialog
-
 iconpath = Path(__file__).resolve().parent / '3xGUI.ico'
 iconname = str(iconpath)
 useicon = iconpath.exists()     # Check if icon file really exist. If False, it will not be used later.
@@ -46,16 +45,12 @@ sortir.title('Scale3x')
 if useicon:
     sortir.iconbitmap(iconname) # Replacement for simple sortir.iconbitmap('3xGUI.ico') - ugly but stable.
 sortir.geometry('+200+100')
-zanyato = Label(sortir, text='Starting...', font=("arial", 36), padx=15, pady=10, justify='center')
+zanyato = Label(sortir, text='Starting...', font=("arial", 16), padx=12, pady=10, justify='center')
 zanyato.pack()
 sortir.withdraw()
-
 # Main dialog created and hidden
-# --------------------------------------------------------------
 
-# --------------------------------------------------------------
 # Open source file
-
 sourcefilename = filedialog.askopenfilename(title='Open source PNG file to reScale3x', filetypes=[('PNG', '.png')])
 if sourcefilename == '':
     quit()
@@ -64,61 +59,39 @@ source = png.Reader(filename=sourcefilename)
 X, Y, pixels, info = source.asDirect()  # Opening image, iDAT comes to "pixels" as bytearray, to be tuple'd lated.
 Z = info['planes']                      # PyPNG returns X,Y directly, but not Z. Z should be extracted from info
 imagedata = tuple((pixels))             # Attempt to fix all bytearrays as something solid
-
 # Source file opened as imagedata
-# --------------------------------------------------------------
 
-# --------------------------------------------------------------
 # Updating dialog
-
 sortir.deiconify()
-zanyato.config(text='Reading...')
+zanyato.config(text=f'Reading {sourcefilename}...')
 sortir.update()
 sortir.update_idletasks()
-
 # Dialog shown and updated
-# --------------------------------------------------------------
 
 # Reading image as list
 ImageAsListListList = IncSrc.Img3D(imagedata, X, Y, Z)
 
-# --------------------------------------------------------------
 # Updating dialog
-
-zanyato.config(text='Scaling...')
+zanyato.config(text=f'Scaling {sourcefilename}...')
 sortir.update()
 sortir.update_idletasks()
-
-# Dialog updated
-# --------------------------------------------------------------
 
 # Scaling to 3x image list
 EPXImage, tripleX, tripleY = Scale3x(ImageAsListListList, X, Y)
 
-# --------------------------------------------------------------
 # Updating dialog
-
 zanyato.config(text='Almost there...')
 sortir.update()
 sortir.update_idletasks()
 
-# Dialog updated
-# --------------------------------------------------------------
-
 # Reshaping 3x scaled 3D list into 1D list for PyPNG .write_array method
 ResultImageAsList = IncSrc.Img3Dto1D(EPXImage, tripleX, tripleY, Z)
 
-# --------------------------------------------------------------
 # Hiding dialog
-
 sortir.withdraw()
-
-# Dialog hidden
-# --------------------------------------------------------------
 
 # --------------------------------------------------------------
 # Open export file
-
 resultPNG = filedialog.asksaveasfile(
     mode='wb',
     title='Save resulting Scale3x PNG file',
@@ -127,9 +100,7 @@ resultPNG = filedialog.asksaveasfile(
 )
 if resultPNG == '':
     quit()
-
 # Export file opened
-# --------------------------------------------------------------
 
 # --------------------------------------------------------------
 # Fixing resolution to match original print size.
@@ -148,9 +119,14 @@ y_pixels_per_unit = 3 * y_pixels_per_unit   # Triple resolution to keep print si
 # Resolution changed
 # --------------------------------------------------------------
 
+# Updating dialog
+sortir.deiconify()
+zanyato.config(text='Saving...')
+sortir.update()
+sortir.update_idletasks()
+
 # --------------------------------------------------------------
 # Writing export file
-
 writer = png.Writer(
     tripleX,
     tripleY,
@@ -161,15 +137,8 @@ writer = png.Writer(
 )
 writer.write_array(resultPNG, ResultImageAsList)
 resultPNG.close()
-
 # Export file written and closed
-# --------------------------------------------------------------
 
-# --------------------------------------------------------------
 # Destroying dialog
-
 sortir.destroy()
 sortir.mainloop()
-
-# Dialog destroyed and closed
-# --------------------------------------------------------------
