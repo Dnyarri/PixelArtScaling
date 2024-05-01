@@ -21,6 +21,9 @@ Currently **Scale2x** (aka **AdvMAME2x**) and **Scale3x** (aka **AdvMAME3x**) ar
         *python Scale3xCLI.py input.png output.png*
 - batchScale3x.py - batch rescaling of all PNG files within chosen directory, recursively, using Scale3x scaling. Source images are replaced, no backup - no mercy.  
 
+> [!NOTE]
+> Batch processing programs in this version use async multiprocessing, drastically reducing processing time but loading CPU at 100% and rendering GUI almost unresponsive.  
+
 ## Sample of Scale3x output (twice)
 
 ![Example of Scale3x run twice](https://dnyarri.github.io/imgscalenx/x3x3.png)
