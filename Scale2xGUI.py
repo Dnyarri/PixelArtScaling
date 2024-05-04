@@ -19,7 +19,7 @@ __author__ = "Ilya Razmanov"
 __copyright__ = "(c) 2024 Ilya Razmanov"
 __credits__ = "Ilya Razmanov"
 __license__ = "unlicense"
-__version__ = "2024.05.01"
+__version__ = "2024.05.04"
 __maintainer__ = "Ilya Razmanov"
 __email__ = "ilyarazmanov@gmail.com"
 __status__ = "Production"
@@ -92,36 +92,36 @@ sortir.withdraw()
 
 # --------------------------------------------------------------
 # Open export file
-resultPNG = filedialog.asksaveasfile(
-    mode='wb',
+resultfilename = filedialog.asksaveasfilename(
     title='Save resulting Scale2x PNG file',
     filetypes=[('PNG', '.png')],
     defaultextension=('PNG file', '.png'),
 )
-if resultPNG == '':
+if resultfilename == '':
     quit()
+resultPNG = open(resultfilename, mode='wb')
 # Export file opened
 
 # --------------------------------------------------------------
 # Fixing resolution to match original print size.
 # If no pHYs found in original, 96 ppi is assumed as original value.
 if 'physical' in info:
-    res = info['physical']      # Reading resolution as tuple
+    res = info['physical']  # Reading resolution as tuple
     x_pixels_per_unit = res[0]
     y_pixels_per_unit = res[1]
     unit_is_meter = res[2]
 else:
-    x_pixels_per_unit = 3780    # 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
-    y_pixels_per_unit = 3780    # 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
+    x_pixels_per_unit = 3780  # 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
+    y_pixels_per_unit = 3780  # 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
     unit_is_meter = True
-x_pixels_per_unit = 2 * x_pixels_per_unit   # Double resolution to keep print size
-y_pixels_per_unit = 2 * y_pixels_per_unit   # Double resolution to keep print size
+x_pixels_per_unit = 2 * x_pixels_per_unit  # Double resolution to keep print size
+y_pixels_per_unit = 2 * y_pixels_per_unit  # Double resolution to keep print size
 # Resolution changed
 # --------------------------------------------------------------
 
 # Updating dialog
 sortir.deiconify()
-zanyato.config(text='Saving...')
+zanyato.config(text=f'Saving {resultfilename}...')
 sortir.update()
 sortir.update_idletasks()
 

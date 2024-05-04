@@ -19,7 +19,7 @@ __author__ = "Ilya Razmanov"
 __copyright__ = "(c) 2024 Ilya Razmanov"
 __credits__ = "Ilya Razmanov"
 __license__ = "unlicense"
-__version__ = "2024.05.01"
+__version__ = "2024.05.04"
 __maintainer__ = "Ilya Razmanov"
 __email__ = "ilyarazmanov@gmail.com"
 __status__ = "Production"
@@ -92,14 +92,14 @@ sortir.withdraw()
 
 # --------------------------------------------------------------
 # Open export file
-resultPNG = filedialog.asksaveasfile(
-    mode='wb',
+resultfilename = filedialog.asksaveasfilename(
     title='Save resulting Scale3x PNG file',
     filetypes=[('PNG', '.png')],
     defaultextension=('PNG file', '.png'),
 )
-if resultPNG == '':
+if resultfilename == '':
     quit()
+resultPNG = open(resultfilename, mode='wb')
 # Export file opened
 
 # --------------------------------------------------------------
@@ -121,7 +121,7 @@ y_pixels_per_unit = 3 * y_pixels_per_unit   # Triple resolution to keep print si
 
 # Updating dialog
 sortir.deiconify()
-zanyato.config(text='Saving...')
+zanyato.config(text=f'Saving {resultfilename}...')
 sortir.update()
 sortir.update_idletasks()
 
