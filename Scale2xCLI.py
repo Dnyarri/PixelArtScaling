@@ -13,6 +13,7 @@ Versions:
 01.003    Ultimate modular evil, moving everything possible to IncSrc.py and IncScaleNx.py 
 2024.02.24  Cleanup, minimizing import, versioning changed to YYYY.MM.DD
 2024.03.30  pHYs chunk editing to keep image print size constant
+2024.05.04  Small improvement in argv handling
 
 '''
 
@@ -20,7 +21,7 @@ __author__ = "Ilya Razmanov"
 __copyright__ = "(c) 2024 Ilya Razmanov"
 __credits__ = "Ilya Razmanov"
 __license__ = "unlicense"
-__version__ = "2024.03.30"
+__version__ = "2024.05.04"
 __maintainer__ = "Ilya Razmanov"
 __email__ = "ilyarazmanov@gmail.com"
 __status__ = "Production"
@@ -33,8 +34,15 @@ from IncScaleNx import Scale2x  # Scale2x and Scale3x from: https://github.com/D
 
 # Taking user input
 
-Rez = argv[1]
-Dvo = argv[2]
+if len(argv) == 2:
+    Rez = argv[1]
+    Dvo = argv[1]
+elif len(argv) == 3:
+    Rez = argv[1]
+    Dvo = argv[2]
+else:
+    print('Usage: Scale2CLI input.png output.png')
+    quit()
 
 # Open source file
 source = png.Reader(filename=Rez)
