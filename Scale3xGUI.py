@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 '''
 Scale3x aka AdvMAME3x bitmap image scaling using Python only

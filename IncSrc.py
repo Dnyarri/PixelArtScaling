@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 '''
 Content
@@ -73,7 +73,6 @@ __status__ = "Production"
 # NEAREST NEIGHBOUR interpolation
 #
 
-
 def src(imagedata, X, Y, Z, x, y, z):
     """Image src, nearest neighbour
 
@@ -93,8 +92,6 @@ def src(imagedata, X, Y, Z, x, y, z):
     channelvalue = int(((imagedata[cy])[position]))
 
     return channelvalue
-
-
 #
 # end of src function. Returned int channel value of coordinates x,y,z
 # --------------------------------------------------------------
@@ -135,7 +132,6 @@ def srcL(imagedata, X, Y, Z, x, y, z):
     )
 
     return int(channelvalue)
-
 #
 # end of srcL function. Returned int channel value of coordinates x,y,z
 # --------------------------------------------------------------
@@ -164,15 +160,15 @@ def Img3D(imagedata, X, Y, Z):
             RowAsListList.append(PixelAsList)
         ImageAsListListList.append(RowAsListList)
     return ImageAsListListList
-
 #
 # end of Img3D function. Returned ImageAsListListList is 3D list of signals of coordinates x,y,z
 # --------------------------------------------------------------
 
 
 # --------------------------------------------------------------
-# Img3Dto1D function. Takes gotImage as 3D list (image) of lists (rows) of lists (pixels) of int (channel values)
-# and reshapes into single row list for easy output with PyPNG png.Writer writer.write_array method.
+# Img3Dto1D function. Takes gotImage as 3D list (image) of lists (rows) of lists (pixels)
+# of int (channel values) and reshapes into single row list for easy output
+# with PyPNG png.Writer writer.write_array method.
 #
 
 def Img3Dto1D(gotImage, gotX, gotY, Z):
@@ -188,11 +184,9 @@ def Img3Dto1D(gotImage, gotX, gotY, Z):
                 signal = gotImage[y][x][z]
                 ResultImageAsList.append(signal)
     return ResultImageAsList
-
 #
 # end of Img3Dto1D function. Returned ResultImageAsList is 1D list suitable for PyPNG .write_array
 # --------------------------------------------------------------
-
 
 if __name__ == "__main__":
     print('Module to be imported, not run as standalone')

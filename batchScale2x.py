@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 '''
 Batch rescaling of PNG image using Scale2x aka AdvMAME2x

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 '''
 Scale2x aka AdvMAME2x bitmap image scaling using Python only, command line version

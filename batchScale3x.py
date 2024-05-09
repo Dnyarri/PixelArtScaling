@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 '''
 Batch rescaling of PNG image using Scale3x aka AdvMAME3x
@@ -35,7 +35,6 @@ from multiprocessing import Pool
 import png                      # PNG reading: PyPNG from:  https://gitlab.com/drj11/pypng
 import IncSrc                   # Image reshaping from:     https://github.com/Dnyarri/PixelArtScaling
 from IncScaleNx import Scale3x  # Scale2x and Scale3x from: https://github.com/Dnyarri/PixelArtScaling
-
 
 def scalefile(runningfilename):
     '''
