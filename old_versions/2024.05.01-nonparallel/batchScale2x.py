@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 '''
 Batch rescaling of PNG image using Scale2x aka AdvMAME2x
@@ -11,6 +11,7 @@ Versions:
 2024.03.30  pHYs chunk editing to keep image print size constant
 2024.04.03  pathlib Path.exists flightcheck to make GUI Nuitka-proof
 2024.05.01  Removed glob in favour of Path, GUI cleanup
+2024.05.10  Fixes
 
 '''
 
@@ -18,7 +19,7 @@ __author__ = "Ilya Razmanov"
 __copyright__ = "(c) 2024 Ilya Razmanov"
 __credits__ = "Ilya Razmanov"
 __license__ = "unlicense"
-__version__ = "2024.05.01"
+__version__ = "2024.05.10"
 __maintainer__ = "Ilya Razmanov"
 __email__ = "ilyarazmanov@gmail.com"
 __status__ = "Production"

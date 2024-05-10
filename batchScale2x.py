@@ -30,7 +30,7 @@ __status__ = "Production"
 
 from tkinter import Tk, Label, filedialog, X
 from pathlib import Path
-from multiprocessing import Pool
+from multiprocessing import Pool, freeze_support
 
 import png                      # PNG reading: PyPNG from:  https://gitlab.com/drj11/pypng
 import IncSrc                   # Image reshaping from:     https://github.com/Dnyarri/PixelArtScaling
@@ -91,6 +91,9 @@ def scalefile(runningfilename):
 # end scalefile, no return
 
 if __name__ == '__main__':
+
+    # Freezing for exe
+    freeze_support()
 
     # Creating dialog
     iconpath = Path(__file__).resolve().parent / '2xBATCH.ico'
