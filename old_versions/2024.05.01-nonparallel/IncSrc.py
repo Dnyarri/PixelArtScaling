@@ -43,38 +43,38 @@ After that you may use forementioned functions like:
 Copyright and redistribution
 -----------------------------
 
-Developed by Ilya Razmanov (https://dnyarri.github.io/) 
-
-May be freely used and included anywhere by anyone who found it useful. 
+Developed by Ilya Razmanov (https://dnyarri.github.io/)  
+May be freely used and included anywhere by anyone who found it useful.  
 
 Versions:
 ----------
 
-2024.02.24  Initial release 
+2024.02.24  Initial release  
 
-2024.03.20  Bilinear interpolation added 
+2024.03.20  Bilinear interpolation added  
 
-2024.04.06  Minor cleanup. Supposedly final version to replace previous one in all packages.  
+2024.05.11  Minor cleanup. Supposedly final version to replace previous one in all packages.  
 
 
 '''
 
-__author__ = "Ilya Razmanov"
-__copyright__ = "(c) 2024 Ilya Razmanov"
-__credits__ = "Ilya Razmanov"
-__license__ = "unlicense"
-__version__ = "2024.04.06"
-__maintainer__ = "Ilya Razmanov"
-__email__ = "ilyarazmanov@gmail.com"
-__status__ = "Production"
+__author__ = 'Ilya Razmanov'
+__copyright__ = '(c) 2024 Ilya Razmanov'
+__credits__ = 'Ilya Razmanov'
+__license__ = 'unlicense'
+__version__ = '2024.05.11'
+__maintainer__ = 'Ilya Razmanov'
+__email__ = 'ilyarazmanov@gmail.com'
+__status__ = 'Production'
 
 # --------------------------------------------------------------
 # src function. Analog of src from FilterMeister, force repeat edge instead of going out of range, with
 # NEAREST NEIGHBOUR interpolation
 #
 
+
 def src(imagedata, X, Y, Z, x, y, z):
-    """Image src, nearest neighbour
+    '''Image src, nearest neighbour
 
     imagedata is image data tuple from png.py output
 
@@ -82,7 +82,7 @@ def src(imagedata, X, Y, Z, x, y, z):
 
     x, y, z - int coordinates to read x, y pixel, z channel value at
 
-    """
+    '''
 
     cx = int(x); cy = int(y)            # Converts float input request to int. Actually it does nearest neighbour
     cx = max(0,cx); cx = min((X-1),cx)  # Repeat edge extrapolation a-la Photoshop
@@ -92,6 +92,8 @@ def src(imagedata, X, Y, Z, x, y, z):
     channelvalue = int(((imagedata[cy])[position]))
 
     return channelvalue
+
+
 #
 # end of src function. Returned int channel value of coordinates x,y,z
 # --------------------------------------------------------------
@@ -103,7 +105,7 @@ def src(imagedata, X, Y, Z, x, y, z):
 #
 
 def srcL(imagedata, X, Y, Z, x, y, z):
-    """ Image src, bilinear interpolation
+    ''' Image src, bilinear interpolation
 
         imagedata is image data tuple from png.py output
 
@@ -113,7 +115,7 @@ def srcL(imagedata, X, Y, Z, x, y, z):
         
         z - int channel number
 
-    """
+    '''
 
     fx = float(x); fy = float(y)        # Uses float input coordinates for interpolation
     fx = max(0,fx); fx = min((X-1),fx)
@@ -132,6 +134,7 @@ def srcL(imagedata, X, Y, Z, x, y, z):
     )
 
     return int(channelvalue)
+
 #
 # end of srcL function. Returned int channel value of coordinates x,y,z
 # --------------------------------------------------------------
@@ -141,13 +144,13 @@ def srcL(imagedata, X, Y, Z, x, y, z):
 #
 
 def Img3D(imagedata, X, Y, Z):
-    """ imagedata is image data tuple from png.py output
+    ''' imagedata is image data tuple from png.py output
 
         X, Y, Z - constants for image size
 
         Function constructs image as as list (image) of lists (rows) of lists (pixels) of int (channel values) from raw png output
 
-    """
+    '''
 
     ImageAsListListList = list()
     for y in range(0, Y, 1):
@@ -160,22 +163,22 @@ def Img3D(imagedata, X, Y, Z):
             RowAsListList.append(PixelAsList)
         ImageAsListListList.append(RowAsListList)
     return ImageAsListListList
+
 #
 # end of Img3D function. Returned ImageAsListListList is 3D list of signals of coordinates x,y,z
 # --------------------------------------------------------------
 
 
 # --------------------------------------------------------------
-# Img3Dto1D function. Takes gotImage as 3D list (image) of lists (rows) of lists (pixels)
-# of int (channel values) and reshapes into single row list for easy output
-# with PyPNG png.Writer writer.write_array method.
+# Img3Dto1D function. Takes gotImage as 3D list (image) of lists (rows) of lists (pixels) of int (channel values)
+# and reshapes into single row list for easy output with PyPNG png.Writer writer.write_array method.
 #
 
 def Img3Dto1D(gotImage, gotX, gotY, Z):
-    """ Takes gotImage as 3D list (image) of lists (rows) of lists (pixels) of int (channel values) 
+    ''' Takes gotImage as 3D list (image) of lists (rows) of lists (pixels) of int (channel values) 
         (gotX, gotY are image sizes) and reshapes into single row list for easy output with PyPNG png.Writer writer.write_array method
         
-    """
+    '''
 
     ResultImageAsList = list()
     for y in range(0, gotY, 1):
@@ -184,9 +187,11 @@ def Img3Dto1D(gotImage, gotX, gotY, Z):
                 signal = gotImage[y][x][z]
                 ResultImageAsList.append(signal)
     return ResultImageAsList
+
 #
 # end of Img3Dto1D function. Returned ResultImageAsList is 1D list suitable for PyPNG .write_array
 # --------------------------------------------------------------
 
-if __name__ == "__main__":
+
+if __name__ == '__main__':
     print('Module to be imported, not run as standalone')
