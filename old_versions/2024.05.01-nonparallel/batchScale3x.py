@@ -15,17 +15,17 @@ Versions:
 
 '''
 
-__author__ = "Ilya Razmanov"
-__copyright__ = "(c) 2024 Ilya Razmanov"
-__credits__ = "Ilya Razmanov"
-__license__ = "unlicense"
-__version__ = "2024.05.10"
-__maintainer__ = "Ilya Razmanov"
-__email__ = "ilyarazmanov@gmail.com"
-__status__ = "Production"
+__author__ = 'Ilya Razmanov'
+__copyright__ = '(c) 2024 Ilya Razmanov'
+__credits__ = 'Ilya Razmanov'
+__license__ = 'unlicense'
+__version__ = '2024.05.10'
+__maintainer__ = 'Ilya Razmanov'
+__email__ = 'ilyarazmanov@gmail.com'
+__status__ = 'Production'
 
 from tkinter import Tk, Label, Button, filedialog, X, BOTH, TOP, BOTTOM
-from tkinter import ttk
+from tkinter.ttk import Progressbar
 from tkinter.scrolledtext import ScrolledText
 
 from pathlib import Path
@@ -46,10 +46,10 @@ if useicon:
     sortir.iconbitmap(iconname)
 sortir.geometry('+200+100')
 
-zanyato = Label(sortir, text='Starting...', font=("arial", 12), padx=16, pady=10, justify='center')
+zanyato = Label(sortir, text='Starting...', font=('arial', 12), padx=16, pady=10, justify='center')
 zanyato.pack(side=TOP)
 
-progressbar =  ttk.Progressbar(orient="horizontal", mode="indeterminate")
+progressbar =  Progressbar(orient='horizontal', mode='indeterminate', maximum=10)
 progressbar.pack(fill=X, side=TOP, expand=True)
 
 pogovorit = ScrolledText(sortir, height=26, wrap='word', state='normal')

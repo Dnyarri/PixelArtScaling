@@ -16,14 +16,14 @@ Versions:
 
 '''
 
-__author__ = "Ilya Razmanov"
-__copyright__ = "(c) 2024 Ilya Razmanov"
-__credits__ = "Ilya Razmanov"
-__license__ = "unlicense"
-__version__ = "2024.05.10"
-__maintainer__ = "Ilya Razmanov"
-__email__ = "ilyarazmanov@gmail.com"
-__status__ = "Production"
+__author__ = 'Ilya Razmanov'
+__copyright__ = '(c) 2024 Ilya Razmanov'
+__credits__ = 'Ilya Razmanov'
+__license__ = 'unlicense'
+__version__ = '2024.05.10'
+__maintainer__ = 'Ilya Razmanov'
+__email__ = 'ilyarazmanov@gmail.com'
+__status__ = 'Production'
 
 from tkinter import Tk
 from tkinter import Label
@@ -46,7 +46,7 @@ sortir.title('Scale3x')
 if useicon:
     sortir.iconbitmap(iconname) # Replacement for simple sortir.iconbitmap('3xGUI.ico') - ugly but stable.
 sortir.geometry('+200+100')
-zanyato = Label(sortir, text='Starting...', font=("arial", 16), padx=12, pady=10, justify='center')
+zanyato = Label(sortir, text='Starting...', font=('arial', 16), padx=12, pady=10, justify='center')
 zanyato.pack()
 sortir.withdraw()
 # Main dialog created and hidden
