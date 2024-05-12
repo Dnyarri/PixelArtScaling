@@ -53,7 +53,8 @@ sortir.withdraw()
 
 # Open source file
 sourcefilename = filedialog.askopenfilename(title='Open source PNG file to reScale3x', filetypes=[('PNG', '.png')])
-if sourcefilename == '':
+if sourcefilename == '' or sourcefilename == None:
+    sortir.destroy()
     quit()
 
 source = png.Reader(filename=sourcefilename)
@@ -98,7 +99,8 @@ resultfilename = filedialog.asksaveasfilename(
     filetypes=[('PNG', '.png')],
     defaultextension=('PNG file', '.png'),
 )
-if resultfilename == '':
+if resultfilename == '' or resultfilename == None:
+    sortir.destroy()
     quit()
 resultPNG = open(resultfilename, mode='wb')
 # Export file opened

@@ -71,7 +71,8 @@ sortir.withdraw()
 
 # Open source dir
 sourcedir = filedialog.askdirectory(title='Open DIR to resize PNG images using Scale2x')
-if sourcedir == '':
+if sourcedir == '' or sourcedir == None:
+    sortir.destroy()
     quit()
 path=Path(sourcedir)
 
@@ -84,7 +85,7 @@ sortir.update_idletasks()
 # Dialog shown and updated
 
 # Process file list
-for runningfilename in path.rglob('*.png', case_sensitive=False):  # select all PNG files in all subfolders
+for runningfilename in path.rglob('*.png'):  # select all PNG files in all subfolders
 
     oldfile = runningfilename
     newfile = oldfile  # Previous version used backup newfile = oldfile + '.2x.png'

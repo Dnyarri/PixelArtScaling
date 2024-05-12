@@ -115,6 +115,7 @@ if __name__ == '__main__':
     # Open source dir
     sourcedir = filedialog.askdirectory(title='Open DIR to resize PNG images using Scale2x')
     if sourcedir == '' or sourcedir == None:
+        sortir.destroy()
         quit()
     path=Path(sourcedir)
 
@@ -128,7 +129,7 @@ if __name__ == '__main__':
     scalepool = Pool()
 
     # Feeding pool (no pun!)
-    scalepool.map_async(scalefile,path.rglob('*.png', case_sensitive=False))
+    scalepool.map_async(scalefile,path.rglob('*.png'))
 
     # Everything fed into the pool, waiting and closing
     scalepool.close()
