@@ -15,9 +15,9 @@ Usage
 -------
 After import IncScaleNx, use something like:
 
-``ScaledImage,newX,newY = IncScaleNx.Scale3x(SourceImage,SourceX,SourceY)``
+``ScaledImage = IncScaleNx.Scale3x(SourceImage)``
 
-where both "Image" are lists, all "X" and "Y" are integer sizes of "Image" along X and Y.
+where both "Image" are lists.
 
 
 Copyright and redistribution
@@ -25,7 +25,7 @@ Copyright and redistribution
 Python implementation developed by Ilya Razmanov (https://dnyarri.github.io/),
 based on brief algorithm description by Andrea Mazzoleni (https://www.scale2x.it/)
 
-Last modified 11 May 2024
+Last modified 14 May 2024. Overwrite version.
 
 May be freely used and included anywhere by anyone who found it useful.
 
@@ -35,7 +35,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024 Ilya Razmanov'
 __credits__ = ['Ilya Razmanov', 'Andrea Mazzoleni']
 __license__ = 'unlicense'
-__version__ = '2024.05.11'
+__version__ = '2024.05.14'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -44,20 +44,40 @@ __status__ = 'Production'
 # Scaling image list to 2x image list
 #
 
-def Scale2x(ImageAsListListList, X, Y):
+def createImage(X,Y,Z):
+    newimage = [
+        [
+            [
+                0 for z in range(Z)
+            ] for x in range(X)
+        ] for y in range(Y)
+    ]
+
+    return(newimage)
+
+def Scale2x(ImageAsListListList):
     '''
     Takes ImageAsListListList as 3D list (image) of lists (rows) of lists (pixels) of int (channel values)
     of X, Y size (see InSrc.py for detail), and performs Scale2x rescaling, returning (scaled image of similar structure, new X, new Y).
 
     '''
 
-    doubleX = 2 * X; doubleY = 2 * Y    # New list (image) size
+    # determining image size from list
+    Y = len(ImageAsListListList)
+    X = len(ImageAsListListList[0])
+    Z = len(ImageAsListListList[0][0])
 
-    EPXImage = list()
+    # creating new 2X x 2Y image by generator
+    scale = 2
+    newX = scale * X; newY = scale * Y
+    EPXImage = createImage(newX, newY, Z)
+    # created 3D list of zeroes
 
+    # rewriting over new image
     for y in range(0, Y, 1):
-        RowRez = list(); RowDvo = list()
         for x in range(0, X, 1):
+
+            xnew = scale * x; ynew = scale * y
 
             P = ImageAsListListList[y][x]
             A = ImageAsListListList[max(y - 1, 0)][x]
@@ -76,14 +96,11 @@ def Scale2x(ImageAsListListList, X, Y):
             if (B == D) and (B != A) and (D != C):
                 r4 = D
 
-            RowRez.append(r1); RowRez.append(r2)
-            RowDvo.append(r3); RowDvo.append(r4)
+            EPXImage[ynew][xnew] = r1; EPXImage[ynew][xnew+1] = r2
+            EPXImage[ynew+1][xnew] = r3; EPXImage[ynew+1][xnew+1] = r4
+    # new image filled, all zeroes replaced by pixel lists
 
-        EPXImage.append(RowRez)
-        EPXImage.append(RowDvo)
-
-    return (EPXImage, doubleX, doubleY)
-
+    return (EPXImage)
 #
 # rescaling two times finished
 # --------------------------------------------------------------
@@ -93,20 +110,29 @@ def Scale2x(ImageAsListListList, X, Y):
 # Scaling to 3x image list
 #
 
-def Scale3x(ImageAsListListList, X, Y):
+def Scale3x(ImageAsListListList):
     '''
     Takes ImageAsListListList as 3D list (image) of lists (rows) of lists (pixels) of int (channel values)
     of X, Y size (see InSrc.py for detail), and performs Scale3x rescaling, returning (scaled image of similar structure, new X, new Y).
 
     '''
 
-    tripleX = 3*X; tripleY = 3*Y    # New list (image) size
+    # determining image size from list
+    Y = len(ImageAsListListList)
+    X = len(ImageAsListListList[0])
+    Z = len(ImageAsListListList[0][0])
 
-    EPXImage = list()
+    # creating new 3X x 3Y image by generator
+    scale = 3
+    newX = scale * X; newY = scale * Y
+    EPXImage = createImage(newX, newY, Z)
+    # created 3D list of zeroes
 
+    # rewriting over new image
     for y in range(0, Y, 1):
-        RowRez = list(); RowDvo = list(); RowTre = list()
         for x in range(0, X, 1):
+
+            xnew = scale * x; ynew = scale * y
 
             E = ImageAsListListList[y][x]  # E is a center of 3x3 square
 
@@ -142,16 +168,12 @@ def Scale3x(ImageAsListListList, X, Y):
             if (F == H) and (F != B) and (H != D):
                 r9 = F
 
-            RowRez.append(r1); RowRez.append(r2); RowRez.append(r3)
-            RowDvo.append(r4); RowDvo.append(r5); RowDvo.append(r6)
-            RowTre.append(r7); RowTre.append(r8); RowTre.append(r9)
+            EPXImage[ynew][xnew] = r1; EPXImage[ynew][xnew+1] = r2; EPXImage[ynew][xnew+2] = r3
+            EPXImage[ynew+1][xnew] = r4; EPXImage[ynew+1][xnew+1] = r5; EPXImage[ynew+1][xnew+2] = r6
+            EPXImage[ynew+2][xnew] = r7; EPXImage[ynew+2][xnew+1] = r8; EPXImage[ynew+2][xnew+2] = r9
+    # new image filled, all zeroes replaced by pixel lists
 
-        EPXImage.append(RowRez)
-        EPXImage.append(RowDvo)
-        EPXImage.append(RowTre)
-
-    return (EPXImage, tripleX, tripleY)
-
+    return (EPXImage)
 #
 # rescaling three times finished
 # --------------------------------------------------------------
