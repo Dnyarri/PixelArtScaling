@@ -49,12 +49,9 @@ May be freely used and included anywhere by anyone who found it useful.
 Versions:
 ----------
 
-2024.05.14  Complete rewriting. Image .append within for loops replaced with comprehension list generator and comprehension list reshaper.
+2024.05.14  Complete rewriting. Image .append within for loops replaced with comprehension list generator and comprehension list reshaper. Img3Dto1D input format changed, only image list required. Image size variables removed from positional arguments.
 
-WARNING:
-----------
-
-Img3Dto1D input format changed, only image list required. Image size variables removed from positional arguments, making this version incompatible with versions 2024.03.20 and below.
+All this makes version 2024.05.14 and above incompatible with versions 2024.03.20 and below.
 
 '''
 
@@ -62,7 +59,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '2024.05.14'
+__version__ = '2024.05.17'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'

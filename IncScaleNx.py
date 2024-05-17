@@ -25,9 +25,12 @@ Copyright and redistribution
 Python implementation developed by Ilya Razmanov (https://dnyarri.github.io/),
 based on brief algorithm description by Andrea Mazzoleni (https://www.scale2x.it/)
 
-Warning: 14 May 2024 - Arguments and return format changed. Incompatible with previous versions!
+May be freely used and included anywhere by anyone who found it useful.  
 
-May be freely used and included anywhere by anyone who found it useful.
+Versions:  
+----------
+
+2024.05.14  Arguments and return format changed. Incompatible with previous versions!
 
 '''
 
@@ -35,7 +38,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024 Ilya Razmanov'
 __credits__ = ['Ilya Razmanov', 'Andrea Mazzoleni']
 __license__ = 'unlicense'
-__version__ = '2024.05.14'
+__version__ = '2024.05.17'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
