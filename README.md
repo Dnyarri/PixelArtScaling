@@ -9,17 +9,23 @@ Apparently useful for scaling up grey text scans with low resolution before OCR,
 > [!NOTE]
 > Only PNG image format is supported. Batch processing of folders and subfolders is supported.
 
-Currently **Scale2x** (aka **AdvMAME2x**) and **Scale3x** (aka **AdvMAME3x**) are implemented.
+Currently **Scale2x** (aka **AdvMAME2x**) and **Scale3x** (aka **AdvMAME3x**) are implemented.  
 
-- Scale2xGUI.py - uses Scale2x scaling, equipped with simple GUI for opening and saving PNG files.
-- Scale2xCLI.py - same Scale2x scaling as above, runs with command line:  
-        *python Scale2xCLI.py input.png output.png*
-- batchScale2x.py - batch rescaling of all PNG files within chosen directory, recursively, using Scale2x algorithm. *Attention:* Source images are replaced, no backup - no mercy.  
+- **Scale2x.py** - single image rescale, uses Scale2x scaling, equipped with simple GUI for opening and saving PNG files, but can also be run from command line.  
+Usage:  
+    *python Scale2x.py*                           - starts GUI for selecting source and result  
+    *python Scale2x.py source.png*                - rescales source.png and overwrites source.png  
+    *python Scale2x.py source.png result.png*     - rescales source.png and writes result.png  
 
-- Scale3xGUI.py - uses Scale3x scaling, equipped with simple GUI for opening and saving PNG files.
-- Scale3xCLI.py - same Scale3x scaling as above, runs with command line:  
-        *python Scale3xCLI.py input.png output.png*
-- batchScale3x.py - batch rescaling of all PNG files within chosen directory, recursively, using Scale3x algorithm. *Attention:* Source images are replaced, no backup - no mercy.  
+- **batchScale2x.py** - batch rescaling of all PNG files within chosen directory, recursively, using Scale2x algorithm. *Attention:* Source images are replaced, no backup - no mercy.  
+
+- **Scale3x.py** - single image rescale, uses Scale3x scaling, equipped with simple GUI for opening and saving PNG files, but can also be run from command line.  
+Usage:  
+    *python Scale3x.py*                           - starts GUI for selecting source and result  
+    *python Scale3x.py source.png*                - rescales source.png and overwrites source.png  
+    *python Scale3x.py source.png result.png*     - rescales source.png and writes result.png  
+
+- **batchScale3x.py** - batch rescaling of all PNG files within chosen directory, recursively, using Scale3x algorithm. *Attention:* Source images are replaced, no backup - no mercy.  
 
 > [!NOTE]
 > Batch processing programs in this version use async multiprocessing, drastically reducing processing time but loading CPU at 100% and rendering GUI almost unresponsive.  
