@@ -13,11 +13,11 @@ Simply put module into your program folder
 
 Usage
 -------
-After import IncScaleNx, use something like:
+After ``import IncScaleNx``, use something like:
 
-``ScaledImage,newX,newY = IncScaleNx.Scale3x(SourceImage,SourceX,SourceY)``
+``ScaledImage = IncScaleNx.Scale3x(SourceImage)``
 
-where both "Image" are lists, all "X" and "Y" are integer sizes of "Image" along X and Y.
+where both ``Image`` are lists. Note that ``Image`` X and Y sized are determined automatically, Z not used and remains unchanged.
 
 
 Copyright and redistribution
@@ -25,7 +25,7 @@ Copyright and redistribution
 Python implementation developed by Ilya Razmanov (https://dnyarri.github.io/),
 based on brief algorithm description by Andrea Mazzoleni (https://www.scale2x.it/)
 
-Last modified 11 May 2024
+Warning: 14 May 2024 - Arguments and return format changed. Incompatible with previous versions!
 
 May be freely used and included anywhere by anyone who found it useful.
 
@@ -35,7 +35,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024 Ilya Razmanov'
 __credits__ = ['Ilya Razmanov', 'Andrea Mazzoleni']
 __license__ = 'unlicense'
-__version__ = '2024.05.11'
+__version__ = '2024.05.14'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -44,15 +44,17 @@ __status__ = 'Production'
 # Scaling image list to 2x image list
 #
 
-def Scale2x(ImageAsListListList, X, Y):
+def Scale2x(ImageAsListListList):
     '''
-    Takes ImageAsListListList as 3D list (image) of lists (rows) of lists (pixels) of int (channel values)
-    of X, Y size (see InSrc.py for detail), and performs Scale2x rescaling, returning (scaled image of similar structure, new X, new Y).
+    Takes ``ImageAsListListList`` as 3D list (image) of lists (rows) of lists (pixels) of int (channel values) (see InSrc.py for detail), and performs Scale2x rescaling, returning (scaled image of similar structure).
 
     '''
+    
+    # determining image size from list
+    Y = len(ImageAsListListList)
+    X = len(ImageAsListListList[0])
 
-    doubleX = 2 * X; doubleY = 2 * Y    # New list (image) size
-
+    # building new list
     EPXImage = list()
 
     for y in range(0, Y, 1):
@@ -82,8 +84,7 @@ def Scale2x(ImageAsListListList, X, Y):
         EPXImage.append(RowRez)
         EPXImage.append(RowDvo)
 
-    return (EPXImage, doubleX, doubleY)
-
+    return EPXImage
 #
 # rescaling two times finished
 # --------------------------------------------------------------
@@ -93,15 +94,17 @@ def Scale2x(ImageAsListListList, X, Y):
 # Scaling to 3x image list
 #
 
-def Scale3x(ImageAsListListList, X, Y):
+def Scale3x(ImageAsListListList):
     '''
-    Takes ImageAsListListList as 3D list (image) of lists (rows) of lists (pixels) of int (channel values)
-    of X, Y size (see InSrc.py for detail), and performs Scale3x rescaling, returning (scaled image of similar structure, new X, new Y).
+    Takes ``ImageAsListListList`` as 3D list (image) of lists (rows) of lists (pixels) of int (channel values) (see InSrc.py for detail), and performs Scale3x rescaling, returning (scaled image of similar structure).
 
     '''
+    
+    # determining image size from list
+    Y = len(ImageAsListListList)
+    X = len(ImageAsListListList[0])
 
-    tripleX = 3*X; tripleY = 3*Y    # New list (image) size
-
+    # building new list
     EPXImage = list()
 
     for y in range(0, Y, 1):
@@ -150,8 +153,7 @@ def Scale3x(ImageAsListListList, X, Y):
         EPXImage.append(RowDvo)
         EPXImage.append(RowTre)
 
-    return (EPXImage, tripleX, tripleY)
-
+    return EPXImage
 #
 # rescaling three times finished
 # --------------------------------------------------------------

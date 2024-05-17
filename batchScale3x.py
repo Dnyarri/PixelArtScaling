@@ -5,28 +5,27 @@ Batch rescaling of PNG image using Scale3x aka AdvMAME3x
 Created by: Ilya Razmanov (mailto:ilyarazmanov@gmail.com)
             aka Ilyich the Toad (mailto:amphisoft@gmail.com)
 Versions:
-01.000      Initial working release 
-01.001      Progress indication added, showing name of file being processed
+01.000      Initial working release. 
 2024.02.24  Cleanup, GUI tweaks, versioning changed to YYYY.MM.DD
-2024.03.30  pHYs chunk editing to keep image print size constant
-2024.04.03  pathlib Path.exists flightcheck to make GUI Nuitka-proof
+2024.03.30  pHYs chunk editing to keep image print size constant.
+2024.04.03  pathlib Path.exists flightcheck to make GUI exe packagers-friendly,
+            glob replaced with path.rglob
 2024.04.23  Self-calling scalefile(runningfilename)
-2024.04.23  Multiprocessing!!!
-            pool.map version
-            Unfortunately, GUI went to hell (mostly)
-2024.04.24  Async variants halve processing time, pool.map_async will go to production
-2024.04.26  GUI still sucks and not updated, but now it apologize
+2024.04.23  Multiprocessing introduced, pool.map_async version will go to production.
+            GUI hangs and not updated, but now it apologize.
+2024.05.14  Linked with IncSrc and IncScaleNx version 2024.05.14,
+            data exchange format changed to incompatible with previous versions.
 
 '''
 
-__author__ = "Ilya Razmanov"
-__copyright__ = "(c) 2024 Ilya Razmanov"
-__credits__ = "Ilya Razmanov"
-__license__ = "unlicense"
-__version__ = "2024.04.26"
-__maintainer__ = "Ilya Razmanov"
-__email__ = "ilyarazmanov@gmail.com"
-__status__ = "Production"
+__author__ = 'Ilya Razmanov'
+__copyright__ = '(c) 2024 Ilya Razmanov'
+__credits__ = 'Ilya Razmanov'
+__license__ = 'unlicense'
+__version__ = '2024.05.14'
+__maintainer__ = 'Ilya Razmanov'
+__email__ = 'ilyarazmanov@gmail.com'
+__status__ = 'Production'
 
 from tkinter import Tk, Label, filedialog, X
 from pathlib import Path
@@ -54,10 +53,14 @@ def scalefile(runningfilename):
     ImageAsListListList = IncSrc.Img3D(imagedata, X, Y, Z)
 
     # Scaling list to 3x image list
-    EPXImage, newX, newY = Scale3x(ImageAsListListList, X, Y)
+    EPXImage = Scale3x(ImageAsListListList)
+   
+    # determining image size from list
+    newY = len(EPXImage)
+    newX = len(EPXImage[0])
 
     # Reshaping 3x scaled 3D list into 1D list for PyPNG .write_array method
-    ResultImageAsList = IncSrc.Img3Dto1D(EPXImage, newX, newY, Z)
+    ResultImageAsList = IncSrc.Img3Dto1D(EPXImage)
 
     # --------------------------------------------------------------
     # Fixing resolution to match original print size.
@@ -96,7 +99,7 @@ if __name__ == '__main__':
     freeze_support()
 
     # Creating dialog
-    iconpath = Path(__file__).resolve().parent / '3xBATCH.ico'
+    iconpath = Path(__file__).resolve().parent / 'b3x.ico'
     iconname = str(iconpath)
     useicon = iconpath.exists() # Check if icon file really exist. If False, it will not be used later.
 
@@ -105,9 +108,9 @@ if __name__ == '__main__':
     if useicon:
         sortir.iconbitmap(iconname)
     sortir.geometry('+200+100')
-    zanyato = Label(sortir, text='Allons-y!', font=("Arial", 16), state='normal', padx=12, pady=10, justify='center')
+    zanyato = Label(sortir, text='Allons-y!', font=('Arial', 16), state='normal', padx=12, pady=10, justify='center')
     zanyato.pack()
-    small = Label(sortir, text='At 100% CPU load GUI tend to become unresponsive.\nWe apologize for making image processing as fast as possible.', font=("Courier", 10), state='disabled', padx=12, pady=10, justify='center')
+    small = Label(sortir, text='At 100% CPU load GUI tend to become unresponsive.\nWe apologize for making image processing as fast as possible.', font=('Courier', 10), state='disabled', padx=12, pady=10, justify='center')
     small.pack(fill=X)
     sortir.withdraw()
     # Main dialog created and hidden
@@ -115,7 +118,6 @@ if __name__ == '__main__':
     # Open source dir
     sourcedir = filedialog.askdirectory(title='Open DIR to resize PNG images using Scale3x')
     if sourcedir == '' or sourcedir == None:
-        sortir.destroy()
         quit()
     path=Path(sourcedir)
 
