@@ -10,3 +10,4 @@ __pycache__/
 *.7z
 *.zip
 *.bz2
+!version_info.txt
