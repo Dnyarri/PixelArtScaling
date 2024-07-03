@@ -22,15 +22,15 @@ where both ``Image`` are lists. Note that ``Image`` X and Y sized are determined
 
 Copyright and redistribution
 -----------------------------
-Python implementation developed by Ilya Razmanov (https://dnyarri.github.io/),
-based on brief algorithm description by Andrea Mazzoleni (https://www.scale2x.it/)
+Python implementation developed by Ilya Razmanov (https://dnyarri.github.io/), (hereinafter referred to as "the Developer"), based on brief algorithm description by Andrea Mazzoleni (https://www.scale2x.it/) (hereinafter referred to as "the Inventor").
 
-May be freely used and included anywhere by anyone who found it useful.  
+May be freely used, included and modified anywhere by anyone. In case of useful modifications sharing it with the Developer is almost obligatory.  
 
 Versions:  
 ----------
 
 2024.05.14  Arguments and return format changed. Incompatible with previous versions!
+2024.07.03  Small improvements, one more retest with new test corpse, as you were, corpus.
 
 '''
 
@@ -38,7 +38,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024 Ilya Razmanov'
 __credits__ = ['Ilya Razmanov', 'Andrea Mazzoleni']
 __license__ = 'unlicense'
-__version__ = '2024.05.17'
+__version__ = '2024.07.03'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -70,7 +70,7 @@ def Scale2x(ImageAsListListList):
             C = ImageAsListListList[y][max(x - 1, 0)]
             D = ImageAsListListList[min(y + 1, Y - 1)][x]
 
-            r1 = P; r2 = P; r3 = P; r4 = P
+            r1 = r2 = r3 = r4 = P
 
             if (C == A) and (C != D) and (A != B):
                 r1 = A
@@ -128,7 +128,7 @@ def Scale3x(ImageAsListListList):
             H = ImageAsListListList[min(y + 1, Y - 1)][x]
             I = ImageAsListListList[min(y + 1, Y - 1)][min(x + 1, X - 1)]
 
-            r1 = E; r2 = E; r3 = E; r4 = E; r5 = E; r6 = E; r7 = E; r8 = E; r9 = E
+            r1 = r2 = r3 = r4 = r5 = r6 = r7 = r8 = r9 = E
 
             if (D == B) and (D != H) and (B != F):
                 r1 = D
