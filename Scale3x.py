@@ -29,7 +29,7 @@ __status__ = 'Development'
 
 from sys import argv
 
-import pnglpng                  # Image reshaping from: https://github.com/Dnyarri/PixelArtScaling
+import pnglpng                  # PNG-list-PNG joint, uses PyPNG
 from IncScaleNx import Scale3x  # Scale2x and Scale3x from: https://github.com/Dnyarri/PixelArtScaling
 
 def cli(Rez, Dvo):
@@ -101,6 +101,7 @@ def gui():
     # Open source file
     sourcefilename = filedialog.askopenfilename(title='Open PNG file to reScale3x', filetypes=[('PNG', '.png')])
     if sourcefilename == '':
+        sortir.destroy()
         quit()
 
     # Updating dialog
