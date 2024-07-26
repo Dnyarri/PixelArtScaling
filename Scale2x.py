@@ -14,6 +14,7 @@ Versions:
 2024.05.11  Initial release of merged GUI and CLI versions.
 2024.05.14  Linked with IncSrc and IncScaleNx version 2024.05.14,
             data exchange format changed to incompatible with previous versions.
+24.07.26    Complete I/O change, excluding IncSrc in favour of pnglpng.
 
 '''
 
@@ -21,15 +22,14 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '2024.05.17'
+__version__ = '24.07.26'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
-__status__ = 'Production'
+__status__ = 'Development'
 
 from sys import argv
 
-import png                      # PNG reading: PyPNG from: https://gitlab.com/drj11/pypng
-import IncSrc                   # Image reshaping from: https://github.com/Dnyarri/PixelArtScaling
+import pnglpng                  # Image reshaping from: https://github.com/Dnyarri/PixelArtScaling
 from IncScaleNx import Scale2x  # Scale2x and Scale3x from: https://github.com/Dnyarri/PixelArtScaling
 
 def cli(Rez, Dvo):
@@ -40,26 +40,14 @@ def cli(Rez, Dvo):
     
     # --------------------------------------------------------------
     # Open source file
-    source = png.Reader(filename=Rez)
-
-    X, Y, pixels, info = source.asDirect()  # Opening image, iDAT comes to "pixels" as bytearray, to be tuple'd lated.
-    Z = info['planes']                      # Maximum CHANNEL NUMBER
-    imagedata = tuple((pixels))             # Attempt to fix all bytearrays
-    # Source file opened as imagedata
 
     # Reading image as list
-    ImageAsListListList = IncSrc.Img3D(imagedata, X, Y, Z)
+    ImageAsListListList = pnglpng.png2list(Rez)[0]
+    info = pnglpng.png2list(Rez)[5]
 
     # Scaling list to 2x image list
     EPXImage = Scale2x(ImageAsListListList)
     
-    # determining image size from list
-    newY = len(EPXImage)
-    newX = len(EPXImage[0])
-
-    # Reshaping 2x scaled 3D list into 1D list for PyPNG .write_array method
-    ResultImageAsList = IncSrc.Img3Dto1D(EPXImage)
-
     # --------------------------------------------------------------
     # Fixing resolution to match original print size.
     # If no pHYs found in original, 96 ppi is assumed as original value.
@@ -72,26 +60,16 @@ def cli(Rez, Dvo):
         x_pixels_per_unit = 3780    # 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
         y_pixels_per_unit = 3780    # 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
         unit_is_meter = True
+
     x_pixels_per_unit = 2 * x_pixels_per_unit   # Double resolution to keep print size
     y_pixels_per_unit = 2 * y_pixels_per_unit   # Double resolution to keep print size
+
+    info['physical'] = [x_pixels_per_unit, y_pixels_per_unit, unit_is_meter]
     # Resolution changed
     # --------------------------------------------------------------
 
-    # Open export file
-    resultPNG = open(Dvo, mode='wb')
-
-    # Writing export file
-    writer = png.Writer(
-        newX,
-        newY,
-        greyscale=info['greyscale'],
-        alpha=info['alpha'],
-        bitdepth=info['bitdepth'],
-        physical=[x_pixels_per_unit, y_pixels_per_unit, unit_is_meter],
-    )
-    writer.write_array(resultPNG, ResultImageAsList)
-    resultPNG.close()
-    # Export file closed
+    # Writing PNG file
+    pnglpng.list2png(Dvo, EPXImage, info)
 
     return None
 # end of CLI variant
@@ -121,17 +99,10 @@ def gui():
     # Main dialog created and hidden
 
     # Open source file
-    sourcefilename = filedialog.askopenfilename(title='Open source PNG file to reScale2x', filetypes=[('PNG', '.png')])
+    sourcefilename = filedialog.askopenfilename(title='Open PNG file to reScale2x', filetypes=[('PNG', '.png')])
     if sourcefilename == '':
         sortir.destroy()
         quit()
-
-    source = png.Reader(filename=sourcefilename)
-    X, Y, pixels, info = source.asDirect()  # Opening image, iDAT comes to "pixels" as bytearray, to be tuple'd lated.
-    Z = info['planes']                      # PyPNG returns X,Y directly, but not Z. Z should be extracted from info
-    imagedata = tuple((pixels))             # Attempt to fix all bytearrays as something solid
-    # Source file opened as imagedata
-
     # Updating dialog
     sortir.deiconify()
     zanyato.config(text=f'Reading {sourcefilename}...')
@@ -140,7 +111,8 @@ def gui():
     # Dialog shown and updated
 
     # Reading image as list
-    ImageAsListListList = IncSrc.Img3D(imagedata, X, Y, Z)
+    ImageAsListListList = pnglpng.png2list(sourcefilename)[0]
+    info = pnglpng.png2list(sourcefilename)[5]
 
     # Updating dialog
     zanyato.config(text=f'Scaling {sourcefilename}...')
@@ -149,34 +121,7 @@ def gui():
 
     # Scaling list to 2x image list
     EPXImage = Scale2x(ImageAsListListList)
-
-    # determining image size from list
-    newY = len(EPXImage)
-    newX = len(EPXImage[0])
-
-    # Updating dialog
-    zanyato.config(text='Almost there...')
-    sortir.update()
-    sortir.update_idletasks()
-
-    # Reshaping 2x scaled 3D list into 1D list for PyPNG .write_array method
-    ResultImageAsList = IncSrc.Img3Dto1D(EPXImage)
-
-    # Hiding dialog
-    sortir.withdraw()
-
-    # Open export file
-    resultfilename = filedialog.asksaveasfilename(
-        title='Save resulting Scale2x PNG file',
-        filetypes=[('PNG', '.png')],
-        defaultextension=('PNG file', '.png'),
-    )
-    if resultfilename == '':
-        sortir.destroy()
-        quit()
-    resultPNG = open(resultfilename, mode='wb')
-    # Export file opened
-
+    
     # --------------------------------------------------------------
     # Fixing resolution to match original print size.
     # If no pHYs found in original, 96 ppi is assumed as original value.
@@ -189,10 +134,26 @@ def gui():
         x_pixels_per_unit = 3780    # 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
         y_pixels_per_unit = 3780    # 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
         unit_is_meter = True
-    x_pixels_per_unit = 2 * x_pixels_per_unit  # Double resolution to keep print size
-    y_pixels_per_unit = 2 * y_pixels_per_unit  # Double resolution to keep print size
+
+    x_pixels_per_unit = 2 * x_pixels_per_unit   # Double resolution to keep print size
+    y_pixels_per_unit = 2 * y_pixels_per_unit   # Double resolution to keep print size
+
+    info['physical'] = [x_pixels_per_unit, y_pixels_per_unit, unit_is_meter]
     # Resolution changed
     # --------------------------------------------------------------
+
+    # Hiding dialog
+    sortir.withdraw()
+
+    # Open export file
+    resultfilename = filedialog.asksaveasfilename(
+        title='Save Scale2x PNG file',
+        filetypes=[('PNG', '.png')],
+        defaultextension=('PNG file', '.png'),
+    )
+    if resultfilename == '':
+        sortir.destroy()
+        quit()
 
     # Updating dialog
     sortir.deiconify()
@@ -200,17 +161,8 @@ def gui():
     sortir.update()
     sortir.update_idletasks()
 
-    # Writing export file
-    writer = png.Writer(
-        newX,
-        newY,
-        greyscale=info['greyscale'],
-        alpha=info['alpha'],
-        bitdepth=info['bitdepth'],
-        physical=[x_pixels_per_unit, y_pixels_per_unit, unit_is_meter],
-    )
-    writer.write_array(resultPNG, ResultImageAsList)
-    resultPNG.close()
+    # Writing PNG file
+    pnglpng.list2png(resultfilename, EPXImage, info)
     # Export file written and closed
 
     # Destroying dialog
