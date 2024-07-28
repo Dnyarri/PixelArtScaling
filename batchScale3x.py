@@ -71,6 +71,9 @@ def scalefile(runningfilename):
     # Resolution changed
     # --------------------------------------------------------------
 
+    # Explicitely setting compression
+    info['compression'] = 9
+
     # Writing PNG file
     pnglpng.list2png(newfile, EPXImage, info)
 

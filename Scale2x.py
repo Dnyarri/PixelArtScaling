@@ -68,6 +68,9 @@ def cli(Rez, Dvo):
     # Resolution changed
     # --------------------------------------------------------------
 
+    # Explicitely setting compression
+    info['compression'] = 9
+
     # Writing PNG file
     pnglpng.list2png(Dvo, EPXImage, info)
 
@@ -141,6 +144,9 @@ def gui():
     info['physical'] = [x_pixels_per_unit, y_pixels_per_unit, unit_is_meter]
     # Resolution changed
     # --------------------------------------------------------------
+
+    # Explicitely setting compression
+    info['compression'] = 9
 
     # Hiding dialog
     sortir.withdraw()
