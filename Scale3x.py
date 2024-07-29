@@ -139,8 +139,8 @@ def gui():
         y_pixels_per_unit = 3780    # 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
         unit_is_meter = True
 
-    x_pixels_per_unit = 2 * x_pixels_per_unit   # Double resolution to keep print size
-    y_pixels_per_unit = 2 * y_pixels_per_unit   # Double resolution to keep print size
+    x_pixels_per_unit = 3 * x_pixels_per_unit   # Triple resolution to keep print size
+    y_pixels_per_unit = 3 * y_pixels_per_unit   # Triple resolution to keep print size
 
     info['physical'] = [x_pixels_per_unit, y_pixels_per_unit, unit_is_meter]
     # Resolution changed
