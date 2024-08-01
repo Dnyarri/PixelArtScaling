@@ -14,7 +14,7 @@ Versions:
 2024.05.11  Initial release of merged GUI and CLI versions.
 2024.05.14  Linked with IncSrc and IncScaleNx version 2024.05.14,
             data exchange format changed to incompatible with previous versions.
-24.07.26    Complete I/O change, excluding IncSrc in favour of pnglpng.
+24.08.01    Complete I/O change, excluding IncSrc in favour of pnglpng.
 
 '''
 
@@ -22,10 +22,10 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '24.07.26'
+__version__ = '24.08.01'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
-__status__ = 'Development'
+__status__ = 'Production'
 
 from sys import argv
 
