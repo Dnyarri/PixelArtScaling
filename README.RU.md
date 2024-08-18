@@ -9,7 +9,7 @@
 > [!NOTE]
 > Поддерживается только формат PNG. Поддерживается batch-обработка всех PNG в выбранной директории и поддиректориях.
 
-В настоящий момент поддерживаются методы **Scale2x** (aka **AdvMAME2x**) и **Scale3x** (aka **AdvMAME3x**).
+В настоящий момент поддерживаются методы [**Scale2x**](https://github.com/amadvance/scale2x) (aka **AdvMAME2x**) и **Scale3x** (aka **AdvMAME3x**).
 
 - **Scale2x.py** - масштабирование одиночной картинки по методу Scale2x, программа оснащена минимальным удобным GUI, но также может быть использована из командной строки.  
 Синтаксис:  
@@ -34,7 +34,7 @@
 
 ![Пример прогона Scale3x дважды](https://dnyarri.github.io/imgscalenx/x3x3.png)
 
-*Внешние зависимости:* [PyPNG](https://gitlab.com/drj11/pypng), Tkinter, sys
+*Внешние зависимости:* [PyPNG](https://gitlab.com/drj11/pypng), Tkinter, multiprocessing, sys
 
 > [!NOTE]
 > Программы написаны целиком на Python, и используют логичное представление картинки как списка списков списков.
