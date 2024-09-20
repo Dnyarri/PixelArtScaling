@@ -9,7 +9,7 @@ Apparently useful for scaling up grey text scans with low resolution before OCR,
 > [!NOTE]
 > Only PNG image format is supported. Batch processing of folders and subfolders is supported.
 
-Currently [**Scale2x**](https://github.com/amadvance/scale2x) (aka **AdvMAME2x**) and **Scale3x** (aka **AdvMAME3x**) are implemented.  
+Currently [**scale2x**](https://github.com/amadvance/scale2x) (aka **AdvMAME2x**) and **scale3x** (aka **AdvMAME3x**) are implemented.  
 
 - **Scale2x.py** - single image rescale, uses Scale2x scaling, equipped with simple GUI for opening and saving PNG files, but can also be run from command line.  
 Usage:  

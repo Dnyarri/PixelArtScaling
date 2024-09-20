@@ -4,8 +4,8 @@
 Overview
 ----------
 
-- IncScaleNx.Scale2x    - Scale2x aka AdvMAME2x image scaling two times
-- IncScaleNx.Scale3x    - Scale3x aka AdvMAME3x image scaling three times
+- scalenx.scale2x    - Scale2x aka AdvMAME2x image scaling two times
+- scalenx.scale3x    - Scale3x aka AdvMAME3x image scaling three times
 
 Installation
 --------------
@@ -13,9 +13,9 @@ Simply put module into your program folder
 
 Usage
 -------
-After ``import IncScaleNx``, use something like:
+After ``import scalenx``, use something like:
 
-``ScaledImage = IncScaleNx.Scale3x(SourceImage)``
+``ScaledImage = scalenx.scale3x(SourceImage)``
 
 where both ``Image`` are lists. Note that ``Image`` X and Y sized are determined automatically, Z not used and remains unchanged.
 
@@ -30,7 +30,10 @@ Versions:
 ----------
 
 2024.05.14  Arguments and return format changed. Incompatible with previous versions!
+
 2024.07.03  Small improvements, one more retest with new test corpse, as you were, corpus.
+
+24.10.01    Minor changes, maintenance release.
 
 '''
 
@@ -47,12 +50,13 @@ __status__ = 'Production'
 # Scaling image list to 2x image list
 #
 
-def Scale2x(ImageAsListListList):
+
+def scale2x(ImageAsListListList):
     '''
-    Takes ``ImageAsListListList`` as 3D list (image) of lists (rows) of lists (pixels) of int (channel values) (see InSrc.py for detail), and performs Scale2x rescaling, returning (scaled image of similar structure).
+    Takes ``ImageAsListListList`` as 3D list (image) of lists (rows) of lists (pixels) of int (channel values) (see InSrc.py for detail), and performs Scale2x rescaling, returning scaled image of similar structure.
 
     '''
-    
+
     # determining image size from list
     Y = len(ImageAsListListList)
     X = len(ImageAsListListList[0])
@@ -61,7 +65,8 @@ def Scale2x(ImageAsListListList):
     EPXImage = list()
 
     for y in range(0, Y, 1):
-        RowRez = list(); RowDvo = list()
+        RowRez = list()
+        RowDvo = list()
         for x in range(0, X, 1):
 
             P = ImageAsListListList[y][x]
@@ -81,28 +86,28 @@ def Scale2x(ImageAsListListList):
             if (B == D) and (B != A) and (D != C):
                 r4 = D
 
-            RowRez.append(r1); RowRez.append(r2)
-            RowDvo.append(r3); RowDvo.append(r4)
+            RowRez.append(r1)
+            RowRez.append(r2)
+            RowDvo.append(r3)
+            RowDvo.append(r4)
 
         EPXImage.append(RowRez)
         EPXImage.append(RowDvo)
 
-    return EPXImage
-#
-# rescaling two times finished
-# --------------------------------------------------------------
+    return EPXImage  # rescaling two times finished
 
 
 # --------------------------------------------------------------
 # Scaling to 3x image list
 #
 
-def Scale3x(ImageAsListListList):
+
+def scale3x(ImageAsListListList):
     '''
-    Takes ``ImageAsListListList`` as 3D list (image) of lists (rows) of lists (pixels) of int (channel values) (see InSrc.py for detail), and performs Scale3x rescaling, returning (scaled image of similar structure).
+    Takes ``ImageAsListListList`` as 3D list (image) of lists (rows) of lists (pixels) of int (channel values) (see InSrc.py for detail), and performs Scale3x rescaling, returning scaled image of similar structure.
 
     '''
-    
+
     # determining image size from list
     Y = len(ImageAsListListList)
     X = len(ImageAsListListList[0])
@@ -111,7 +116,9 @@ def Scale3x(ImageAsListListList):
     EPXImage = list()
 
     for y in range(0, Y, 1):
-        RowRez = list(); RowDvo = list(); RowTre = list()
+        RowRez = list()
+        RowDvo = list()
+        RowTre = list()
         for x in range(0, X, 1):
 
             E = ImageAsListListList[y][x]  # E is a center of 3x3 square
@@ -148,17 +155,23 @@ def Scale3x(ImageAsListListList):
             if (F == H) and (F != B) and (H != D):
                 r9 = F
 
-            RowRez.append(r1); RowRez.append(r2); RowRez.append(r3)
-            RowDvo.append(r4); RowDvo.append(r5); RowDvo.append(r6)
-            RowTre.append(r7); RowTre.append(r8); RowTre.append(r9)
+            RowRez.append(r1)
+            RowRez.append(r2)
+            RowRez.append(r3)
+            RowDvo.append(r4)
+            RowDvo.append(r5)
+            RowDvo.append(r6)
+            RowTre.append(r7)
+            RowTre.append(r8)
+            RowTre.append(r9)
 
         EPXImage.append(RowRez)
         EPXImage.append(RowDvo)
         EPXImage.append(RowTre)
 
-    return EPXImage
-#
-# rescaling three times finished
+    return EPXImage  # rescaling three times finished
+
+
 # --------------------------------------------------------------
 
 
