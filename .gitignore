@@ -3,6 +3,7 @@ build-*/
 development*/
 temp/
 testcases/
+old_versions
 __pycache__/
 *.json
 *.txt
