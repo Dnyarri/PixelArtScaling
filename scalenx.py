@@ -26,14 +26,14 @@ Python implementation developed by Ilya Razmanov (https://dnyarri.github.io/), (
 
 May be freely used, included and modified anywhere by anyone. In case of useful modifications sharing it with the Developer is almost obligatory.  
 
-Versions:  
+History:  
 ----------
 
 2024.05.14  Arguments and return format changed. Incompatible with previous versions!
 
 2024.07.03  Small improvements, one more retest with new test corpse, as you were, corpus.
 
-24.10.01    Minor changes, maintenance release.
+24.10.01    Internal restructure, imports change, maintenance release.
 
 '''
 

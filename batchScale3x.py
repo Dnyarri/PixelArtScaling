@@ -4,19 +4,18 @@
 Batch rescaling of PNG image using Scale3x aka AdvMAME3x
 Created by: Ilya Razmanov (mailto:ilyarazmanov@gmail.com)
             aka Ilyich the Toad (mailto:amphisoft@gmail.com)
-Versions:
+
+History:
+
 01.000      Initial working release. 
-2024.02.24  Cleanup, GUI tweaks, versioning changed to YYYY.MM.DD
-2024.03.30  pHYs chunk editing to keep image print size constant.
-2024.04.03  pathlib Path.exists flightcheck to make GUI exe packagers-friendly,
-            glob replaced with path.rglob
-2024.04.23  Self-calling scalefile(runningfilename)
-2024.04.23  Multiprocessing introduced, pool.map_async version will go to production.
-            GUI hangs and not updated, but now it apologize.
-2024.05.14  Linked with IncSrc and IncScaleNx version 2024.05.14,
-            data exchange format changed to incompatible with previous versions.
-24.08.01    Complete I/O change, excluding IncSrc in favour of pnglpng.
-24.10.01    Internal restructure.
+2024.02.24  Cleanup, GUI tweaks, versioning changed to YYYY.MM.DD  
+2024.03.30  pHYs chunk editing to keep image print size constant.  
+2024.04.03  pathlib Path.exists flightcheck to make GUI exe packagers-friendly, glob replaced with path.rglob  
+2024.04.23  Self-calling scalefile(runningfilename)  
+2024.04.23  Multiprocessing introduced, pool.map_async version will go to production. GUI hangs and not updated, but now it apologize.  
+2024.05.14  Linked with IncSrc and IncScaleNx version 2024.05.14, data exchange format changed to incompatible with previous versions. 
+24.08.01    Complete I/O change, excluding IncSrc in favour of pnglpng.  
+24.10.01    Internal restructure, imports change.  
 
 '''
 

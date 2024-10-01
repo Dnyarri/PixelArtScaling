@@ -10,12 +10,12 @@ Usage:
     python Scale2x.py source.png            - rescales source.png and overwrites source.png
     python Scale2x.py                       - starts GUI for selecting source and result
 
-Versions:
-2024.05.11  Initial release of merged GUI and CLI versions.
-2024.05.14  Linked with IncSrc and IncScaleNx version 2024.05.14,
-            data exchange format changed to incompatible with previous versions.
-24.08.01    Complete I/O change, excluding IncSrc in favour of pnglpng.
-24.10.01    Internal restructure.
+History:
+
+2024.05.11  Initial release of merged GUI and CLI versions.  
+2024.05.14  Linked with IncSrc and IncScaleNx version 2024.05.14, data exchange format changed to incompatible with previous versions.  
+24.08.01    Complete I/O change, excluding IncSrc in favour of pnglpng.  
+24.10.01    Internal restructure, imports change.  
 
 '''
 

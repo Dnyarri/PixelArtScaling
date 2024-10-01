@@ -45,7 +45,7 @@ PyPNG download: https://gitlab.com/drj11/pypng
 
 PyPNG docs: https://drj11.gitlab.io/pypng
 
-Versions:  
+History:  
 ----------
 
 24.07.25    Initial version.
@@ -98,7 +98,13 @@ def png2list(in_filename):
     imagedata = tuple(pixels)  # Creates tuple of bytes or whatever "pixels" generator returns
 
     # Next part forcedly creates 3D list of int out of "imagedata" tuple of hell knows what
-    image3D = [[[int((imagedata[y])[(x * Z) + z]) for z in range(Z)] for x in range(X)] for y in range(Y)]
+    image3D = [
+        [
+            [
+                int(((imagedata[y])[(x*Z) + z])) for z in range(Z)
+            ] for x in range(X)
+        ] for y in range(Y)
+    ]
     # List (image) of lists (rows) of lists (pixels) of ints (channels) created
 
     return (X, Y, Z, maxcolors, image3D, info)
@@ -131,7 +137,12 @@ def list2png(out_filename, image3D, info):
     info['planes'] = Z
 
     # flattening 3D list to 1D list for PNG .write_array method
-    image1D = [c for row in image3D for px in row for c in px]
+    image1D = [
+        c 
+            for row in image3D
+                for px in row
+                    for c in px
+    ]
 
     # Writing PNG
     resultPNG = open(out_filename, mode='wb')
