@@ -54,13 +54,15 @@ History:
 
 24.10.01    Internal restructure, incompatible with previous version.
 
+24.10.13    list2png - force rewriting more "info" parameters with those detected from image3D.
+
 '''
 
 __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '24.10.01'
+__version__ = '24.10.13'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Development'
@@ -132,9 +134,16 @@ def list2png(out_filename, image3D, info):
     X = len(image3D[0])
     Z = len(image3D[0][0])
 
-    # Duplicate image size in header with image size in "info"
+    # Overwriting "info" properties with ones determined from the list
     info['size'] = (X, Y)
     info['planes'] = Z
+    if Z == 1 or Z == 3:
+        info['alpha'] = False
+    if Z == 2 or Z == 4:
+        info['alpha'] = True
+
+    # Forcing compression to maximum
+    info['compression'] = 9
 
     # flattening 3D list to 1D list for PNG .write_array method
     image1D = [
