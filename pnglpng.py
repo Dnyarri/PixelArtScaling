@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
-'''
+'''Joint between PyPNG module and 3D-list structures.
+
 Overview
 ----------
 
-pnglpng (png-list-png) is a suitable joint between PyPNG and other Python programs, providing data conversion from/to used by PyPNG and understandable by ordinary average human.
+pnglpng (png-list-png) is a suitable joint between PyPNG and other Python programs, providing data conversion from/to used by PyPNG to/from understandable by ordinary average human.
 
 - png2list  - reading PNG file and returning all data
 - list2png  - getting data and writing PNG file
@@ -54,7 +55,7 @@ History:
 
 24.10.01    Internal restructure, incompatible with previous version.
 
-24.10.13    list2png - force rewriting more "info" parameters with those detected from image3D.
+24.10.13    list2png - force rewriting more "info" parameters with those detected from 3D list.
 
 '''
 
@@ -72,6 +73,8 @@ import png  # PNG I/O: PyPNG from: https://gitlab.com/drj11/pypng
 
 def png2list(in_filename):
     '''
+    Take PNG filename and return PNG data in a suitable form.
+
     Usage:
     -------
 
@@ -117,6 +120,8 @@ def png2list(in_filename):
 
 def list2png(out_filename, image3D, info):
     '''
+    Take filename and image data in a suitable form, and create PNG file.
+
     Usage:
     -------
 
@@ -137,13 +142,20 @@ def list2png(out_filename, image3D, info):
     # Overwriting "info" properties with ones determined from the list
     info['size'] = (X, Y)
     info['planes'] = Z
+
+    ''' Part below downgraded specifically for ScaleNx project to extend compatibility
     if Z == 1 or Z == 3:
         info['alpha'] = False
     if Z == 2 or Z == 4:
         info['alpha'] = True
+    if Z == 1 or Z == 2:
+        info['greyscale'] = True
+    if Z == 3 or Z == 4:
+        info['greyscale'] = False
 
     # Forcing compression to maximum
     info['compression'] = 9
+    '''
 
     # flattening 3D list to 1D list for PNG .write_array method
     image1D = [
