@@ -1,4 +1,6 @@
-**(EN)** [(RU)](README.RU.md)
+
+| EN | [RU](README.RU.md) |
+| --- | --- |
 
 # Pixel Art Scaling programs
 
@@ -32,7 +34,7 @@ Usage:
 
 ## Sample of Scale3x output (twice)
 
-![Example of Scale3x run twice](https://dnyarri.github.io/imgscalenx/x3x3.png)
+[![Example of Scale3x run twice](https://dnyarri.github.io/imgscalenx/x3x3.png)](https://dnyarri.github.io/scalenx.html)
 
 *Dependencies:* [PyPNG](https://gitlab.com/drj11/pypng), Tkinter, multiprocessing, sys
 

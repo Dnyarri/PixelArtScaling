@@ -1,4 +1,6 @@
-[(EN)](README.md) **(RU)**
+
+| [EN](README.md) | RU |
+| --- | --- |
 
 # Программы для масштабирования пиксельных картинок - Pixel Art Scaling
 
@@ -32,7 +34,7 @@
 
 ## Пример прогона Scale3x дважды по одной картинке
 
-![Пример прогона Scale3x дважды](https://dnyarri.github.io/imgscalenx/x3x3.png)
+[![Пример прогона Scale3x дважды](https://dnyarri.github.io/imgscalenx/x3x3.png)](https://dnyarri.github.io/scalenx.html)
 
 *Внешние зависимости:* [PyPNG](https://gitlab.com/drj11/pypng), Tkinter, multiprocessing, sys
 
