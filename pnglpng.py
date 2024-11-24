@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
 
-'''Joint between PyPNG module and 3D-list structures.
+"""Joint between PyPNG module and 3D-list structures.
 
 Overview
 ----------
 
 pnglpng (png-list-png) is a suitable joint between PyPNG and other Python programs, providing data conversion from/to used by PyPNG to/from understandable by ordinary average human.
 
-- png2list  - reading PNG file and returning all data
-- list2png  - getting data and writing PNG file
+- png2list  - reading PNG file and returning all data.
+- list2png  - getting data and writing PNG file.
+- create_image - creating empty nested 3D list for image representation.
 
 Installation
 --------------
-Simply put module into your main program folder
+Simply put module into your main program folder.
 
 Usage
 -------
@@ -55,41 +56,40 @@ History:
 
 24.10.01    Internal restructure, incompatible with previous version.
 
-24.10.13    list2png - force rewriting more "info" parameters with those detected from 3D list.
+24.11.24    list2png - force rewriting more "info" parameters with those detected from 3D list. Docstrings and typing slightly more PEP-compliant.
 
-'''
+"""
 
 __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '24.10.13'
+__version__ = '24.11.24'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
-__status__ = 'Development'
+__status__ = 'Production'
 
 import png  # PNG I/O: PyPNG from: https://gitlab.com/drj11/pypng
 
+''' ┌──────────┐
+    │ png2list │
+    └────-─────┘ '''
 
-def png2list(in_filename):
-    '''
-    Take PNG filename and return PNG data in a suitable form.
+def png2list(in_filename: str) -> tuple[int, int, int, int, list[list[list[int]]], dict]:
+    """Take PNG filename and return PNG data in a human-friendly form.
 
     Usage:
     -------
 
-    ``image3D, X, Y, Z, maxcolors, info = pnglpng.png2list(in_filename)``
+    ``X, Y, Z, maxcolors, image3D, info = pnglpng.png2list(in_filename)``
 
     Takes PNG filename ``in_filename`` and returns the following tuple:
 
-    ``image3D`` - Y*X*Z list (image) of lists (rows) of lists (pixels) of ints (channels), from PNG iDAT
-
-    ``X, Y, Z`` - int, PNG image sizes
-
-    ``maxcolors`` - int, value maximum per channel, either 255 or 65535, for 8 bpc and 16 bpc PNG respectively
-
-    ``info`` - dictionary, chunks like resolution etc. as they are accessible by PyPNG
-    '''
+    - ``X, Y, Z`` - int, PNG image sizes.
+    - ``image3D`` - Y*X*Z list (image) of lists (rows) of lists (pixels) of ints (channels), from PNG iDAT.
+    - ``maxcolors`` - int, value maximum per channel, either 255 or 65535, for 8 bpc and 16 bpc PNG respectively.
+    - ``info`` - dictionary, chunks like resolution etc. as they are accessible by PyPNG.
+    """
 
     source = png.Reader(in_filename)
 
@@ -115,12 +115,12 @@ def png2list(in_filename):
     return (X, Y, Z, maxcolors, image3D, info)
 
 
-# --------------------------------------------------------------
+''' ┌──────────┐
+    │ list2png │
+    └────-─────┘ '''
 
-
-def list2png(out_filename, image3D, info):
-    '''
-    Take filename and image data in a suitable form, and create PNG file.
+def list2png(out_filename: str, image3D: list[list[list[int]]], info: dict) -> None:
+    """Take filename and image data in a suitable form, and create PNG file.
 
     Usage:
     -------
@@ -129,10 +129,9 @@ def list2png(out_filename, image3D, info):
 
     Takes data described below and writes PNG file ``out_filename`` out of it:
 
-    ``image3D`` - Y*X*Z list (image) of lists (rows) of lists (pixels) of ints (channels)
-
-    ``info`` - dictionary, chunks like resolution etc. as you want them to be present in PNG
-    '''
+    - ``image3D`` - Y*X*Z list (image) of lists (rows) of lists (pixels) of ints (channels).
+    - ``info`` - dictionary, chunks like resolution etc. as you want them to be present in PNG.
+    """
 
     # Determining list sizes
     Y = len(image3D)
@@ -142,20 +141,6 @@ def list2png(out_filename, image3D, info):
     # Overwriting "info" properties with ones determined from the list
     info['size'] = (X, Y)
     info['planes'] = Z
-
-    ''' Part below downgraded specifically for ScaleNx project to extend compatibility
-    if Z == 1 or Z == 3:
-        info['alpha'] = False
-    if Z == 2 or Z == 4:
-        info['alpha'] = True
-    if Z == 1 or Z == 2:
-        info['greyscale'] = True
-    if Z == 3 or Z == 4:
-        info['greyscale'] = False
-
-    # Forcing compression to maximum
-    info['compression'] = 9
-    '''
 
     # flattening 3D list to 1D list for PNG .write_array method
     image1D = [
@@ -172,6 +157,24 @@ def list2png(out_filename, image3D, info):
     resultPNG.close()  # Close output
 
     return None
+
+
+''' ┌────────────────────┐
+    │ Create empty image │
+    └────-───────────────┘ '''
+
+def create_image(X: int, Y: int, Z: int) -> list[list[list[int]]]:
+    """Create empty 3D nested list of X*Y*Z sizes"""
+
+    new_image = [
+        [
+            [
+                0 for z in range(Z)
+            ] for x in range(X)
+        ] for y in range(Y)
+    ]
+
+    return new_image
 
 
 # --------------------------------------------------------------

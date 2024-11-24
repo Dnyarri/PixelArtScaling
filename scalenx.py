@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 
-'''
+"""Module contain Scale2x and Scale3x image rescaling functions.
+
 Overview
 ----------
 
-- scalenx.scale2x    - Scale2x aka AdvMAME2x image scaling two times
-- scalenx.scale3x    - Scale3x aka AdvMAME3x image scaling three times
+- scalenx.scale2x    - Scale2x aka AdvMAME2x image scaling two times.
+- scalenx.scale3x    - Scale3x aka AdvMAME3x image scaling three times.
 
 Installation
 --------------
-Simply put module into your program folder
+Simply put module into your program folder.
 
 Usage
 -------
@@ -29,33 +30,37 @@ May be freely used, included and modified anywhere by anyone. In case of useful 
 History:  
 ----------
 
+2024.02.24  Release as shared module, versioning changed to YYYY.MM.DD.
+
 2024.05.14  Arguments and return format changed. Incompatible with previous versions!
 
 2024.07.03  Small improvements, one more retest with new test corpse, as you were, corpus.
 
-24.10.01    Internal restructure, imports change, maintenance release.
+2024.10.01  Internal restructure, imports change, maintenance release.
 
-'''
+2024.11.24  Improved documentation.
+
+"""
 
 __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024 Ilya Razmanov'
 __credits__ = ['Ilya Razmanov', 'Andrea Mazzoleni']
 __license__ = 'unlicense'
-__version__ = '2024.07.03'
+__version__ = '2024.11.24'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
 
-# --------------------------------------------------------------
-# Scaling image list to 2x image list
-#
+''' ╔════════════════════════════════════════════╗
+    ║ Scaling image nested list to 2x image list ║
+    ╚════════════════════════════════════════════╝ '''
 
+def scale2x(ImageAsListListList: list[list[list[int]]]) -> list[list[list[int]]]:
+    """Rescale image with Scale2x.
+    
+    Takes ``ImageAsListListList`` as 3D nested list (image) of lists (rows) of lists (pixels) of int (channel values) (see pnglpng.py for detail), and performs Scale2x rescaling, returning scaled image of similar structure.
 
-def scale2x(ImageAsListListList):
-    '''
-    Takes ``ImageAsListListList`` as 3D list (image) of lists (rows) of lists (pixels) of int (channel values) (see InSrc.py for detail), and performs Scale2x rescaling, returning scaled image of similar structure.
-
-    '''
+    """
 
     # determining image size from list
     Y = len(ImageAsListListList)
@@ -97,16 +102,16 @@ def scale2x(ImageAsListListList):
     return EPXImage  # rescaling two times finished
 
 
-# --------------------------------------------------------------
-# Scaling to 3x image list
-#
+''' ╔════════════════════════════════════════════╗
+    ║ Scaling image nested list to 3x image list ║
+    ╚════════════════════════════════════════════╝ '''
 
+def scale3x(ImageAsListListList: list[list[list[int]]]) -> list[list[list[int]]]:
+    """Rescale image with Scale3x.
+    
+    Takes ``ImageAsListListList`` as 3D nested list (image) of lists (rows) of lists (pixels) of int (channel values) (see pnglpng.py for detail), and performs Scale3x rescaling, returning scaled image of similar structure.
 
-def scale3x(ImageAsListListList):
-    '''
-    Takes ``ImageAsListListList`` as 3D list (image) of lists (rows) of lists (pixels) of int (channel values) (see InSrc.py for detail), and performs Scale3x rescaling, returning scaled image of similar structure.
-
-    '''
+    """
 
     # determining image size from list
     Y = len(ImageAsListListList)
