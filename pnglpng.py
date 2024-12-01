@@ -86,9 +86,10 @@ def png2list(in_filename: str) -> tuple[int, int, int, int, list[list[list[int]]
     Takes PNG filename ``in_filename`` and returns the following tuple:
 
     - ``X, Y, Z`` - int, PNG image sizes.
-    - ``image3D`` - Y*X*Z list (image) of lists (rows) of lists (pixels) of ints (channels), from PNG iDAT.
     - ``maxcolors`` - int, value maximum per channel, either 255 or 65535, for 8 bpc and 16 bpc PNG respectively.
+    - ``image3D`` - Y*X*Z list (image) of lists (rows) of lists (pixels) of ints (channels), from PNG iDAT.
     - ``info`` - dictionary, chunks like resolution etc. as they are accessible by PyPNG.
+
     """
 
     source = png.Reader(in_filename)
@@ -106,7 +107,7 @@ def png2list(in_filename: str) -> tuple[int, int, int, int, list[list[list[int]]
     image3D = [
         [
             [
-                int(((imagedata[y])[(x*Z) + z])) for z in range(Z)
+                int((imagedata[y])[(x*Z) + z]) for z in range(Z)
             ] for x in range(X)
         ] for y in range(Y)
     ]
@@ -131,6 +132,7 @@ def list2png(out_filename: str, image3D: list[list[list[int]]], info: dict) -> N
 
     - ``image3D`` - Y*X*Z list (image) of lists (rows) of lists (pixels) of ints (channels).
     - ``info`` - dictionary, chunks like resolution etc. as you want them to be present in PNG.
+
     """
 
     # Determining list sizes

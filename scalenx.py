@@ -57,7 +57,7 @@ __status__ = 'Production'
 
 def scale2x(ImageAsListListList: list[list[list[int]]]) -> list[list[list[int]]]:
     """Rescale image with Scale2x.
-    
+
     Takes ``ImageAsListListList`` as 3D nested list (image) of lists (rows) of lists (pixels) of int (channel values) (see pnglpng.py for detail), and performs Scale2x rescaling, returning scaled image of similar structure.
 
     """
@@ -108,7 +108,7 @@ def scale2x(ImageAsListListList: list[list[list[int]]]) -> list[list[list[int]]]
 
 def scale3x(ImageAsListListList: list[list[list[int]]]) -> list[list[list[int]]]:
     """Rescale image with Scale3x.
-    
+
     Takes ``ImageAsListListList`` as 3D nested list (image) of lists (rows) of lists (pixels) of int (channel values) (see pnglpng.py for detail), and performs Scale3x rescaling, returning scaled image of similar structure.
 
     """
