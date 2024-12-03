@@ -9,7 +9,7 @@ Programs for scaling up small low-color images like icons and game sprites.
 Apparently useful for scaling up grey text scans with low resolution before OCR, to improve OCR quality.
 
 > [!NOTE]
-> Only PNG image format is supported. Batch processing of folders and subfolders is supported.
+> For single file processing PNG, PGM and PPM formats are supported. Batch processing of folders and subfolders is supported. Currently only PNG format is supported for batch processing to avoid batch confusions due to different PNM subversions.
 
 Currently [**Scale2x**](https://github.com/amadvance/scale2x) (aka **AdvMAME2x**) and **Scale3x** (aka **AdvMAME3x**) are implemented.  
 
