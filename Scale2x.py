@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-'''
+"""
 Scale2x aka AdvMAME2x bitmap image scaling using Python only, merged command line and GUI versions.
 Created by: Ilya Razmanov (mailto:ilyarazmanov@gmail.com)
             aka Ilyich the Toad (mailto:amphisoft@gmail.com)
@@ -12,40 +12,59 @@ Usage:
 
 History:
 
-2024.05.11  Initial release of merged GUI and CLI versions.  
-2024.05.14  Linked with IncSrc and IncScaleNx version 2024.05.14, data exchange format changed to incompatible with previous versions.  
-24.08.01    Complete I/O change, excluding IncSrc in favour of pnglpng.  
-24.10.01    Internal restructure, imports change.  
+2024.05.11  Initial release of merged GUI and CLI versions.
+2024.05.14  Linked with IncSrc and IncScaleNx version 2024.05.14, data exchange format changed to incompatible with previous versions.
+24.08.01    Complete I/O change, excluding IncSrc in favour of pnglpng.
+24.10.01    Internal restructure, imports change.
+24.12.03    PPM and PGM support added
 
-'''
+"""
 
 __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '24.10.01'
+__version__ = '24.12.03'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
 
+from pathlib import Path
 from sys import argv
 
 import pnglpng  # PNG-list-PNG joint, uses PyPNG
+import pnmlpnm  # PNM-list-PNM
 from scalenx import scale2x  # Scale2x and Scale3x from: https://github.com/Dnyarri/PixelArtScaling
 
+""" ╔═════════════════════╗
+    ║ commandline variant ║
+    ╚═════════════════════╝ """
 
 def cli(Rez, Dvo):
-    '''
+    """
     Command line variant of Scale2x. Input - source and result PNG filenames.
 
-    '''
+    """
 
     # --------------------------------------------------------------
     # Open source file
 
-    # Reading image as list
-    ImageAsListListList = pnglpng.png2list(Rez)[4]
-    info = pnglpng.png2list(Rez)[5]
+    if Path(Rez).suffix == '.png':
+        # Reading image as list
+        X, Y, Z, maxcolors, ImageAsListListList, info = pnglpng.png2list(Rez)
+
+    elif (Path(Rez).suffix == '.ppm') or (Path(Rez).suffix == '.pgm'):
+        # Reading image as list
+        X, Y, Z, maxcolors, ImageAsListListList = pnmlpnm.pnm2list(Rez)
+        # Creating dummy info
+        info = {}
+        # Fixing color mode. So far pnglpng does not make any assumptions on that; guess it must be fixed later.
+        if Z < 3:
+            info['greyscale'] = True
+        else:
+            info['greyscale'] = False
+        if maxcolors > 255:
+            info['bitdepth'] = 16
 
     # Scaling list to 2x image list
     EPXImage = scale2x(ImageAsListListList)
@@ -73,22 +92,24 @@ def cli(Rez, Dvo):
     # Explicitly setting compression
     info['compression'] = 9
 
-    # Writing PNG file
-    pnglpng.list2png(Dvo, EPXImage, info)
+    if Path(Dvo).suffix == '.png':
+        pnglpng.list2png(Dvo, EPXImage, info)
+    elif (Path(Dvo).suffix == '.ppm') or (Path(Dvo).suffix == '.pgm'):
+        pnmlpnm.list2pnm(Dvo, EPXImage, maxcolors)
 
     return None  # end of CLI variant
 
 
-# --------------------------------------------------------------
-
+""" ╔═════════════╗
+    ║ GUI variant ║
+    ╚═════════════╝ """
 
 def gui():
-    '''
+    """
     GUI variant of Scale2x, based on tkinter.
 
-    '''
+    """
 
-    from pathlib import Path
     from tkinter import Label, Tk, filedialog
 
     # Creating dialog
@@ -107,10 +128,10 @@ def gui():
     # Main dialog created and hidden
 
     # Open source file
-    sourcefilename = filedialog.askopenfilename(title='Open PNG file to reScale2x', filetypes=[('PNG', '.png')])
+    sourcefilename = filedialog.askopenfilename(title='Open image file to reScale2x', filetypes=[('Supported formats', '.png .ppm .pgm'), ('PNG', '.png'), ('PNM', '.ppm .pgm')])
     if sourcefilename == '':
-        sortir.destroy()
-        quit()
+        return None
+
     # Updating dialog
     sortir.deiconify()
     zanyato.config(text=f'Reading {sourcefilename}...')
@@ -118,9 +139,22 @@ def gui():
     sortir.update_idletasks()
     # Dialog shown and updated
 
-    # Reading image as list
-    ImageAsListListList = pnglpng.png2list(sourcefilename)[4]
-    info = pnglpng.png2list(sourcefilename)[5]
+    if Path(sourcefilename).suffix == '.png':
+        # Reading image as list
+        X, Y, Z, maxcolors, ImageAsListListList, info = pnglpng.png2list(sourcefilename)
+
+    elif (Path(sourcefilename).suffix == '.ppm') or (Path(sourcefilename).suffix == '.pgm'):
+        # Reading image as list
+        X, Y, Z, maxcolors, ImageAsListListList = pnmlpnm.pnm2list(sourcefilename)
+        # Creating dummy info
+        info = {}
+        # Fixing color mode. So far pnglpng does not make any assumptions on that; guess it must be fixed later.
+        if Z < 3:
+            info['greyscale'] = True
+        else:
+            info['greyscale'] = False
+        if maxcolors > 255:
+            info['bitdepth'] = 16
 
     # Updating dialog
     zanyato.config(text=f'Scaling {sourcefilename}...')
@@ -156,15 +190,20 @@ def gui():
     # Hiding dialog
     sortir.withdraw()
 
+    # Adjusting "Save to" formats to be displayed according to bitdepth
+    if Z < 3:
+        format = [('PNG', '.png'), ('Portable grey map', '.pgm')]
+    else:
+        format = [('PNG', '.png'), ('Portable pixel map', '.ppm')]
+
     # Open export file
     resultfilename = filedialog.asksaveasfilename(
-        title='Save Scale2x PNG file',
-        filetypes=[('PNG', '.png')],
+        title='Save Scale2x image file',
+        filetypes=format,
         defaultextension=('PNG file', '.png'),
     )
     if resultfilename == '':
-        sortir.destroy()
-        quit()
+        return None
 
     # Updating dialog
     sortir.deiconify()
@@ -172,9 +211,10 @@ def gui():
     sortir.update()
     sortir.update_idletasks()
 
-    # Writing PNG file
-    pnglpng.list2png(resultfilename, EPXImage, info)
-    # Export file written and closed
+    if Path(resultfilename).suffix == '.png':
+        pnglpng.list2png(resultfilename, EPXImage, info)
+    elif (Path(resultfilename).suffix == '.ppm') or (Path(resultfilename).suffix == '.pgm'):
+        pnmlpnm.list2pnm(resultfilename, EPXImage, maxcolors)
 
     # Destroying dialog
     sortir.destroy()
@@ -186,7 +226,6 @@ def gui():
 # --------------------------------------------------------------
 
 if __name__ == '__main__':
-
     # Taking user input
 
     if len(argv) == 2:
