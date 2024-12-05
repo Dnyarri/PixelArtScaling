@@ -36,7 +36,9 @@ Usage:
 
 [![Example of Scale3x run twice](https://dnyarri.github.io/imgscalenx/x3x3.png)](https://dnyarri.github.io/scalenx.html)
 
-*Dependencies:* [PyPNG](https://gitlab.com/drj11/pypng), Tkinter, multiprocessing, sys
+## Dependencies:
+
+[PyPNG](https://gitlab.com/drj11/pypng), Tkinter, multiprocessing.
 
 > [!NOTE]
 > Programs are written entirely on Python, using image representation as list of lists of lists.
@@ -44,7 +46,9 @@ Usage:
 > Moreover, programs contain lists reshaping for PNG I/O purposes, also performed using Python native means only.
 > As a result, programs are slow but quite compatible with anything and don't require large external packages.
 
-Related links:
+## Related links:
+
+[ScaleNx PyPI](https://pypi.org/project/ScaleNx/)
 
 [Dnyarri website](https://dnyarri.github.io)
 
