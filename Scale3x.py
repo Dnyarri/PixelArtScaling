@@ -16,7 +16,7 @@ History:
 2024.05.14  Linked with IncSrc and IncScaleNx version 2024.05.14, data exchange format changed to incompatible with previous versions.
 24.08.01    Complete I/O change, excluding IncSrc in favour of pnglpng.
 24.10.01    Internal restructure, imports change.
-24.12.03    PPM and PGM support added
+25.01.01    PPM and PGM read and write support added, PBM read only.
 
 """
 
@@ -24,7 +24,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '24.12.03'
+__version__ = '25.01.01'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -53,7 +53,7 @@ def cli(Rez, Dvo):
         # Reading image as list
         X, Y, Z, maxcolors, ImageAsListListList, info = pnglpng.png2list(Rez)
 
-    elif (Path(Rez).suffix == '.ppm') or (Path(Rez).suffix == '.pgm'):
+    elif (Path(Rez).suffix in ('.ppm', '.pgm', '.pbm')):
         # Reading image as list
         X, Y, Z, maxcolors, ImageAsListListList = pnmlpnm.pnm2list(Rez)
         # Creating dummy info
@@ -65,6 +65,9 @@ def cli(Rez, Dvo):
             info['greyscale'] = False
         if maxcolors > 255:
             info['bitdepth'] = 16
+
+    else:
+        raise ValueError('Extension not recognized')
 
     # Scaling to 3x image list
     EPXImage = scale3x(ImageAsListListList)
@@ -95,6 +98,8 @@ def cli(Rez, Dvo):
         pnglpng.list2png(Dvo, EPXImage, info)
     elif (Path(Dvo).suffix == '.ppm') or (Path(Dvo).suffix == '.pgm'):
         pnmlpnm.list2pnm(Dvo, EPXImage, maxcolors)
+    else:
+        raise ValueError('Extension not recognized')
 
     return None  # end of CLI variant
 
@@ -128,7 +133,7 @@ def gui():
     # Main dialog created and hidden
 
     # Open source file
-    sourcefilename = filedialog.askopenfilename(title='Open image file to reScale3x', filetypes=[('Supported formats', '.png .ppm .pgm'), ('PNG', '.png'), ('PNM', '.ppm .pgm')])
+    sourcefilename = filedialog.askopenfilename(title='Open image file to reScale3x', filetypes=[('Supported formats', '.png .ppm .pgm .pbm'), ('PNG', '.png'), ('PNM', '.ppm .pgm .pbm')])
     if sourcefilename == '':
         return None
 
@@ -143,7 +148,7 @@ def gui():
         # Reading image as list
         X, Y, Z, maxcolors, ImageAsListListList, info = pnglpng.png2list(sourcefilename)
 
-    elif (Path(sourcefilename).suffix == '.ppm') or (Path(sourcefilename).suffix == '.pgm'):
+    elif (Path(sourcefilename).suffix in ('.ppm', '.pgm', '.pbm')):
         # Reading image as list
         X, Y, Z, maxcolors, ImageAsListListList = pnmlpnm.pnm2list(sourcefilename)
         # Creating dummy info
@@ -155,6 +160,9 @@ def gui():
             info['greyscale'] = False
         if maxcolors > 255:
             info['bitdepth'] = 16
+
+    else:
+        raise ValueError('Extension not recognized')
 
     # Updating dialog
     zanyato.config(text=f'Scaling {sourcefilename}...')

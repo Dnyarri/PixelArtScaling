@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 
-"""Functions to read PPM and PGM files to nested 3D list and write back.
+"""Functions to read PPM and PGM files to nested 3D list of int and/or write back.
 
 Overview
 ----------
 
 pnmlpnm (pnm-list-pnm) is a pack of functions for dealing with PPM and PGM image files. Functions included are:
 
-- pnm2list  - reading binary or ascii RGB PPM or L PGM file and returning image data as ints and nested list.
-- list2bin  - getting image data as ints and nested list and creating binary PPM (P6) or PGM (P5) data structure in memory. Suitable for generating data to display with Tkinter.
+- pnm2list  - reading binary or ascii RGB PPM or L PGM file and returning image data as nested list of int.
+- list2bin  - getting image data as nested list of int and creating binary PPM (P6) or PGM (P5) data structure in memory. Suitable for generating data to display with Tkinter `PhotoImage(data=...)` class.
 - list2pnm  - writing data created with list2bin to file.
 - list2pnmascii - alternative function to write ASCII PPM (P3) or PGM (P2) files.
 - create_image - creating empty nested 3D list for image representation. Not used within this particular module but often needed by programs this module is supposed to be used with.
@@ -50,29 +50,37 @@ Copyright and redistribution
 -----------------------------
 Written by Ilya Razmanov (https://dnyarri.github.io/) to provide working with PPM/PGM files and creating PPM data to be displayed with Tkinter "PhotoImage" class.
 
-May be freely used and redistributed.
+May be freely used, redistributed and modified. In case of introducing useful modifications, please report to original developer.
 
 References
------------------------------
+-----------
 
 Netpbm specs: https://netpbm.sourceforge.net/doc/
 
-History:  
-----------
+PyPNM at PyPI: https://pypi.org/project/PyPNM/
+
+PyPNM at GitHub: https://github.com/Dnyarri/PyPNM/
+
+Version history
+----------------
 
 0.11.26.0   Initial working version 26 Nov 2024.
 
-0.11.27.3   Implemented fix for Adobe Photoshop CS6 using linebreaks in header.
+0.11.27.3   Implemented fix for Adobe Photoshop CS6 using linebreaks instead of spaces in header.
 
 0.11.28.0   Rewritten to use less arguments for output; X, Y, Z autodetected.
 
 0.11.29.0   Added ASCII write support.
 
-0.11.30.0   Switched to array; this allowed 16 bpc P5 and P6 files writing.
+0.11.30.0   Switched to array, thus allowing 16 bpc P5 and P6 files writing.
 
-0.11.30.2   Seems like finally fixed 16 bpc P5 and P6 files reading. Looks ugly but works.
+0.11.30.2   Fixed 16 bpc P5 and P6 files reading. Solution looks ugly but works.
 
-1.12.1.2   Seem to be ready for release.
+1.12.1.2    Initial public release.
+
+1.12.12.1   PBM read support added. PBM write is not planned.
+
+1.12.14.1   Reoptimized to comprehensions.
 
 """
 
@@ -80,7 +88,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '1.12.1.2'
+__version__ = '1.12.14.1'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -107,49 +115,61 @@ def pnm2list(filename: str) -> tuple[int, int, int, int, list[list[list[int]]]]:
 
     """
 
+    magic_list = ['P6', 'P3', 'P5', 'P2', 'P4', 'P1']
+
     with open(filename, 'rb') as file:  # Open file in binary mode
         magic = file.readline().strip().decode()
+
+        if magic not in magic_list:
+            raise ValueError(f"Unsupported format {filename}: {magic[:32]}")
 
         # Passing comments by
         comment_line = file.readline().decode()
         while comment_line.startswith('#'):
             comment_line = file.readline().decode()
 
-        # Reading dimensions. Photoshop CS6 uses EOLN as separator, GIMP, XnView etc. use space
-        size_temp = comment_line.split()
-        if len(size_temp) < 2:  # Part for Photoshop
-            X = int(size_temp[0])
-            Y = int(file.readline().decode())
-        else:  # Part for most other software
-            X, Y = map(int, comment_line.split())
-
-        # Color depth
-        maxcolors = int(file.readline().strip().decode())
-
         ''' ┌─────┐
             │ RGB │
             └────-┘ '''
 
         if magic == 'P6':  # RGB bin
+
+            # Reading dimensions. Photoshop CS6 uses EOLN as separator, GIMP, XnView etc. use space
+            size_temp = comment_line.split()
+            if len(size_temp) < 2:  # Part for Photoshop
+                X = int(size_temp[0])
+                Y = int(file.readline().decode())
+            else:  # Part for most other software
+                X, Y = map(int, comment_line.split())
+
+            # Color depth
+            maxcolors = int(file.readline().strip().decode())
+
+            # Channel number
             Z = 3
-            list_3d = []
-            for _ in range(Y):
-                row = []
-                for _ in range(X):
 
-                    if maxcolors < 256:
-                        red = int.from_bytes(file.read(1))
-                        green = int.from_bytes(file.read(1))
-                        blue = int.from_bytes(file.read(1))
-                    else:
-                        red = int.from_bytes(file.read(2))
-                        green = int.from_bytes(file.read(2))
-                        blue = int.from_bytes(file.read(2))
+            # Building 3D list of ints, converted from bytes
+            list_3d = [
+                [
+                    [int.from_bytes(file.read(1)), int.from_bytes(file.read(1)), int.from_bytes(file.read(1))] if (maxcolors < 256) else [int.from_bytes(file.read(2)), int.from_bytes(file.read(2)), int.from_bytes(file.read(2))]  # Consecutive reading of R, G, B
+                    for x in range(X)
+                ] for y in range(Y)
+            ]
 
-                    row.append([red, green, blue])
-                list_3d.append(row)
+        if magic == 'P3':  # RGB ASCII
 
-        if magic == 'P3':  # RGB ascii
+            # Reading dimensions. Photoshop CS6 uses EOLN as separator, GIMP, XnView etc. use space
+            size_temp = comment_line.split()
+            if len(size_temp) < 2:  # Part for Photoshop
+                X = int(size_temp[0])
+                Y = int(file.readline().decode())
+            else:  # Part for most other software
+                X, Y = map(int, comment_line.split())
+
+            # Color depth
+            maxcolors = int(file.readline().strip().decode())
+
+            # Channel number
             Z = 3
 
             list_1d = []  # Toss everything to 1D list because linebreaks in PNM are unpredictable
@@ -170,19 +190,43 @@ def pnm2list(filename: str) -> tuple[int, int, int, int, list[list[list[int]]]]:
             └───┘ '''
 
         if magic == 'P5':  # L bin
-            Z = 1
-            list_3d = []
-            for _ in range(Y):
-                row = []
-                for _ in range(X):
-                    if maxcolors < 256:
-                        channel = [int.from_bytes(file.read(1))]
-                    else:
-                        channel = [int.from_bytes(file.read(2))]
-                    row.append(channel)
-                list_3d.append(row)
 
-        if magic == 'P2':  # L ascii
+            # Reading dimensions. Photoshop CS6 uses EOLN as separator, GIMP, XnView etc. use space
+            size_temp = comment_line.split()
+            if len(size_temp) < 2:  # Part for Photoshop
+                X = int(size_temp[0])
+                Y = int(file.readline().decode())
+            else:  # Part for most other software
+                X, Y = map(int, comment_line.split())
+
+            # Color depth
+            maxcolors = int(file.readline().strip().decode())
+
+            # Channel number
+            Z = 1
+            # Building 3D list of ints, converted from bytes
+            list_3d = [
+                [
+                    [
+                        int.from_bytes(file.read(1)) if (maxcolors < 256) else int.from_bytes(file.read(2))
+                    ] for x in range(X)
+                ] for y in range(Y)
+            ]
+
+        if magic == 'P2':  # L ASCII
+
+            # Reading dimensions. Photoshop CS6 uses EOLN as separator, GIMP, XnView etc. use space
+            size_temp = comment_line.split()
+            if len(size_temp) < 2:  # Part for Photoshop
+                X = int(size_temp[0])
+                Y = int(file.readline().decode())
+            else:  # Part for most other software
+                X, Y = map(int, comment_line.split())
+
+            # Color depth
+            maxcolors = int(file.readline().strip().decode())
+
+            # Channel number
             Z = 1
 
             list_1d = []  # Toss everything to 1D list because linebreaks in ASCII PGM are unpredictable
@@ -198,6 +242,72 @@ def pnm2list(filename: str) -> tuple[int, int, int, int, list[list[list[int]]]]:
                 ] for y in range(Y)
             ]
 
+
+        ''' ┌─────┐
+            │ Bit │
+            └────-┘ '''
+
+        if magic == 'P4':  # Bit bin
+            # Reading dimensions. Photoshop CS6 uses EOLN as separator, GIMP, XnView etc. use space
+            size_temp = comment_line.split()
+            if len(size_temp) < 2:  # Part for Photoshop
+                X = int(size_temp[0])
+                Y = int(file.readline().decode())
+            else:  # Part for most other software
+                X, Y = map(int, comment_line.split())
+
+            # Color depth
+            maxcolors = 255  # Force conversion from bit to L
+
+            # Channel number
+            Z = 1
+
+            raw_data = file.read()  # Reading the rest of file
+
+            row_width = (X + 7) // 8  # Rounded up version of width, to get whole bytes included junk at EOLNs
+
+            list_3d = []
+            for y in range(Y):
+                row = []
+                for x in range(row_width):
+                    single_byte = raw_data[(y * row_width) + x]
+                    single_byte_bits = [int(bit) for bit in bin(single_byte)[2:].zfill(8)]
+                    single_byte_bits_normalized = [[255 * (1 - c)] for c in single_byte_bits]  # renormalizing colors from ink on/off to L model, replacing int with [int]
+                    row.extend(single_byte_bits_normalized)  # assembling row, junk included
+
+                list_3d.append(row[0:X])  # apparently cutting junk off
+
+        if magic == 'P1':  # Bit ASCII
+
+            # Reading dimensions. Photoshop CS6 uses EOLN as separator, GIMP, XnView etc. use space
+            size_temp = comment_line.split()
+            if len(size_temp) < 2:  # Part for Photoshop
+                X = int(size_temp[0])
+                Y = int(file.readline().decode())
+            else:  # Part for most other software
+                X, Y = map(int, comment_line.split())
+
+            # Color depth
+            maxcolors = 255  # Force conversion from bit to L
+
+            # Channel number
+            Z = 1
+
+            list_1d = []  # Toss everything to 1D list because linebreaks in ASCII PBM are unpredictable
+            for y in file:
+                row_data = y.strip()
+                bits = [(255 * (1 - int(row_data[i : i + 1]))) for i in range(0, len(row_data), 1)]
+                list_1d.extend(bits)
+
+            list_3d = [  # Now break 1D toss into component compounds, building 3D list
+                [
+                    [
+                        list_1d[z + x * Z + y * X * Z] for z in range(Z)
+                    ] for x in range(X)
+                ] for y in range(Y)
+            ]
+
+
         return (X, Y, Z, maxcolors, list_3d)  # Output mimic that of pnglpng
 
 
@@ -206,7 +316,7 @@ def pnm2list(filename: str) -> tuple[int, int, int, int, list[list[list[int]]]]:
     ╚══════════╝ '''
 
 def list2bin(in_list_3d: list[list[list[int]]], maxcolors: int) -> bytes:
-    """Convert PNG to PGM P5 or PPM P6 (binary) data structure in memory.
+    """Convert nested image data list to PGM P5 or PPM P6 (binary) data structure in memory.
 
     Based on Netpbm specs at https://netpbm.sourceforge.net/doc/
 
@@ -255,7 +365,7 @@ def list2bin(in_list_3d: list[list[list[int]]], maxcolors: int) -> bytes:
     header = array.array('B', f'{magic}\n{X} {Y}\n{maxcolors}\n'.encode())
     content = array.array(datatype, in_list_1d)
 
-    content.byteswap()  # Critical!
+    content.byteswap()  # Critical for 16 bits per channel
 
     pnm = header.tobytes() + content.tobytes()
 
@@ -278,7 +388,7 @@ def list2pnm(out_filename: str, in_list_3d: list[list[list[int]]], maxcolors: in
 
     Output:
 
-    - ``out_filename`` - PNM file.
+    - ``out_filename`` - PNM file name.
 
 
     """
@@ -307,7 +417,7 @@ def list2pnmascii(out_filename: str, in_list_3d: list[list[list[int]]], maxcolor
 
     Output:
 
-    - ``out_filename`` - PNM file.
+    - ``out_filename`` - PNM file name.
 
     """
 
