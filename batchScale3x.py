@@ -23,20 +23,20 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '24.10.01'
+__version__ = '25.01.07'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
 
 from multiprocessing import Pool, freeze_support
 from pathlib import Path
-from tkinter import Label, Tk, X, filedialog
+from tkinter import Label, PhotoImage, Tk, X, filedialog
 
-import pnglpng  # PNG-list-PNG joint, uses PyPNG
+from pypng import pnglpng  # PNG-list-PNG joint, uses PyPNG
 from scalenx import scale3x  # Scale2x and Scale3x from: https://github.com/Dnyarri/PixelArtScaling
 
 
-def scalefile(runningfilename):
+def scalefile(runningfilename: str) -> None:
     '''
     Function that does all the job, and keeps quite.
 
@@ -87,14 +87,15 @@ if __name__ == '__main__':
     freeze_support()
 
     # Creating dialog
-    iconpath = Path(__file__).resolve().parent / 'b3x.ico'
-    iconname = str(iconpath)
-    useicon = iconpath.exists()  # Check if icon file really exist. If False, it will not be used later.
-
     sortir = Tk()
     sortir.title('Processing Scale3x...')
-    if useicon:
-        sortir.iconbitmap(iconname)
+
+    iconpath = Path(__file__).resolve().parent / 'b3x.ico'
+    if iconpath.exists():
+        sortir.iconbitmap(str(iconpath))
+    else:
+        sortir.iconphoto(True, PhotoImage(data=b'P6\n2 2\n255\n\xff\x00\x00\xff\xff\x00\x00\x00\xff\x00\xff\x00'))
+
     sortir.geometry('+200+100')
     zanyato = Label(sortir, text='Allons-y!', font=('Arial', 16), state='normal', padx=12, pady=10, justify='center')
     zanyato.pack()

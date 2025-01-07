@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Joint between PyPNG module and 3D-list structures.
+"""Joint between PyPNG module and 3D nested list data structures.
 
 Overview
 ----------
@@ -28,7 +28,7 @@ for reading data from PNG, where:
 - image3D   - image pixel data as list(list(list(int)));
 - info      - PNG chunks like resolution etc (dictionary);
 
-and 
+and
 
 ``pnglpng.list2png(out_filename, image3D, info)``
 
@@ -47,7 +47,7 @@ PyPNG download: https://gitlab.com/drj11/pypng
 
 PyPNG docs: https://drj11.gitlab.io/pypng
 
-History:  
+History:
 ----------
 
 24.07.25    Initial version.
@@ -56,7 +56,7 @@ History:
 
 24.10.01    Internal restructure, incompatible with previous version.
 
-24.11.24    list2png - force rewriting more "info" parameters with those detected from 3D list. Docstrings and typing slightly more PEP-compliant.
+25.01.07    `list2png` - force rewrite more "info" parameters with those detected from 3D list; force remove `palette` due to accumulating problems with images promoted to full color, and `background` due to rare problems with changing color mode.
 
 """
 
@@ -64,16 +64,17 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '24.11.24'
+__version__ = '25.01.07'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
 
-import png  # PNG I/O: PyPNG from: https://gitlab.com/drj11/pypng
+from . import png  # PNG I/O: PyPNG from: https://gitlab.com/drj11/pypng
 
-''' ┌──────────┐
+""" ┌──────────┐
     │ png2list │
-    └────-─────┘ '''
+    └────-─────┘ """
+
 
 def png2list(in_filename: str) -> tuple[int, int, int, int, list[list[list[int]]], dict]:
     """Take PNG filename and return PNG data in a human-friendly form.
@@ -104,21 +105,16 @@ def png2list(in_filename: str) -> tuple[int, int, int, int, list[list[list[int]]
     imagedata = tuple(pixels)  # Creates tuple of bytes or whatever "pixels" generator returns
 
     # Next part forcedly creates 3D list of int out of "imagedata" tuple of hell knows what
-    image3D = [
-        [
-            [
-                int((imagedata[y])[(x*Z) + z]) for z in range(Z)
-            ] for x in range(X)
-        ] for y in range(Y)
-    ]
+    image3D = [[[int((imagedata[y])[(x * Z) + z]) for z in range(Z)] for x in range(X)] for y in range(Y)]
     # List (image) of lists (rows) of lists (pixels) of ints (channels) created
 
     return (X, Y, Z, maxcolors, image3D, info)
 
 
-''' ┌──────────┐
+""" ┌──────────┐
     │ list2png │
-    └────-─────┘ '''
+    └────-─────┘ """
+
 
 def list2png(out_filename: str, image3D: list[list[list[int]]], info: dict) -> None:
     """Take filename and image data in a suitable form, and create PNG file.
@@ -143,13 +139,25 @@ def list2png(out_filename: str, image3D: list[list[list[int]]], info: dict) -> N
     # Overwriting "info" properties with ones determined from the list
     info['size'] = (X, Y)
     info['planes'] = Z
+    if 'palette' in info:
+        del info['palette']  # images get promoted to smooth color when editing
+    if 'background' in info:
+        info['background'] = (0,) * (Z - 1 + Z % 2)  # black for any color mode
+    if (Z % 2) == 1:
+        info['alpha'] = False
+    else:
+        info['alpha'] = True
+    if Z < 3:
+        info['greyscale'] = True
+    else:
+        info['greyscale'] = False
 
     # flattening 3D list to 1D list for PNG .write_array method
     image1D = [
-        c 
+        channel
             for row in image3D
-                for px in row
-                    for c in px
+                for pixel in row
+                    for channel in pixel
     ]
 
     # Writing PNG
@@ -161,9 +169,10 @@ def list2png(out_filename: str, image3D: list[list[list[int]]], info: dict) -> N
     return None
 
 
-''' ┌────────────────────┐
+""" ┌────────────────────┐
     │ Create empty image │
-    └────-───────────────┘ '''
+    └────-───────────────┘ """
+
 
 def create_image(X: int, Y: int, Z: int) -> list[list[list[int]]]:
     """Create empty 3D nested list of X*Y*Z sizes"""

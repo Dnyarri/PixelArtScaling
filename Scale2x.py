@@ -24,7 +24,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.01.01'
+__version__ = '25.01.07'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -32,15 +32,15 @@ __status__ = 'Production'
 from pathlib import Path
 from sys import argv
 
-import pnglpng  # PNG-list-PNG joint, uses PyPNG
-import pnmlpnm  # PNM-list-PNM
+from pypng import pnglpng  # PNG-list-PNG joint, uses PyPNG
+from pypnm import pnmlpnm  # PNM-list-PNM
 from scalenx import scale2x  # Scale2x and Scale3x from: https://github.com/Dnyarri/PixelArtScaling
 
 """ ╔═════════════════════╗
     ║ commandline variant ║
     ╚═════════════════════╝ """
 
-def cli(Rez, Dvo):
+def cli(Rez: str, Dvo: str) -> None:
     """
     Command line variant of Scale2x. Input - source and result PNG filenames.
 
@@ -58,13 +58,11 @@ def cli(Rez, Dvo):
         X, Y, Z, maxcolors, ImageAsListListList = pnmlpnm.pnm2list(Rez)
         # Creating dummy info
         info = {}
-        # Fixing color mode. So far pnglpng does not make any assumptions on that; guess it must be fixed later.
-        if Z < 3:
-            info['greyscale'] = True
-        else:
-            info['greyscale'] = False
+        # Fixing color mode. The rest is fixed with pnglpng v. 25.01.07.
         if maxcolors > 255:
             info['bitdepth'] = 16
+        else:
+            info['bitdepth'] = 8
 
     else:
         raise ValueError('Extension not recognized')
@@ -115,17 +113,18 @@ def gui():
 
     """
 
-    from tkinter import Label, Tk, filedialog
+    from tkinter import Label, PhotoImage, Tk, filedialog
 
     # Creating dialog
-    iconpath = Path(__file__).resolve().parent / '2x.ico'
-    iconname = str(iconpath)
-    useicon = iconpath.exists()  # Check if icon file really exist. If False, it will not be used later.
-
     sortir = Tk()
     sortir.title('Scale2x')
-    if useicon:
-        sortir.iconbitmap(iconname)  # Replacement for simple sortir.iconbitmap('2xGUI.ico') - ugly but stable
+
+    iconpath = Path(__file__).resolve().parent / '2x.ico'
+    if iconpath.exists():
+        sortir.iconbitmap(str(iconpath))
+    else:
+        sortir.iconphoto(True, PhotoImage(data=b'P6\n2 2\n255\n\xff\x00\x00\xff\xff\x00\x00\x00\xff\x00\xff\x00'))
+
     sortir.geometry('+200+100')
     zanyato = Label(sortir, text='Starting...', font=('arial', 14), padx=14, pady=10, justify='center')
     zanyato.pack()
@@ -153,13 +152,11 @@ def gui():
         X, Y, Z, maxcolors, ImageAsListListList = pnmlpnm.pnm2list(sourcefilename)
         # Creating dummy info
         info = {}
-        # Fixing color mode. So far pnglpng does not make any assumptions on that; guess it must be fixed later.
-        if Z < 3:
-            info['greyscale'] = True
-        else:
-            info['greyscale'] = False
+        # Fixing color mode. The rest is fixed with pnglpng v. 25.01.07.
         if maxcolors > 255:
             info['bitdepth'] = 16
+        else:
+            info['bitdepth'] = 8
 
     else:
         raise ValueError('Extension not recognized')
