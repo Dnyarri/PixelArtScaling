@@ -56,7 +56,7 @@ History:
 
 24.10.01    Internal restructure, incompatible with previous version.
 
-25.01.07    `list2png` - force rewrite more "info" parameters with those detected from 3D list; force remove `palette` due to accumulating problems with images promoted to full color, and `background` due to rare problems with changing color mode.
+25.01.08    `list2png` - force rewrite more "info" parameters with those detected from 3D list; force remove `palette` due to accumulating problems with images promoted to full color, and `background` due to rare problems with changing color mode.
 
 """
 
@@ -142,7 +142,10 @@ def list2png(out_filename: str, image3D: list[list[list[int]]], info: dict) -> N
     if 'palette' in info:
         del info['palette']  # images get promoted to smooth color when editing
     if 'background' in info:
-        info['background'] = (0,) * (Z - 1 + Z % 2)  # black for any color mode
+        # as image mode tend to get promoted when editing, background must be either
+        # redefined to match image color mode every time, or deleted 
+        # info['background'] = (0,) * (Z - 1 + Z % 2)  # black for any color mode
+        del info['background']
     if (Z % 2) == 1:
         info['alpha'] = False
     else:
