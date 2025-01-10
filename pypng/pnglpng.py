@@ -19,18 +19,18 @@ Usage
 -------
 After ``import pnglpng``, use something like
 
-``X, Y, Z, maxcolors, image3D, info = pnglpng.png2list(in_filename)``
+``X, Y, Z, maxcolors, list_3d, info = pnglpng.png2list(in_filename)``
 
 for reading data from PNG, where:
 
 - X, Y, Z   - image sizes (int);
 - maxcolors - number of colors per channel for current image (int);
-- image3D   - image pixel data as list(list(list(int)));
+- list_3d   - image pixel data as list(list(list(int)));
 - info      - PNG chunks like resolution etc (dictionary);
 
 and
 
-``pnglpng.list2png(out_filename, image3D, info)``
+``pnglpng.list2png(out_filename, list_3d, info)``
 
 for writing data to PNG.
 
@@ -64,7 +64,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.01.07'
+__version__ = '25.01.08'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -73,7 +73,7 @@ from . import png  # PNG I/O: PyPNG from: https://gitlab.com/drj11/pypng
 
 """ ┌──────────┐
     │ png2list │
-    └────-─────┘ """
+    └──────────┘ """
 
 
 def png2list(in_filename: str) -> tuple[int, int, int, int, list[list[list[int]]], dict]:
@@ -82,20 +82,20 @@ def png2list(in_filename: str) -> tuple[int, int, int, int, list[list[list[int]]
     Usage:
     -------
 
-    ``X, Y, Z, maxcolors, image3D, info = pnglpng.png2list(in_filename)``
+    ``X, Y, Z, maxcolors, list_3d, info = pnglpng.png2list(in_filename)``
 
     Takes PNG filename ``in_filename`` and returns the following tuple:
 
     - ``X, Y, Z`` - int, PNG image sizes.
     - ``maxcolors`` - int, value maximum per channel, either 255 or 65535, for 8 bpc and 16 bpc PNG respectively.
-    - ``image3D`` - Y*X*Z list (image) of lists (rows) of lists (pixels) of ints (channels), from PNG iDAT.
+    - ``list_3d`` - Y*X*Z list (image) of lists (rows) of lists (pixels) of ints (channels), from PNG iDAT.
     - ``info`` - dictionary, chunks like resolution etc. as they are accessible by PyPNG.
 
     """
 
     source = png.Reader(in_filename)
 
-    X, Y, pixels, info = source.asDirect()  # Opening image, iDAT comes to "pixels" as bytearray
+    X, Y, pixels, info = source.asDirect()  # Opening image, iDAT comes to "pixels"
     Z = info['planes']  # Channels number
     if info['bitdepth'] == 8:
         maxcolors = 255  # Maximal value for 8-bit channel
@@ -105,36 +105,36 @@ def png2list(in_filename: str) -> tuple[int, int, int, int, list[list[list[int]]
     imagedata = tuple(pixels)  # Creates tuple of bytes or whatever "pixels" generator returns
 
     # Next part forcedly creates 3D list of int out of "imagedata" tuple of hell knows what
-    image3D = [[[int((imagedata[y])[(x * Z) + z]) for z in range(Z)] for x in range(X)] for y in range(Y)]
+    list_3d = [[[int((imagedata[y])[(x * Z) + z]) for z in range(Z)] for x in range(X)] for y in range(Y)]
     # List (image) of lists (rows) of lists (pixels) of ints (channels) created
 
-    return (X, Y, Z, maxcolors, image3D, info)
+    return (X, Y, Z, maxcolors, list_3d, info)
 
 
 """ ┌──────────┐
     │ list2png │
-    └────-─────┘ """
+    └──────────┘ """
 
 
-def list2png(out_filename: str, image3D: list[list[list[int]]], info: dict) -> None:
+def list2png(out_filename: str, list_3d: list[list[list[int]]], info: dict) -> None:
     """Take filename and image data in a suitable form, and create PNG file.
 
     Usage:
     -------
 
-    ``pnglpng.list2png(out_filename, image3D, info)``
+    ``pnglpng.list2png(out_filename, list_3d, info)``
 
     Takes data described below and writes PNG file ``out_filename`` out of it:
 
-    - ``image3D`` - Y*X*Z list (image) of lists (rows) of lists (pixels) of ints (channels).
+    - ``list_3d`` - Y*X*Z list (image) of lists (rows) of lists (pixels) of ints (channels).
     - ``info`` - dictionary, chunks like resolution etc. as you want them to be present in PNG.
 
     """
 
     # Determining list sizes
-    Y = len(image3D)
-    X = len(image3D[0])
-    Z = len(image3D[0][0])
+    Y = len(list_3d)
+    X = len(list_3d[0])
+    Z = len(list_3d[0][0])
 
     # Overwriting "info" properties with ones determined from the list
     info['size'] = (X, Y)
@@ -156,9 +156,9 @@ def list2png(out_filename: str, image3D: list[list[list[int]]], info: dict) -> N
         info['greyscale'] = False
 
     # flattening 3D list to 1D list for PNG .write_array method
-    image1D = [
+    list_1d = [
         channel
-            for row in image3D
+            for row in list_3d
                 for pixel in row
                     for channel in pixel
     ]
@@ -166,7 +166,7 @@ def list2png(out_filename: str, image3D: list[list[list[int]]], info: dict) -> N
     # Writing PNG
     resultPNG = open(out_filename, mode='wb')
     writer = png.Writer(X, Y, **info)
-    writer.write_array(resultPNG, image1D)
+    writer.write_array(resultPNG, list_1d)
     resultPNG.close()  # Close output
 
     return None
@@ -174,7 +174,7 @@ def list2png(out_filename: str, image3D: list[list[list[int]]], info: dict) -> N
 
 """ ┌────────────────────┐
     │ Create empty image │
-    └────-───────────────┘ """
+    └────────────────────┘ """
 
 
 def create_image(X: int, Y: int, Z: int) -> list[list[list[int]]]:
