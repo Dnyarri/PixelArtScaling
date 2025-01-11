@@ -1,5 +1,5 @@
 
-| EN | [RU](README.RU.md) |
+| 『EN』 | [RU](README.RU.md) |
 | --- | --- |
 
 # Pixel Art Scaling programs
@@ -36,9 +36,11 @@ Usage:
 
 [![Example of Scale3x run twice](https://dnyarri.github.io/imgscalenx/x3x3.png)](https://dnyarri.github.io/scalenx.html)
 
-## Dependencies:
+## Dependencies
 
-[PyPNG](https://gitlab.com/drj11/pypng), Tkinter, multiprocessing.
+1. [PyPNG](https://gitlab.com/drj11/pypng). Copy included into ScaleNx distribution.
+2. [PyPNM](https://pypi.org/project/PyPNM/). Copy included into ScaleNx distribution.
+3. Tkinter, multiprocessing. Included into standard CPython distribution.
 
 > [!NOTE]
 > Programs are written entirely on Python, using image representation as list of lists of lists.
@@ -46,12 +48,12 @@ Usage:
 > Moreover, programs contain lists reshaping for PNG I/O purposes, also performed using Python native means only.
 > As a result, programs are slow but quite compatible with anything and don't require large external packages.
 
-## Related links:
+## Related links
 
-[ScaleNx PyPI](https://pypi.org/project/ScaleNx/)
+[ScaleNx at PyPI](https://pypi.org/project/ScaleNx/) - install ScaleNx core library via *pip*. Does not contain shell, image I/O, and GUI, only ScaleNx core for developers.
 
-[Dnyarri website](https://dnyarri.github.io)
+[Dnyarri website](https://dnyarri.github.io) - the rest of Dnyarri stuff with previews etc.
 
-[github Dnyarri](https://github.com/Dnyarri)
+[github Dnyarri](https://github.com/Dnyarri).
 
-[gitflic Dnyarri](https://gitflic.ru/user/dnyarri)
+[gitflic Dnyarri](https://gitflic.ru/user/dnyarri) mirror.

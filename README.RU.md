@@ -1,5 +1,5 @@
 
-| [EN](README.md) | RU |
+| [EN](README.md) | 『RU』 |
 | --- | --- |
 
 # Программы для масштабирования пиксельных картинок - Pixel Art Scaling
@@ -36,20 +36,24 @@
 
 [![Пример прогона Scale3x дважды](https://dnyarri.github.io/imgscalenx/x3x3.png)](https://dnyarri.github.io/scalenx.html)
 
-*Внешние зависимости:* [PyPNG](https://gitlab.com/drj11/pypng), Tkinter, multiprocessing, sys
+## Внешние зависимости
+
+1. [PyPNG](https://gitlab.com/drj11/pypng). Копия включена в дистрибутив ScaleNx.
+2. [PyPNM](https://pypi.org/project/PyPNM/). Копия включена в дистрибутив ScaleNx.
+3. Tkinter, multiprocessing. Входят в состав стандартного дистрибутива CPython.
 
 > [!NOTE]
 > Программы написаны целиком на Python, и используют логичное представление картинки как списка списков списков.
 > В то время как для человека данное представление является логичным, Python обрабатывает его медленно (впрочем, желающие могут попытаться указать мне и назвать, а что Python обрабатывает быстро).
-> Помимо этого, программы включают переформатирование списков для ввода/вывода PNG, тоже с использованием исключительно средств Python.
-> В результате программы не требуют больших внешних пакетов типа numpy и совместимы со всем, что шевелится, но работают медленно.
+> Помимо этого, программы включают переформатирование списков для ввода/вывода PNG и PNM, тоже с использованием исключительно средств Python.
+> В результате программы не требуют больших внешних пакетов типа Pillow и numpy, не имеют конфликтов версий, и совместимы со всем, что шевелится, но работают медленно.
 
-## Родственные сайты:
+## Родственные сайты
 
-[ScaleNx PyPI](https://pypi.org/project/ScaleNx/)
+[ScaleNx at PyPI](https://pypi.org/project/ScaleNx/) - ядро ScaleNx, установка через *pip*. Чистое ядро без примеров, гуёв и т.п.
 
-[Dnyarri website](https://dnyarri.github.io)
+[Dnyarri website](https://dnyarri.github.io) - остальной товар от Жабы Огромной Умственной Силы.
 
-[github Dnyarri](https://github.com/Dnyarri)
+[github Dnyarri](https://github.com/Dnyarri).
 
-[gitflic Dnyarri](https://gitflic.ru/user/dnyarri)
+[gitflic Dnyarri](https://gitflic.ru/user/dnyarri) - зеркало (с поправкой на тормознутость и глюкавость гитфлика).
