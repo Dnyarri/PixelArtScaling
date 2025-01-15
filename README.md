@@ -48,16 +48,18 @@ Usage:
 > Moreover, programs contain lists reshaping for PNG I/O purposes, also performed using Python native means only.
 > As a result, programs are slow but quite compatible with anything capable of running Python, and don't require large external packages causing version conflicts.
 
-## Related
+## References
 
-1. [Scale2x origin](https://github.com/amadvance/scale2x) by Andrea Mazzoleni.
+1. [Scale2x and Scale3x](https://www.scale2x.it/algorithm) algorithms description by the inventor, Andrea Mazzoleni.
 
 2. [Pixel-art scaling algorithms](https://en.wikipedia.org/wiki/Pixel-art_scaling_algorithms) review at Wikipedia.
 
-3. [ScaleNx at PyPI](https://pypi.org/project/ScaleNx/) - install ScaleNx core library via *pip*. Does not contain shell, image I/O, and GUI, only ScaleNx core for developers.
+3. [ScaleNx at PyPI](https://pypi.org/project/ScaleNx/) - install current ScaleNx core library via *pip*. Does not contain shell, image I/O, and GUI, only ScaleNx core for developers.
 
-4. [Dnyarri website](https://dnyarri.github.io) - the rest of Dnyarri stuff with previews etc.
+## Related
 
-5. [github Dnyarri](https://github.com/Dnyarri).
+1. [Dnyarri website](https://dnyarri.github.io) - the rest of Dnyarri stuff with previews etc.
 
-6. [gitflic Dnyarri](https://gitflic.ru/user/dnyarri) mirror.
+2. [github Dnyarri](https://github.com/Dnyarri).
+
+3. [gitflic Dnyarri](https://gitflic.ru/user/dnyarri) mirror.

@@ -48,16 +48,18 @@
 > Помимо этого, программы включают переформатирование списков для ввода/вывода PNG и PNM, тоже с использованием исключительно средств Python.
 > В результате программы не требуют больших внешних пакетов типа Pillow и numpy, не имеют конфликтов версий, и совместимы со всем, что шевелится, но работают медленно.
 
-## Родственное
+## Литература
 
-1. [Первоисточник Scale2x](https://github.com/amadvance/scale2x) - репозиторий Andrea Mazzoleni.
+1. [Первоисточник Scale2x и Scale3x](https://www.scale2x.it/algorithm) - описание алгоритмов автором, Andrea Mazzoleni.
 
 2. [Алгоритмы масштабирования пиксельной графики](https://ru.wikipedia.org/wiki/Алгоритмы_масштабирования_пиксельной_графики) - краткий обзор на Wikipedia.
 
 3. [ScaleNx на PyPI](https://pypi.org/project/ScaleNx/) - ядро ScaleNx, установка через *pip*. Чистое ядро без примеров, гуёв и т.п.
 
-4. [Dnyarri website](https://dnyarri.github.io) - остальной товар от Жабы Огромной Умственной Силы.
+## Родственное
 
-5. [github Dnyarri](https://github.com/Dnyarri).
+1. [Dnyarri website](https://dnyarri.github.io) - остальной товар от Жабы Огромной Умственной Силы.
 
-6. [gitflic Dnyarri](https://gitflic.ru/user/dnyarri) - зеркало (с поправкой на тормознутость гитфлика).
+2. [github Dnyarri](https://github.com/Dnyarri).
+
+3. [gitflic Dnyarri](https://gitflic.ru/user/dnyarri) - зеркало.
