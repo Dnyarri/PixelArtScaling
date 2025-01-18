@@ -1,30 +1,26 @@
 #!/usr/bin/env python3
 
 """
-Scale2x aka AdvMAME2x bitmap image scaling using Python only, merged command line and GUI versions.
+Scale3x bitmap image scaling, Scale3xSFX patch, merged command line and GUI versions.
 Created by: Ilya Razmanov (mailto:ilyarazmanov@gmail.com) aka Ilyich the Toad (mailto:amphisoft@gmail.com)
 
 Usage:
 
-    `python Scale2x.py source.png result.png`   - rescales source.png and writes result.png
-    `python Scale2x.py source.png`              - rescales source.png and overwrites source.png
-    `python Scale2x.py`                         - starts GUI for selecting source and result
+    `python Scale3xSFX.py source.png result.png`    - rescales source.png and writes result.png
+    `python Scale3xSFX.py source.png`               - rescales source.png and overwrites source.png
+    `python Scale3xSFX.py`                          - starts GUI for selecting source and result
 
 History:
 
-2024.05.11  Initial release of merged GUI and CLI versions.
-2024.05.14  Linked with IncSrc and IncScaleNx version 2024.05.14, data exchange format changed to incompatible with previous versions.
-24.08.01    Complete I/O change, excluding IncSrc in favour of pnglpng.
-24.10.01    Internal restructure, imports change.
-25.01.01    PPM and PGM read and write support added, PBM read only.
+25.01.16    Initial release.
 
 """
 
 __author__ = 'Ilya Razmanov'
-__copyright__ = '(c) 2024 Ilya Razmanov'
+__copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.01.07'
+__version__ = '25.01.16'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -33,8 +29,8 @@ from pathlib import Path
 from sys import argv
 
 from pypng import pnglpng  # PNG-list-PNG joint, uses PyPNG
-from pypnm import pnmlpnm  # PNM-list-PNM
-from scalenx.scalenx import scale2x  # Scale2x and Scale3x from: https://github.com/Dnyarri/PixelArtScaling
+from pypnm import pnmlpnm  # PyPNM
+from scalenx.scalenxsfx import scale3x  # https://github.com/Dnyarri/PixelArtScaling
 
 """ ╔═════════════════════╗
     ║ commandline variant ║
@@ -42,7 +38,7 @@ from scalenx.scalenx import scale2x  # Scale2x and Scale3x from: https://github.
 
 def cli(Rez: str, Dvo: str) -> None:
     """
-    Command line variant of Scale2x. Input - source and result PNG filenames.
+    Command line variant of Scale3x. Input - source and result PNG filenames.
 
     """
 
@@ -67,8 +63,8 @@ def cli(Rez: str, Dvo: str) -> None:
     else:
         raise ValueError('Extension not recognized')
 
-    # Scaling list to 2x image list
-    EPXImage = scale2x(image3d)
+    # Scaling to 3x image list
+    EPXImage = scale3x(image3d)
 
     # --------------------------------------------------------------
     # Fixing resolution to match original print size.
@@ -82,9 +78,8 @@ def cli(Rez: str, Dvo: str) -> None:
         x_pixels_per_unit = 3780  # 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
         y_pixels_per_unit = 3780  # 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
         unit_is_meter = True
-
-    x_pixels_per_unit = 2 * x_pixels_per_unit  # Double resolution to keep print size
-    y_pixels_per_unit = 2 * y_pixels_per_unit  # Double resolution to keep print size
+    x_pixels_per_unit = 3 * x_pixels_per_unit  # Double resolution to keep print size
+    y_pixels_per_unit = 3 * y_pixels_per_unit  # Double resolution to keep print size
 
     info['physical'] = [x_pixels_per_unit, y_pixels_per_unit, unit_is_meter]
     # Resolution changed
@@ -95,7 +90,7 @@ def cli(Rez: str, Dvo: str) -> None:
 
     if Path(Dvo).suffix == '.png':
         pnglpng.list2png(Dvo, EPXImage, info)
-    elif (Path(Dvo).suffix in ('.ppm', '.pgm')):
+    elif (Path(Dvo).suffix == '.ppm') or (Path(Dvo).suffix == '.pgm'):
         pnmlpnm.list2pnm(Dvo, EPXImage, maxcolors)
     else:
         raise ValueError('Extension not recognized')
@@ -109,7 +104,7 @@ def cli(Rez: str, Dvo: str) -> None:
 
 def gui():
     """
-    GUI variant of Scale2x, based on tkinter.
+    GUI variant of Scale3x, based on tkinter.
 
     """
 
@@ -117,9 +112,8 @@ def gui():
 
     # Creating dialog
     sortir = Tk()
-    sortir.title('Scale2x')
-
-    iconpath = Path(__file__).resolve().parent / '2x.ico'
+    sortir.title('Scale3x')
+    iconpath = Path(__file__).resolve().parent / '3x.ico'
     if iconpath.exists():
         sortir.iconbitmap(str(iconpath))
     else:
@@ -132,7 +126,7 @@ def gui():
     # Main dialog created and hidden
 
     # Open source file
-    sourcefilename = filedialog.askopenfilename(title='Open image file to reScale2x', filetypes=[('Supported formats', '.png .ppm .pgm .pbm'), ('PNG', '.png'), ('PNM', '.ppm .pgm .pbm')])
+    sourcefilename = filedialog.askopenfilename(title='Open image file to reScale3x', filetypes=[('Supported formats', '.png .ppm .pgm .pbm'), ('PNG', '.png'), ('PNM', '.ppm .pgm .pbm')])
     if sourcefilename == '':
         return None
 
@@ -166,10 +160,9 @@ def gui():
     sortir.update()
     sortir.update_idletasks()
 
-    # Scaling list to 2x image list
-    EPXImage = scale2x(image3d)
-
-    # --------------------------------------------------------------
+    # Scaling to 3x image list
+    EPXImage = scale3x(image3d)
+# --------------------------------------------------------------
     # Fixing resolution to match original print size.
     # If no pHYs found in original, 96 ppi is assumed as original value.
     if 'physical' in info:
@@ -182,8 +175,8 @@ def gui():
         y_pixels_per_unit = 3780  # 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
         unit_is_meter = True
 
-    x_pixels_per_unit = 2 * x_pixels_per_unit  # Double resolution to keep print size
-    y_pixels_per_unit = 2 * y_pixels_per_unit  # Double resolution to keep print size
+    x_pixels_per_unit = 3 * x_pixels_per_unit  # Triple resolution to keep print size
+    y_pixels_per_unit = 3 * y_pixels_per_unit  # Triple resolution to keep print size
 
     info['physical'] = [x_pixels_per_unit, y_pixels_per_unit, unit_is_meter]
     # Resolution changed
@@ -203,7 +196,7 @@ def gui():
 
     # Open export file
     resultfilename = filedialog.asksaveasfilename(
-        title='Save Scale2x image file',
+        title='Save Scale3x image file',
         filetypes=format,
         defaultextension=('PNG file', '.png'),
     )

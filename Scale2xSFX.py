@@ -1,22 +1,18 @@
 #!/usr/bin/env python3
 
 """
-Scale2x aka AdvMAME2x bitmap image scaling using Python only, merged command line and GUI versions.
+Scale2x bitmap image scaling, Scale2xSFX patch, merged command line and GUI versions.
 Created by: Ilya Razmanov (mailto:ilyarazmanov@gmail.com) aka Ilyich the Toad (mailto:amphisoft@gmail.com)
 
 Usage:
 
-    `python Scale2x.py source.png result.png`   - rescales source.png and writes result.png
-    `python Scale2x.py source.png`              - rescales source.png and overwrites source.png
-    `python Scale2x.py`                         - starts GUI for selecting source and result
+    `python Scale2xSFX.py source.png result.png`    - rescales source.png and writes result.png
+    `python Scale2xSFX.py source.png`               - rescales source.png and overwrites source.png
+    `python Scale2xSFX.py`                          - starts GUI for selecting source and result
 
 History:
 
-2024.05.11  Initial release of merged GUI and CLI versions.
-2024.05.14  Linked with IncSrc and IncScaleNx version 2024.05.14, data exchange format changed to incompatible with previous versions.
-24.08.01    Complete I/O change, excluding IncSrc in favour of pnglpng.
-24.10.01    Internal restructure, imports change.
-25.01.01    PPM and PGM read and write support added, PBM read only.
+25.01.16    Initial release.
 
 """
 
@@ -24,7 +20,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.01.07'
+__version__ = '25.01.16'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -33,8 +29,8 @@ from pathlib import Path
 from sys import argv
 
 from pypng import pnglpng  # PNG-list-PNG joint, uses PyPNG
-from pypnm import pnmlpnm  # PNM-list-PNM
-from scalenx.scalenx import scale2x  # Scale2x and Scale3x from: https://github.com/Dnyarri/PixelArtScaling
+from pypnm import pnmlpnm  # PyPNM
+from scalenx.scalenxsfx import scale2x  # https://github.com/Dnyarri/PixelArtScaling
 
 """ ╔═════════════════════╗
     ║ commandline variant ║

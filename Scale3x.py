@@ -2,13 +2,13 @@
 
 """
 Scale3x aka AdvMAME3x bitmap image scaling using Python only, merged command line and GUI versions.
-Created by: Ilya Razmanov (mailto:ilyarazmanov@gmail.com)
-            aka Ilyich the Toad (mailto:amphisoft@gmail.com)
+Created by: Ilya Razmanov (mailto:ilyarazmanov@gmail.com) aka Ilyich the Toad (mailto:amphisoft@gmail.com)
 
 Usage:
-    python Scale3x.py source.png result.png - rescales source.png and writes result.png
-    python Scale3x.py source.png            - rescales source.png and overwrites source.png
-    python Scale3x.py                       - starts GUI for selecting source and result
+
+    `python Scale3x.py source.png result.png`   - rescales source.png and writes result.png
+    `python Scale3x.py source.png`              - rescales source.png and overwrites source.png
+    `python Scale3x.py`                         - starts GUI for selecting source and result
 
 History:
 
@@ -34,7 +34,7 @@ from sys import argv
 
 from pypng import pnglpng  # PNG-list-PNG joint, uses PyPNG
 from pypnm import pnmlpnm  # PNM-list-PNM
-from scalenx import scale3x  # Scale2x and Scale3x from: https://github.com/Dnyarri/PixelArtScaling
+from scalenx.scalenx import scale3x  # Scale2x and Scale3x from: https://github.com/Dnyarri/PixelArtScaling
 
 """ ╔═════════════════════╗
     ║ commandline variant ║
@@ -51,11 +51,11 @@ def cli(Rez: str, Dvo: str) -> None:
 
     if Path(Rez).suffix == '.png':
         # Reading image as list
-        X, Y, Z, maxcolors, ImageAsListListList, info = pnglpng.png2list(Rez)
+        X, Y, Z, maxcolors, image3d, info = pnglpng.png2list(Rez)
 
     elif (Path(Rez).suffix in ('.ppm', '.pgm', '.pbm')):
         # Reading image as list
-        X, Y, Z, maxcolors, ImageAsListListList = pnmlpnm.pnm2list(Rez)
+        X, Y, Z, maxcolors, image3d = pnmlpnm.pnm2list(Rez)
         # Creating dummy info
         info = {}
         # Fixing color mode. The rest is fixed with pnglpng v. 25.01.07.
@@ -68,7 +68,7 @@ def cli(Rez: str, Dvo: str) -> None:
         raise ValueError('Extension not recognized')
 
     # Scaling to 3x image list
-    EPXImage = scale3x(ImageAsListListList)
+    EPXImage = scale3x(image3d)
 
     # --------------------------------------------------------------
     # Fixing resolution to match original print size.
@@ -143,11 +143,11 @@ def gui():
 
     if Path(sourcefilename).suffix == '.png':
         # Reading image as list
-        X, Y, Z, maxcolors, ImageAsListListList, info = pnglpng.png2list(sourcefilename)
+        X, Y, Z, maxcolors, image3d, info = pnglpng.png2list(sourcefilename)
 
     elif (Path(sourcefilename).suffix in ('.ppm', '.pgm', '.pbm')):
         # Reading image as list
-        X, Y, Z, maxcolors, ImageAsListListList = pnmlpnm.pnm2list(sourcefilename)
+        X, Y, Z, maxcolors, image3d = pnmlpnm.pnm2list(sourcefilename)
         # Creating dummy info
         info = {}
         # Fixing color mode. The rest is fixed with pnglpng v. 25.01.07.
@@ -165,9 +165,8 @@ def gui():
     sortir.update_idletasks()
 
     # Scaling to 3x image list
-    EPXImage = scale3x(ImageAsListListList)
-
-    # --------------------------------------------------------------
+    EPXImage = scale3x(image3d)
+# --------------------------------------------------------------
     # Fixing resolution to match original print size.
     # If no pHYs found in original, 96 ppi is assumed as original value.
     if 'physical' in info:

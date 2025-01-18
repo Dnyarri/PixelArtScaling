@@ -1,29 +1,20 @@
 #!/usr/bin/env python3
 
 '''
-Batch rescaling of PNG image using Scale3x aka AdvMAME3x
-Created by: Ilya Razmanov (mailto:ilyarazmanov@gmail.com)
-            aka Ilyich the Toad (mailto:amphisoft@gmail.com)
+Batch rescaling of PNG image using Scale3xSFX.
+Created by: Ilya Razmanov (mailto:ilyarazmanov@gmail.com) aka Ilyich the Toad (mailto:amphisoft@gmail.com)
 
 History:
 
-01.000      Initial working release. 
-2024.02.24  Cleanup, GUI tweaks, versioning changed to YYYY.MM.DD  
-2024.03.30  pHYs chunk editing to keep image print size constant.  
-2024.04.03  pathlib Path.exists flightcheck to make GUI exe packagers-friendly, glob replaced with path.rglob  
-2024.04.23  Self-calling scalefile(runningfilename)  
-2024.04.23  Multiprocessing introduced, pool.map_async version will go to production. GUI hangs and not updated, but now it apologize.  
-2024.05.14  Linked with IncSrc and IncScaleNx version 2024.05.14, data exchange format changed to incompatible with previous versions. 
-24.08.01    Complete I/O change, excluding IncSrc in favour of pnglpng.  
-24.10.01    Internal restructure, imports change.  
+25.01.16    Initial release.
 
 '''
 
 __author__ = 'Ilya Razmanov'
-__copyright__ = '(c) 2024 Ilya Razmanov'
+__copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.01.07'
+__version__ = '25.01.16'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -33,7 +24,7 @@ from pathlib import Path
 from tkinter import Label, PhotoImage, Tk, X, filedialog
 
 from pypng import pnglpng  # PNG-list-PNG joint, uses PyPNG
-from scalenx import scale3x  # Scale2x and Scale3x from: https://github.com/Dnyarri/PixelArtScaling
+from scalenx.scalenxsfx import scale3x  # https://github.com/Dnyarri/PixelArtScaling
 
 
 def scalefile(runningfilename: str) -> None:
@@ -46,11 +37,11 @@ def scalefile(runningfilename: str) -> None:
     newfile = oldfile  # Previous version used backup newfile = oldfile + '.3x.png'
 
     # Reading image as list
-    ImageAsListListList = pnglpng.png2list(oldfile)[4]
+    image3d = pnglpng.png2list(oldfile)[4]
     info = pnglpng.png2list(oldfile)[5]
 
     # Scaling list to 3x image list
-    EPXImage = scale3x(ImageAsListListList)
+    EPXImage = scale3x(image3d)
 
     # --------------------------------------------------------------
     # Fixing resolution to match original print size.
