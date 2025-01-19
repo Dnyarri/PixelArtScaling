@@ -3,14 +3,10 @@
 
 for ScaleNx:
 
-``from scalenx.scalenx import scale2x``
+`from scalenx import scalenx`
 
-``from scalenx.scalenx import scale3x``
+for ScaleNxSFX:
 
-or for ScaleNxSFX patch:
-
-``from scalenx.scalenxsfx import scale2x``
-
-``from scalenx.scalenxsfx import scale2x``
+`from scalenx import scalenxsfx`
 
 """

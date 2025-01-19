@@ -8,31 +8,14 @@ Programs for scaling up small low-color images like icons and game sprites.
 
 Apparently useful for scaling up grey text scans with low resolution before OCR, to improve OCR quality.
 
-> [!NOTE]
-> For single file processing PNG, PGM and PPM formats are supported. Batch processing of folders and subfolders is supported. Currently only PNG format is supported for batch processing to avoid batch confusions due to different PNM subversions.
+Currently **Scale2x** (aka AdvMAME2x), **Scale3x** (aka AdvMAME3x), **Scale2xSFX** and **Scale3xSFX** methods are implemented.  
 
-Currently [**Scale2x**](https://www.scale2x.it/) (aka **AdvMAME2x**) and **Scale3x** (aka **AdvMAME3x**) are implemented.  
-
-- **Scale2x.py** - single image rescale, uses Scale2x scaling, equipped with simple GUI for opening and saving PNG files, but can also be run from command line.  
-Usage:  
-    *python Scale2x.py*                           - starts GUI for selecting source and result  
-    *python Scale2x.py source.png*                - rescales source.png and overwrites source.png  
-    *python Scale2x.py source.png result.png*     - rescales source.png and writes result.png  
-
-- **batchScale2x.py** - batch rescaling of all PNG files within chosen directory, recursively, using Scale2x algorithm. *Attention:* Source images are replaced, no backup - no mercy.  
-
-- **Scale3x.py** - single image rescale, uses Scale3x scaling, equipped with simple GUI for opening and saving PNG files, but can also be run from command line.  
-Usage:  
-    *python Scale3x.py*                           - starts GUI for selecting source and result  
-    *python Scale3x.py source.png*                - rescales source.png and overwrites source.png  
-    *python Scale3x.py source.png result.png*     - rescales source.png and writes result.png  
-
-- **batchScale3x.py** - batch rescaling of all PNG files within chosen directory, recursively, using Scale3x algorithm. *Attention:* Source images are replaced, no backup - no mercy.  
+**ScaleNxGUI.py** is a common shell joining together image formats reading/writing and image rescaling modules. Program provides suitable GUI to access both single file and batch files processing.
 
 > [!NOTE]
-> Batch processing programs in this version use async multiprocessing, drastically reducing processing time but loading CPU at 100% and rendering GUI almost unresponsive.  
+> For single file processing PNG, PGM and PPM formats are supported. For batch processing currently only PNG format is supported to avoid batch confusions due to different PNM subversions. Note that batch processing programs replace original files with scaled copies. Batch processing programs in this version use async multiprocessing, thus drastically reducing processing time but loading CPU at 100% and rendering GUI almost unresponsive.  
 
-## Sample of Scale3x output (twice)
+## Sample of Scale3x (twice)
 
 [![Example of Scale3x run twice](https://dnyarri.github.io/imgscalenx/x3x3.png)](https://dnyarri.github.io/scalenx.html)
 
@@ -52,9 +35,11 @@ Usage:
 
 1. [Scale2x and Scale3x](https://www.scale2x.it/algorithm) algorithms description by the inventor, Andrea Mazzoleni.
 
-2. [Pixel-art scaling algorithms](https://en.wikipedia.org/wiki/Pixel-art_scaling_algorithms) review at Wikipedia.
+2. [Scale2xSFX and Scale3xSFX](https://web.archive.org/web/20160527015550/https://libretro.com/forums/archive/index.php?t-1655.html) algorithms description at forums archive.
 
-3. [ScaleNx at PyPI](https://pypi.org/project/ScaleNx/) - install current ScaleNx core library via *pip*. Does not contain shell, image I/O, and GUI, only ScaleNx core for developers.
+3. [Pixel-art scaling algorithms](https://en.wikipedia.org/wiki/Pixel-art_scaling_algorithms) review at Wikipedia.
+
+4. [ScaleNx at PyPI](https://pypi.org/project/ScaleNx/) - install current ScaleNx core library via *pip*. Does not contain shell, image I/O, and GUI, only ScaleNx core for developers.
 
 ## Related
 

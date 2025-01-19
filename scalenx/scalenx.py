@@ -5,23 +5,25 @@
 Overview
 ----------
 
-- ``scalenx.scale2x``   - Scale2x aka AdvMAME2x image scaling up two times.
+- `scalenx.scale2x`: Scale2x aka AdvMAME2x image scaling up two times.
 
-- ``scalenx.scale3x``   - Scale3x aka AdvMAME3x image scaling up three times.
+- `scalenx.scale3x`: Scale3x aka AdvMAME3x image scaling up three times.
 
 Installation
 --------------
 
-Simply put module into your program folder.
+Either use `pip scalenx` or simply put `scalenx` module into your program folder, then
+
+`from scalenx import scalenx`
 
 Usage
 -------
 
-After ``import scalenx``, use something like:
+Use something like:
 
-``ScaledImage = scalenx.scale3x(SourceImage)``
+`ScaledImage = scalenx.scale3x(SourceImage)`
 
-where both ``Image`` are lists. Note that ``Image`` X and Y sized are determined automatically, Z not used and remains unchanged.
+where both `Image` are list[list[list[int]]]. Note that `Image` X and Y sized are determined automatically, Z not used and remains unchanged.
 
 
 Copyright and redistribution
@@ -29,7 +31,7 @@ Copyright and redistribution
 
 Python implementation developed by Ilya Razmanov (https://dnyarri.github.io/), (hereinafter referred to as "the Developer"), based on brief algorithm description by Andrea Mazzoleni (https://www.scale2x.it/) (hereinafter referred to as "the Inventor").
 
-May be freely used, included and modified anywhere by anyone. In case of useful modifications sharing it with the Developer is almost obligatory.
+Current implementation may be freely used, included and modified anywhere by anyone. In case of useful modifications sharing it with the Developer is almost obligatory.
 
 History:
 ----------
@@ -52,7 +54,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024-2025 Ilya Razmanov'
 __credits__ = ['Ilya Razmanov', 'Andrea Mazzoleni']
 __license__ = 'unlicense'
-__version__ = '2025.01.15'
+__version__ = '2025.01.19'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -66,9 +68,9 @@ def scale2x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
     """Scale2x image rescale
     -
 
-    ``EPXImage = scale2x(image3d)``
+    `EPXImage = scalenx.scale2x(image3d)`
 
-    Takes ``image3d`` as 3D nested list (image) of lists (rows) of lists (pixels) of int (channel values), and performs Scale2x rescaling, returning scaled EPXImage of similar structure.
+    Takes `image3d` as 3D nested list (image) of lists (rows) of lists (pixels) of int (channel values), and performs Scale2x rescaling, returning scaled EPXImage of similar structure.
 
     """
 
@@ -137,9 +139,9 @@ def scale3x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
     """Scale3x image rescale
     -
 
-    ``EPXImage = scale3x(image3d)``
+    `EPXImage = scalenx.scale3x(image3d)`
 
-    Takes ``image3d`` as 3D nested list (image) of lists (rows) of lists (pixels) of int (channel values), and performs Scale3x rescaling, returning scaled EPXImage of similar structure.
+    Takes `image3d` as 3D nested list (image) of lists (rows) of lists (pixels) of int (channel values), and performs Scale3x rescaling, returning scaled EPXImage of similar structure.
 
     """
 
