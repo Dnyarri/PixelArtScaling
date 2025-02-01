@@ -4,6 +4,10 @@
 
 # Программы для масштабирования пиксельных картинок - Pixel Art Scaling
 
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/scalenx)
+ ![PyPI - Version](https://img.shields.io/pypi/v/scalenx)
+ ![PyPI - Downloads](https://img.shields.io/pypi/dm/scalenx)
+
 Программы для увеличения маленьких малоцветных картинок типа иконок и игровых спрайтов.
 
 Также полезны для улучшения сканов текстов с низким разрешением перед OCR.
