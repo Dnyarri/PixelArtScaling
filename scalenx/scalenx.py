@@ -12,7 +12,7 @@ Overview
 Installation
 --------------
 
-Either use `pip scalenx` or simply put `scalenx` module into your program folder, then
+Either use `pip scalenx` or simply put `scalenx` module folder into your main program folder, then:
 
 `from scalenx import scalenx`
 
@@ -46,7 +46,9 @@ History:
 
 2024.11.24  Improved documentation.
 
-2025.01.15  Substantial change in "if" tree. Some appends replaced with extends. Scale2x boost ca. 12%, Scale3x ca. 15%.
+2025.01.15  Conditional optimization. Some appends replaced with extends.
+
+2025.02.01  FIR optimization. Speed gain, % of original: ca.15% 2x, ca. 50% 3x.
 
 """
 
@@ -54,7 +56,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024-2025 Ilya Razmanov'
 __credits__ = ['Ilya Razmanov', 'Andrea Mazzoleni']
 __license__ = 'unlicense'
-__version__ = '2025.01.19'
+__version__ = '2025.02.01'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -68,23 +70,60 @@ def scale2x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
     """Scale2x image rescale
     -
 
-    `EPXImage = scalenx.scale2x(image3d)`
+    `scaled_image = scalenx.scale2x(image3d)`
 
-    Takes `image3d` as 3D nested list (image) of lists (rows) of lists (pixels) of int (channel values), and performs Scale2x rescaling, returning scaled EPXImage of similar structure.
+    Takes `image3d` as 3D nested list (image) of lists (rows) of lists (pixels) of int (channel values), and performs Scale2x rescaling, returning scaled `scaled_image` of similar structure.
 
     """
 
-    # determining image size from list
+    # determining source image size from list
     Y = len(image3d)
     X = len(image3d[0])
 
-    # building new list
-    EPXImage = list()
+    # starting new image list
+    scaled_image: list[list[list[int]]] = list()
+
+    def _dva(A: list[int], B: list[int], C: list[int], D: list[int], E: list[int]):
+        """Scale2x decision tree function"""
+
+        r1 = r2 = r3 = r4 = E
+
+        if A != D and C != B:
+            if A == C:
+                r1 = C
+            if A == B:
+                r2 = B
+            if D == C:
+                r3 = C
+            if D == B:
+                r4 = B
+        return r1, r2, r3, r4
 
     for y in range(0, Y, 1):
-        RowRez = list()
-        RowDvo = list()
-        for x in range(0, X, 1):
+        """
+            ┌───────────────────────┐
+            │ First pixel in a row. │
+            │ "Repeat edge" mode.   │
+            └───────────────────────┘
+        """
+        A = image3d[max(y - 1, 0)][0]
+        B = image3d[y][min(1, X - 1)]
+        C = E = image3d[y][0]
+        D = image3d[min(y + 1, Y - 1)][0]
+
+        r1, r2, r3, r4 = _dva(A, B, C, D, E)
+
+        row_rez = [r1, r2]
+        row_dvo = [r3, r4]
+
+        """
+            ┌───────────────────────────────────────────┐
+            │ Next pixels in a row (below).             │
+            │ Reusing pixels from previous kernel.      │
+            │ Only rightmost pixels are read from list. │
+            └───────────────────────────────────────────┘
+        """
+        for x in range(1, X, 1):
             """ Source around default pixel E
                 ┌───┬───┬───┐
                 │   │ A │   │
@@ -94,11 +133,10 @@ def scale2x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
                 │   │ D │   │
                 └───┴───┴───┘
             """
-
-            E = image3d[y][x]
+            C = E
+            E = B
             A = image3d[max(y - 1, 0)][x]
             B = image3d[y][min(x + 1, X - 1)]
-            C = image3d[y][max(x - 1, 0)]
             D = image3d[min(y + 1, Y - 1)][x]
 
             """ Result
@@ -108,26 +146,15 @@ def scale2x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
                 │ r3 │ r4 │
                 └────┴────┘
             """
+            r1, r2, r3, r4 = _dva(A, B, C, D, E)
 
-            r1 = r2 = r3 = r4 = E
+            row_rez.extend((r1, r2))
+            row_dvo.extend((r3, r4))
 
-            if A != D and C != B:
-                if A == C:
-                    r1 = C
-                if A == B:
-                    r2 = B
-                if D == C:
-                    r3 = C
-                if D == B:
-                    r4 = B
+        scaled_image.append(row_rez)
+        scaled_image.append(row_dvo)
 
-            RowRez.extend([r1, r2])
-            RowDvo.extend([r3, r4])
-
-        EPXImage.append(RowRez)
-        EPXImage.append(RowDvo)
-
-    return EPXImage  # rescaling two times finished
+    return scaled_image  # rescaling two times finished
 
 
 """ ╔════════════════════════════════════════════╗
@@ -139,24 +166,72 @@ def scale3x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
     """Scale3x image rescale
     -
 
-    `EPXImage = scalenx.scale3x(image3d)`
+    `scaled_image = scalenx.scale3x(image3d)`
 
-    Takes `image3d` as 3D nested list (image) of lists (rows) of lists (pixels) of int (channel values), and performs Scale3x rescaling, returning scaled EPXImage of similar structure.
+    Takes `image3d` as 3D nested list (image) of lists (rows) of lists (pixels) of int (channel values), and performs Scale3x rescaling, returning scaled `scaled_image` of similar structure.
 
     """
 
-    # determining image size from list
+    # determining source image size from list
     Y = len(image3d)
     X = len(image3d[0])
 
-    # building new list
-    EPXImage = list()
+    # starting new image list
+    scaled_image: list[list[list[int]]] = list()
+
+    def _tri(A: list[int], B: list[int], C: list[int], D: list[int], E: list[int], F: list[int], G: list[int], H: list[int], I: list[int]):
+        """Scale3x decision tree function"""
+
+        r1 = r2 = r3 = r4 = r5 = r6 = r7 = r8 = r9 = E
+
+        if B != H and D != F:
+            if D == B:
+                r1 = D
+            if (D == B and E != C) or (B == F and E != A):
+                r2 = B
+            if B == F:
+                r3 = F
+            if (D == B and E != G) or (D == H and E != A):
+                r4 = D
+            # central pixel r5 = E set already
+            if (B == F and E != I) or (H == F and E != C):
+                r6 = F
+            if D == H:
+                r7 = D
+            if (D == H and E != I) or (H == F and E != G):
+                r8 = H
+            if H == F:
+                r9 = F
+        return r1, r2, r3, r4, r5, r6, r7, r8, r9
 
     for y in range(0, Y, 1):
-        RowRez = list()
-        RowDvo = list()
-        RowTre = list()
-        for x in range(0, X, 1):
+        """
+            ┌───────────────────────┐
+            │ First pixel in a row. │
+            │ "Repeat edge" mode.   │
+            └───────────────────────┘
+        """
+        A = B = image3d[max(y - 1, 0)][0]
+        C = image3d[max(y - 1, 0)][min(1, X - 1)]
+        D = E = image3d[y][0]
+        F = image3d[y][min(1, X - 1)]
+        G = H = image3d[min(y + 1, Y - 1)][0]
+        I = image3d[min(y + 1, Y - 1)][min(1, X - 1)]
+
+        r1, r2, r3, r4, r5, r6, r7, r8, r9 = _tri(A, B, C, D, E, F, G, H, I)
+
+        row_rez = [r1, r2, r3]
+        row_dvo = [r4, r5, r6]
+        row_tre = [r7, r8, r9]
+
+        """
+            ┌───────────────────────────────────────────┐
+            │ Next pixels in a row (below).             │
+            │ Reusing pixels from previous kernel.      │
+            │ Only rightmost pixels are read from list. │
+            └───────────────────────────────────────────┘
+        """
+        for x in range(1, X, 1):
             """ Source around default pixel E
                 ┌───┬───┬───┐
                 │ A │ B │ C │
@@ -166,19 +241,16 @@ def scale3x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
                 │ G │ H │ I │
                 └───┴───┴───┘
             """
-
-            E = image3d[y][x]  # E is a center of 3x3 square
-
-            A = image3d[max(y - 1, 0)][max(x - 1, 0)]
-            B = image3d[max(y - 1, 0)][x]
+            A = B
+            B = C
             C = image3d[max(y - 1, 0)][min(x + 1, X - 1)]
 
-            D = image3d[y][max(x - 1, 0)]
-            # central pixel E = image3d[y][x] retrieved already
+            D = E
+            E = F
             F = image3d[y][min(x + 1, X - 1)]
 
-            G = image3d[min(y + 1, Y - 1)][max(x - 1, 0)]
-            H = image3d[min(y + 1, Y - 1)][x]
+            G = H
+            H = I
             I = image3d[min(y + 1, Y - 1)][min(x + 1, X - 1)]
 
             """ Result
@@ -190,37 +262,17 @@ def scale3x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
                 │ r7 │ r8 │ r9 │
                 └────┴────┴────┘
             """
+            r1, r2, r3, r4, r5, r6, r7, r8, r9 = _tri(A, B, C, D, E, F, G, H, I)
 
-            r1 = r2 = r3 = r4 = r5 = r6 = r7 = r8 = r9 = E
+            row_rez.extend((r1, r2, r3))
+            row_dvo.extend((r4, r5, r6))
+            row_tre.extend((r7, r8, r9))
 
-            if B != H and D != F:
-                if D == B:
-                    r1 = D
-                if (D == B and E != C) or (B == F and E != A):
-                    r2 = B
-                if B == F:
-                    r3 = F
-                if (D == B and E != G) or (D == H and E != A):
-                    r4 = D
-                # central pixel r5 = E set already
-                if (B == F and E != I) or (H == F and E != C):
-                    r6 = F
-                if D == H:
-                    r7 = D
-                if (D == H and E != I) or (H == F and E != G):
-                    r8 = H
-                if H == F:
-                    r9 = F
+        scaled_image.append(row_rez)
+        scaled_image.append(row_dvo)
+        scaled_image.append(row_tre)
 
-            RowRez.extend([r1, r2, r3])
-            RowDvo.extend([r4, r5, r6])
-            RowTre.extend([r7, r8, r9])
-
-        EPXImage.append(RowRez)
-        EPXImage.append(RowDvo)
-        EPXImage.append(RowTre)
-
-    return EPXImage  # rescaling three times finished
+    return scaled_image  # rescaling three times finished
 
 
 # --------------------------------------------------------------
