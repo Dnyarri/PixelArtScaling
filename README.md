@@ -4,9 +4,9 @@
 
 # Pixel Art Scaling programs
 
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/scalenx)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/scalenx)
  ![PyPI - Version](https://img.shields.io/pypi/v/scalenx)
- ![PyPI - Downloads](https://img.shields.io/pypi/dm/scalenx)
+ ![PyPI - Downloads](https://img.shields.io/pypi/dm/scalenx)](https://pypi.org/project/ScaleNx/)
 
 Programs for scaling up small low-color images like icons and game sprites.
 
@@ -17,7 +17,10 @@ Currently **Scale2x** (aka AdvMAME2x), **Scale3x** (aka AdvMAME3x), **Scale2xSFX
 **ScaleNxGUI.py** is a common shell joining together image formats reading/writing and image rescaling modules. Program provides suitable GUI to access both single file and batch files processing.
 
 > [!NOTE]
-> For single file processing PNG, PGM and PPM formats are supported. For batch processing currently only PNG format is supported to avoid batch confusions due to different PNM subversions. Note that batch processing programs replace original files with scaled copies. Batch processing programs in this version use async multiprocessing, thus drastically reducing processing time but loading CPU at 100% and rendering GUI almost unresponsive.  
+> For single file processing PNG, PGM and PPM formats are supported. For batch processing currently only PNG format is supported to avoid batch confusions due to different PNM subversions.
+
+> [!CAUTION]
+> Batch processing programs replace original files with scaled copies. Batch processing programs in this version use async multiprocessing, thus drastically reducing processing time but loading CPU at 100% and rendering GUI almost unresponsive.  
 
 ## Sample of Scale3x (twice)
 
