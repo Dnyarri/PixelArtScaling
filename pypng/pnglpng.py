@@ -65,7 +65,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024-2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.02.06'
+__version__ = '25.02.08'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -170,12 +170,12 @@ def list2png(out_filename: str, list_3d: list[list[list[int]]], info: dict) -> N
     def flatten_2d(list_3d: list[list[list[int]]]):
         """Flatten `list_3d` to 2D list of rows, yield generator."""
 
-        for row in list_3d:
-            row = [channel
-                    for pixel in row
-                        for channel in pixel
-                ]
-            yield row
+        yield from (
+                        [channel
+                            for pixel in row
+                                for channel in pixel
+                        ] for row in list_3d
+                    ) 
 
     # Writing PNG with `.write` method (row by row), using `flatten_2d` generator to save memory
     writer = png.Writer(X, Y, **info)
@@ -196,7 +196,7 @@ def create_image(X: int, Y: int, Z: int) -> list[list[list[int]]]:
                     [
                         [0 for z in range(Z)] for x in range(X)
                     ] for y in range(Y)
-            ]
+                ]
 
     return new_image
 
