@@ -1,5 +1,5 @@
 
-| 『EN』 | [RU](README.RU.md) |
+| 【EN】 | [〖RU〗](README.RU.md) |
 | --- | --- |
 
 # Pixel Art Scaling programs
