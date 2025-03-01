@@ -3,38 +3,44 @@
 """Module contain Scale2x and Scale3x image rescaling functions.
 
 Overview
-----------
+---------
 
-- `scalenx.scale2x`: Scale2x aka AdvMAME2x image scaling up two times.
+- `scalenx.scale2x`: Scale2x aka AdvMAME2x image scaling up two times
+without introducing intermediate colors (blur).
 
-- `scalenx.scale3x`: Scale3x aka AdvMAME3x image scaling up three times.
+- `scalenx.scale3x`: Scale3x aka AdvMAME3x image scaling up three times
+without introducing intermediate colors (blur).
 
 Installation
---------------
+-------------
 
 Either use `pip scalenx` or simply put `scalenx` module folder into your main program folder, then:
 
-`from scalenx import scalenx`
+    `from scalenx import scalenx`
 
 Usage
--------
+------
 
-Use something like:
+Syntaxis example:
 
-`ScaledImage = scalenx.scale3x(SourceImage)`
+    `scaled_image = scalenx.scale3x(source_image)`
 
-where both `Image` are list[list[list[int]]]. Note that `Image` X and Y sized are determined automatically, Z not used and remains unchanged.
+where both `image` are list[list[list[int]]].
+Note that `image` X and Y sized are determined automatically, Z not used and remains unchanged.
 
 
 Copyright and redistribution
 -----------------------------
 
-Python implementation developed by Ilya Razmanov (https://dnyarri.github.io/), (hereinafter referred to as "the Developer"), based on brief algorithm description by Andrea Mazzoleni (https://www.scale2x.it/) (hereinafter referred to as "the Inventor").
+Current Python implementation of ScaleNx developed by `Ilya Razmanov <https://dnyarri.github.io/>`_
+(hereinafter referred to as "the Developer"), based on `brief algorithm description <https://www.scale2x.it/algorithm>`_
+by `Andrea Mazzoleni <https://www.scale2x.it/>`_ (hereinafter referred to as "the Inventor").
 
-Current implementation may be freely used, included and modified anywhere by anyone. In case of useful modifications sharing it with the Developer is almost obligatory.
+Current implementation may be freely used, included and modified anywhere by anyone.
+In case of useful modifications sharing it with the Developer is almost obligatory.
 
-History:
-----------
+History
+--------
 
 2024.02.24  Release as shared module, versioning changed to YYYY.MM.DD.
 
@@ -56,7 +62,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024-2025 Ilya Razmanov'
 __credits__ = ['Ilya Razmanov', 'Andrea Mazzoleni']
 __license__ = 'unlicense'
-__version__ = '2025.02.01'
+__version__ = '2025.03.01'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -70,9 +76,10 @@ def scale2x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
     """Scale2x image rescale
     -
 
-    `scaled_image = scalenx.scale2x(image3d)`
+        `scaled_image = scalenx.scale2x(image3d)`
 
-    Takes `image3d` as 3D nested list (image) of lists (rows) of lists (pixels) of int (channel values), and performs Scale2x rescaling, returning scaled `scaled_image` of similar structure.
+    Takes `image3d` as 3D nested list (image) of lists (rows) of lists (pixels) of int (channel values),
+    and performs Scale2x rescaling, returning scaled `scaled_image` of similar structure.
 
     """
 
@@ -84,7 +91,7 @@ def scale2x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
     scaled_image: list[list[list[int]]] = list()
 
     def _dva(A: list[int], B: list[int], C: list[int], D: list[int], E: list[int]):
-        """Scale2x decision tree function"""
+        """Scale2x conditional tree function"""
 
         r1 = r2 = r3 = r4 = E
 
@@ -99,7 +106,23 @@ def scale2x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
                 r4 = B
         return r1, r2, r3, r4
 
-    for y in range(0, Y, 1):
+    """ Source around default pixel E
+        ┌───┬───┬───┐
+        │   │ A │   │
+        ├───┼───┼───┤
+        │ C │ E │ B │
+        ├───┼───┼───┤
+        │   │ D │   │
+        └───┴───┴───┘
+
+        Result
+        ┌────┬────┐
+        │ r1 │ r2 │
+        ├────┼────┤
+        │ r3 │ r4 │
+        └────┴────┘
+    """
+    for y in range(Y):
         """
             ┌───────────────────────┐
             │ First pixel in a row. │
@@ -123,29 +146,13 @@ def scale2x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
             │ Only rightmost pixels are read from list. │
             └───────────────────────────────────────────┘
         """
-        for x in range(1, X, 1):
-            """ Source around default pixel E
-                ┌───┬───┬───┐
-                │   │ A │   │
-                ├───┼───┼───┤
-                │ C │ E │ B │
-                ├───┼───┼───┤
-                │   │ D │   │
-                └───┴───┴───┘
-            """
+        for x in range(1, X):
             C = E
             E = B
             A = image3d[max(y - 1, 0)][x]
             B = image3d[y][min(x + 1, X - 1)]
             D = image3d[min(y + 1, Y - 1)][x]
 
-            """ Result
-                ┌────┬────┐
-                │ r1 │ r2 │
-                ├────┼────┤
-                │ r3 │ r4 │
-                └────┴────┘
-            """
             r1, r2, r3, r4 = _dva(A, B, C, D, E)
 
             row_rez.extend((r1, r2))
@@ -166,9 +173,10 @@ def scale3x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
     """Scale3x image rescale
     -
 
-    `scaled_image = scalenx.scale3x(image3d)`
+        `scaled_image = scalenx.scale3x(image3d)`
 
-    Takes `image3d` as 3D nested list (image) of lists (rows) of lists (pixels) of int (channel values), and performs Scale3x rescaling, returning scaled `scaled_image` of similar structure.
+    Takes `image3d` as 3D nested list (image) of lists (rows) of lists (pixels) of int (channel values),
+    and performs Scale3x rescaling, returning scaled `scaled_image` of similar structure.
 
     """
 
@@ -180,7 +188,7 @@ def scale3x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
     scaled_image: list[list[list[int]]] = list()
 
     def _tri(A: list[int], B: list[int], C: list[int], D: list[int], E: list[int], F: list[int], G: list[int], H: list[int], I: list[int]):
-        """Scale3x decision tree function"""
+        """Scale3x conditional tree function"""
 
         r1 = r2 = r3 = r4 = r5 = r6 = r7 = r8 = r9 = E
 
@@ -204,7 +212,25 @@ def scale3x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
                 r9 = F
         return r1, r2, r3, r4, r5, r6, r7, r8, r9
 
-    for y in range(0, Y, 1):
+    """ Source around default pixel E
+        ┌───┬───┬───┐
+        │ A │ B │ C │
+        ├───┼───┼───┤
+        │ D │ E │ F │
+        ├───┼───┼───┤
+        │ G │ H │ I │
+        └───┴───┴───┘
+
+        Result
+        ┌────┬────┬────┐
+        │ r1 │ r2 │ r3 │
+        ├────┼────┼────┤
+        │ r4 │ r5 │ r6 │
+        ├────┼────┼────┤
+        │ r7 │ r8 │ r9 │
+        └────┴────┴────┘
+    """
+    for y in range(Y):
         """
             ┌───────────────────────┐
             │ First pixel in a row. │
@@ -231,16 +257,7 @@ def scale3x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
             │ Only rightmost pixels are read from list. │
             └───────────────────────────────────────────┘
         """
-        for x in range(1, X, 1):
-            """ Source around default pixel E
-                ┌───┬───┬───┐
-                │ A │ B │ C │
-                ├───┼───┼───┤
-                │ D │ E │ F │
-                ├───┼───┼───┤
-                │ G │ H │ I │
-                └───┴───┴───┘
-            """
+        for x in range(1, X):
             A = B
             B = C
             C = image3d[max(y - 1, 0)][min(x + 1, X - 1)]
@@ -253,15 +270,6 @@ def scale3x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
             H = I
             I = image3d[min(y + 1, Y - 1)][min(x + 1, X - 1)]
 
-            """ Result
-                ┌────┬────┬────┐
-                │ r1 │ r2 │ r3 │
-                ├────┼────┼────┤
-                │ r4 │ r5 │ r6 │
-                ├────┼────┼────┤
-                │ r7 │ r8 │ r9 │
-                └────┴────┴────┘
-            """
             r1, r2, r3, r4, r5, r6, r7, r8, r9 = _tri(A, B, C, D, E, F, G, H, I)
 
             row_rez.extend((r1, r2, r3))
