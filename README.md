@@ -17,7 +17,7 @@ Currently **Scale2x** (aka AdvMAME2x), **Scale3x** (aka AdvMAME3x), **Scale2xSFX
 **ScaleNxGUI.py** is a common shell joining together image formats reading/writing and image rescaling modules. Program provides suitable GUI to access both single file and batch files processing.
 
 > [!NOTE]
-> For single file processing PNG, PGM and PPM formats are supported. For batch processing currently only PNG format is supported to avoid batch confusions due to different PNM subversions.
+> During batch processing PPM and PGM files are saved as binary formats (P6 and P5 respectively) regardless of source format since binary formats surprisingly appeared to be more compatible with software like Photoshop.
 
 > [!CAUTION]
 > Batch processing programs replace original files with scaled copies. Batch processing programs in this version use async multiprocessing, thus drastically reducing processing time but loading CPU at 100% and rendering GUI almost unresponsive.  
