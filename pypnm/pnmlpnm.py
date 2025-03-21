@@ -96,13 +96,16 @@ controlled by optional `show_chessboard` bool added to arguments.
 Default is `False` (i.e. simply ignoring alpha) for backward compatibility.
 Improved robustness.
 
+1.15.19.19  General branch shortening and more cleanup. Minor bogus stuff removed.
+Yet another final version ;-)
+
 """
 
 __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024-2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '1.15.1.1'
+__version__ = '1.15.19.19'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -113,6 +116,7 @@ import re
 """ ╔══════════╗
     ║ pnm2list ║
     ╚══════════╝ """
+
 
 def pnm2list(in_filename: str) -> tuple[int, int, int, int, list[list[list[int]]]]:
     """Read PGM or PPM file to nested image data list.
@@ -186,13 +190,13 @@ def pnm2list(in_filename: str) -> tuple[int, int, int, int, list[list[list[int]]
 
             list_1d = array_1d.tolist()
 
-            list_3d = [
-                        [
-                            [
-                                list_1d[z + x * Z + y * X * Z] for z in range(Z)
-                            ] for x in range(X)
-                        ] for y in range(Y)
-                    ]
+            del array_1d  # Cleanup
+
+            list_3d = [[[list_1d[z + x * Z + y * X * Z] for z in range(Z)] for x in range(X)] for y in range(Y)]
+
+            del list_1d  # Cleanup
+
+            return (X, Y, Z, maxcolors, list_3d)  # Output mimic that of pnglpng
 
         if (magic == 'P3') or (magic == 'P2'):
             """ ┌──────────────────────────┐
@@ -200,13 +204,11 @@ def pnm2list(in_filename: str) -> tuple[int, int, int, int, list[list[list[int]]
                 └──────────────────────────┘ """
             list_1d = filtered_bytes.split()
 
-            list_3d = [
-                        [
-                            [
-                                int(list_1d[z + x * Z + y * X * Z]) for z in range(Z)
-                            ] for x in range(X)
-                        ] for y in range(Y)
-                    ]
+            list_3d = [[[int(list_1d[z + x * Z + y * X * Z]) for z in range(Z)] for x in range(X)] for y in range(Y)]
+
+            del list_1d  # Cleanup
+
+            return (X, Y, Z, maxcolors, list_3d)  # Output mimic that of pnglpng
 
     elif full_bytes.startswith((b'P4', b'P1')):
         """ ┌────────────────┐
@@ -257,6 +259,8 @@ def pnm2list(in_filename: str) -> tuple[int, int, int, int, list[list[list[int]]
 
                 list_3d.append(row[0:X])  # apparently cutting junk off
 
+            return (X, Y, Z, maxcolors, list_3d)  # Output mimic that of pnglpng
+
         if magic == 'P1':
             """ ┌──────────────────────┐
                 │ IF ASCII 1 Bit/pixel │
@@ -267,15 +271,18 @@ def pnm2list(in_filename: str) -> tuple[int, int, int, int, list[list[list[int]]
 
             list_3d = [[[(255 * (1 - int(list_1d[z + x * Z + y * X * Z]))) for z in range(Z)] for x in range(X)] for y in range(Y)]
 
+            del list_1d  # Cleanup
+
+            return (X, Y, Z, maxcolors, list_3d)  # Output mimic that of pnglpng
+
     else:
         raise ValueError(f'Unsupported format {in_filename}: {full_bytes[:32]}')
-
-    return (X, Y, Z, maxcolors, list_3d)  # Output mimic that of pnglpng
 
 
 """ ╔══════════╗
     ║ list2bin ║
     ╚══════════╝ """
+
 
 def list2bin(list_3d: list[list[list[int]]], maxcolors: int, show_chessboard: bool = False) -> bytes:
     """Convert nested image data list to PGM P5 or PPM P6 (binary) data structure in memory to be used with Tkinter PhotoImage(data=...).
@@ -291,7 +298,7 @@ def list2bin(list_3d: list[list[list[int]]], maxcolors: int, show_chessboard: bo
 
     - `list_3d`: Y * X * Z list (image) of lists (rows) of lists (pixels) of ints (channel values);
     - `maxcolors`: number of colors per channel for current image (int);
-    - `show_chessboard`: optional bool, set `True` to show LA and RGBA images against chessboard pattern; `False` or missing show existing L or RGB data for transparent areas as opaque. Default is `False` for backward compatibility. 
+    - `show_chessboard`: optional bool, set `True` to show LA and RGBA images against chessboard pattern; `False` or missing show existing L or RGB data for transparent areas as opaque. Default is `False` for backward compatibility.
 
     Output:
 
@@ -319,41 +326,42 @@ def list2bin(list_3d: list[list[list[int]]], maxcolors: int, show_chessboard: bo
     else:
         magic = 'P6'
 
-    if Z == 3 or Z == 1:
+    if Z == 3 or Z == 1:  # Source has no alpha
         Z_READ = Z
         # Flattening 3D list to 1D list
         list_1d = [list_3d[y][x][z] for y in range(Y) for x in range(X) for z in range(Z_READ)]
-    else:
-        Z_READ = min(Z, 4) - 1  # To fiddle with alpha; clipping anything above RGBA off 
+
+    else:  # Source has alpha
+        Z_READ = min(Z, 4) - 1  # To fiddle with alpha; clipping anything above RGBA off
 
         if show_chessboard:
             # Flattening 3D list to 1D list, mixing with chessboard
-            list_1d = [
-                (((list_3d[y][x][z] * list_3d[y][x][Z_READ]) + (_chess(x, y) * (maxcolors - list_3d[y][x][Z_READ]))) // maxcolors)
-                for y in range(Y)
-                for x in range(X)
-                for z in range(Z_READ)
-            ]
+            list_1d = [(((list_3d[y][x][z] * list_3d[y][x][Z_READ]) + (_chess(x, y) * (maxcolors - list_3d[y][x][Z_READ]))) // maxcolors) for y in range(Y) for x in range(X) for z in range(Z_READ)]
         else:
             # Flattening 3D list to 1D list, skipping alpha
             list_1d = [list_3d[y][x][z] for y in range(Y) for x in range(X) for z in range(Z_READ)]
+
+    del list_3d  # Cleanup
 
     if maxcolors < 256:
         datatype = 'B'
     else:
         datatype = 'H'
 
-    header = array.array('B', f'{magic}\n{X} {Y}\n{maxcolors}\n'.encode('ascii'))
     content = array.array(datatype, list_1d)
+
+    del list_1d  # Cleanup
 
     content.byteswap()  # Critical for 16 bits per channel
 
-    return (header.tobytes() + content.tobytes())  # End of 'list2bin' list to PNM conversion function
+    return f'{magic}\n{X} {Y}\n{maxcolors}\n'.encode('ascii') + content.tobytes()
+# End of 'list2bin' list to in-memory PNM conversion function
 
 
 """ ╔══════════╗
     ║ list2pnm ║
     ╚══════════╝ """
+
 
 def list2pnm(out_filename: str, list_3d: list[list[list[int]]], maxcolors: int) -> None:
     """Write binary PNM `out_filename` file; writing performed per row to reduce RAM usage.
@@ -397,12 +405,14 @@ def list2pnm(out_filename: str, list_3d: list[list[list[int]]], maxcolors: int) 
             row_array.byteswap()  # Critical for 16 bits per channel
             file_pnm.write(row_array)  # Adding row bytes array to file
 
-    return None  # End of 'list2pnm' function writing binary PPM/PGM file
+    return None
+# End of 'list2pnm' function writing binary PPM/PGM file
 
 
 """ ╔═══════════════╗
     ║ list2pnmascii ║
     ╚═══════════════╝ """
+
 
 def list2pnmascii(out_filename: str, list_3d: list[list[list[int]]], maxcolors: int) -> None:
     """Write ASCII PNM `out_filename` file; writing performed per sample to reduce RAM usage.
@@ -450,12 +460,14 @@ def list2pnmascii(out_filename: str, list_3d: list[list[list[int]]], maxcolors: 
                         file_pnm.write('\n')  # Writing break to fulfill specs line <= 60 char
                     file_pnm.write(f'{list_3d[y][x][z]} ')  # Writing channel value to file
 
-    return None  # End of 'list2pnmascii' function writing ASCII PPM/PGM file
+    return None
+# End of 'list2pnmascii' function writing ASCII PPM/PGM file
 
 
 """ ╔════════════════════╗
     ║ Create empty image ║
     ╚════════════════════╝ """
+
 
 def create_image(X: int, Y: int, Z: int) -> list[list[list[int]]]:
     """Create empty 3D nested list of X * Y * Z size."""
@@ -466,7 +478,8 @@ def create_image(X: int, Y: int, Z: int) -> list[list[list[int]]]:
                     ] for y in range(Y)
                 ]
 
-    return new_image  # End of 'create_image' empty nested 3D list creation
+    return new_image
+# End of 'create_image' empty nested 3D list creation
 
 
 # --------------------------------------------------------------
