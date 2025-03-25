@@ -4,13 +4,14 @@
 
 # Программы для масштабирования пиксельных картинок - Pixel Art Scaling
 
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/scalenx)
- ![PyPI - Version](https://img.shields.io/pypi/v/scalenx)
- ![PyPI - Downloads](https://img.shields.io/pypi/dm/scalenx)](https://pypi.org/project/ScaleNx/)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/scalenx)](https://pypi.org/project/ScaleNx/)
 
 Программы для увеличения маленьких малоцветных картинок типа иконок и игровых спрайтов.
 
 Также полезны для улучшения сканов текстов с низким разрешением перед OCR.
+
+> [!NOTE]
+> Данная ветка содержит специальную версию, совместимую с Python 3.4. Она может отставать в развитии от [ветки main](https://github.com/Dnyarri/PixelArtScaling/tree/main).
 
 В настоящий момент поддерживаются методы **Scale2x** (aka AdvMAME2x), **Scale3x** (aka AdvMAME3x), **Scale2xSFX** и **Scale3xSFX**.
 

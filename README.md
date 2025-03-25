@@ -4,13 +4,14 @@
 
 # Pixel Art Scaling programs
 
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/scalenx)
- ![PyPI - Version](https://img.shields.io/pypi/v/scalenx)
- ![PyPI - Downloads](https://img.shields.io/pypi/dm/scalenx)](https://pypi.org/project/ScaleNx/)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/scalenx)](https://pypi.org/project/ScaleNx/)
 
 Programs for scaling up small low-color images like icons and game sprites.
 
 Apparently useful for scaling up grey text scans with low resolution before OCR, to improve OCR quality.
+
+> [!NOTE]
+> This branch contains special backward compatible version, successfully tested under Python 3.4. It may be behind [main branch](https://github.com/Dnyarri/PixelArtScaling/tree/main).
 
 Currently **Scale2x** (aka AdvMAME2x), **Scale3x** (aka AdvMAME3x), **Scale2xSFX** and **Scale3xSFX** methods are implemented.  
 
