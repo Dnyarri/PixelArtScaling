@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Module contain Scale2x and Scale3x image rescaling functions.
+"""Module contain Scale2x and Scale3x image rescaling functions. NOTE: This is special Python 3.4 compatible build.
 
 Overview
 ---------
@@ -62,7 +62,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024-2025 Ilya Razmanov'
 __credits__ = ['Ilya Razmanov', 'Andrea Mazzoleni']
 __license__ = 'unlicense'
-__version__ = '2025.03.01'
+__version__ = '2025.03.34'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -72,7 +72,7 @@ __status__ = 'Production'
     ╚════════════════════════════════════════════╝ """
 
 
-def scale2x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
+def scale2x(image3d):
     """Scale2x image rescale
     -
 
@@ -88,9 +88,9 @@ def scale2x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
     X = len(image3d[0])
 
     # starting new image list
-    scaled_image: list[list[list[int]]] = list()
+    scaled_image = list()
 
-    def _dva(A: list[int], B: list[int], C: list[int], D: list[int], E: list[int]):
+    def _dva(A, B, C, D, E):
         """Scale2x conditional tree function"""
 
         r1 = r2 = r3 = r4 = E
@@ -169,7 +169,7 @@ def scale2x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
     ╚════════════════════════════════════════════╝ """
 
 
-def scale3x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
+def scale3x(image3d):
     """Scale3x image rescale
     -
 
@@ -185,9 +185,9 @@ def scale3x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
     X = len(image3d[0])
 
     # starting new image list
-    scaled_image: list[list[list[int]]] = list()
+    scaled_image = list()
 
-    def _tri(A: list[int], B: list[int], C: list[int], D: list[int], E: list[int], F: list[int], G: list[int], H: list[int], I: list[int]):
+    def _tri(A, B, C, D, E, F, G, H, I):
         """Scale3x conditional tree function"""
 
         r1 = r2 = r3 = r4 = r5 = r6 = r7 = r8 = r9 = E

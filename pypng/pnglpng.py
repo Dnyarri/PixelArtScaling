@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 """Joint between PyPNG module and 3D nested list data structures.
+NOTE: This is special Python 3.4 version!
 
 Overview
 ---------
@@ -64,13 +65,15 @@ Fixed missing `maxcolors` for 1-bit images.
 
 25.03.01    Improved robustness, `list2png` is skipping any possible input channel above 4-th.
 
+25.03.01.34 Special build of 25.03.01 version, downgraded to Python 3.4.
+
 """
 
 __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024-2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.03.01'
+__version__ = '25.03.01.34'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -82,7 +85,7 @@ from . import png  # PNG I/O: PyPNG from: https://gitlab.com/drj11/pypng
     └──────────┘ """
 
 
-def png2list(in_filename: str) -> tuple[int, int, int, int, list[list[list[int]]], dict]:
+def png2list(in_filename):
     """Take PNG filename and return PNG data in a human-friendly form.
 
     Usage
@@ -131,7 +134,7 @@ def png2list(in_filename: str) -> tuple[int, int, int, int, list[list[list[int]]
     └──────────┘ """
 
 
-def list2png(out_filename: str, list_3d: list[list[list[int]]], info: dict) -> None:
+def list2png(out_filename, list_3d, info):
     """Take filename and image data, and create PNG file.
 
     Usage
@@ -174,7 +177,7 @@ def list2png(out_filename: str, list_3d: list[list[list[int]]], info: dict) -> N
         info['greyscale'] = False
 
     # Flattening 3D list to 2D list of rows for PNG `.write` method
-    def flatten_2d(list_3d: list[list[list[int]]]):
+    def flatten_2d(list_3d):
         """Flatten `list_3d` to 2D list of rows, yield generator."""
 
         yield from (
@@ -196,7 +199,7 @@ def list2png(out_filename: str, list_3d: list[list[list[int]]], info: dict) -> N
     │ Create empty image │
     └────────────────────┘ """
 
-def create_image(X: int, Y: int, Z: int) -> list[list[list[int]]]:
+def create_image(X, Y, Z):
     """Create empty 3D nested list of X * Y * Z size."""
 
     new_image = [

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-ScaleNx GUI - Common shell for ScaleNx single file and batch PNG, PPM and PGM rescaling.
+ScaleNx GUI - Common shell for ScaleNx single file and batch PNG, PPM and PGM rescaling. NOTE: This is special Python 3.4 compatible build.
 ---
 
 Created by: Ilya Razmanov <ilyarazmanov@gmail.com> aka Ilyich the Toad <amphisoft@gmail.com>
@@ -26,7 +26,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.03.01.01'
+__version__ = '25.03.01.34'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -80,7 +80,7 @@ def UIBusy():
     sortir.update()
 
 
-def FileNx(size: int, sfx: bool) -> None:
+def FileNx(size, sfx):
     """Single file ScaleNx with variable N and method.
 
     Arguments:
@@ -184,7 +184,7 @@ def FileNx(size: int, sfx: bool) -> None:
     return None
 
 
-def scale_file_png(runningfilename: str, size: int, sfx: bool) -> None:
+def scale_file_png(runningfilename, size, sfx):
     """Function upscales one PNG file and keeps quite.
 
     Arguments:
@@ -243,7 +243,7 @@ def scale_file_png(runningfilename: str, size: int, sfx: bool) -> None:
     return None
 
 
-def scale_file_pnm(runningfilename: str, size: int, sfx: bool) -> None:
+def scale_file_pnm(runningfilename, size, sfx):
     """Function upscales one PNM file and keeps quite.
 
     Arguments:
@@ -279,7 +279,7 @@ def scale_file_pnm(runningfilename: str, size: int, sfx: bool) -> None:
     return None
 
 
-def FolderNx(size: int, sfx: bool) -> None:
+def FolderNx(size, sfx):
     """Multiprocessing pool to feed `scale_file_*` processes to.
 
     Arguments:
@@ -349,7 +349,7 @@ if __name__ == '__main__':
         sortir.iconbitmap(str(iconpath))
 
     # Info statuses dictionaries
-    info_normal = {'txt': f'ScaleNx ver. {__version__} at your command', 'fg': 'grey', 'bg': 'light grey'}
+    info_normal = {'txt': 'ScaleNx for Python 3.4 at your command', 'fg': 'grey', 'bg': 'light grey'}
     info_waiting = {'txt': 'Waiting for input', 'fg': 'green', 'bg': 'light grey'}
     info_busy = {'txt': 'BUSY, PLEASE WAIT', 'fg': 'red', 'bg': 'yellow'}
 
