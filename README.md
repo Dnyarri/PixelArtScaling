@@ -4,11 +4,9 @@
 
 # Pixel Art Scaling programs
 
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/scalenx)
- ![PyPI - Version](https://img.shields.io/pypi/v/scalenx)
- ![PyPI - Downloads](https://img.shields.io/pypi/dm/scalenx)](https://pypi.org/project/ScaleNx/)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/scalenx)](https://pypi.org/project/ScaleNx/)
 
-Programs for scaling up small low-color images like icons and game sprites.
+Programs for scaling up small low-color images like icons and game sprites without blurring.
 
 Apparently useful for scaling up grey text scans with low resolution before OCR, to improve OCR quality.
 
