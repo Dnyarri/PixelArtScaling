@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Functions to read PPM and PGM files to nested 3D list of int and/or write back.
+"""PPM and PGM image files reading, displaying and writing for Python 3.10 - 3.13.
 
 Overview
 ---------
@@ -63,7 +63,7 @@ for writing data from `list_3d` nested list to ASCII PPM/PGM file `out_filename`
 
 Copyright and redistribution
 -----------------------------
-Written by `Ilya Razmanov <https://dnyarri.github.io/>`_ to provide working with PPM/PGM files
+Written by `Ilya Razmanov <https://dnyarri.github.io/>`_ to facilitate working with PPM/PGM files
 and converting image-like data to PPM/PGM bytes to be displayed with Tkinter `PhotoImage` class.
 
 May be freely used, redistributed and modified.
@@ -78,34 +78,13 @@ References
 
 `PyPNM at PyPI <https://pypi.org/project/PyPNM/>`_
 
-Version history
-----------------
-
-0.11.26.0   Initial working version 26 Nov 2024.
-
-1.12.14.1   Public release at `PyPI <https://pypi.org/project/PyPNM/>`_.
-
-1.13.09.0   Complete rewriting of `pnm2list` using `re` and `array`; PPM and PGM support rewritten.
-
-1.13.10.5   Header pattern seem to comprise all problematic cases; PBM support rewritten.
-
-1.14.08.12  File output rewritten to reduce memory usage; `list2pnm` per row, `list2pnmascii` per sample.
-
-1.15.1.1    Rendering preview for LA and RGBA against chessboard added to `list2bin`,
-controlled by optional `show_chessboard` bool added to arguments.
-Default is `False` (i.e. simply ignoring alpha) for backward compatibility.
-Improved robustness.
-
-1.15.19.19  General branch shortening and more cleanup. Minor bogus stuff removed.
-Yet another final version ;-)
-
 """
 
 __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024-2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '1.15.19.19'
+__version__ = '1.16.1.9'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -192,7 +171,13 @@ def pnm2list(in_filename: str) -> tuple[int, int, int, int, list[list[list[int]]
 
             del array_1d  # Cleanup
 
-            list_3d = [[[list_1d[z + x * Z + y * X * Z] for z in range(Z)] for x in range(X)] for y in range(Y)]
+            list_3d = [
+                        [
+                            [
+                                list_1d[z + x * Z + y * X * Z] for z in range(Z)
+                            ] for x in range(X)
+                        ] for y in range(Y)
+                    ]
 
             del list_1d  # Cleanup
 
@@ -204,7 +189,13 @@ def pnm2list(in_filename: str) -> tuple[int, int, int, int, list[list[list[int]]
                 └──────────────────────────┘ """
             list_1d = filtered_bytes.split()
 
-            list_3d = [[[int(list_1d[z + x * Z + y * X * Z]) for z in range(Z)] for x in range(X)] for y in range(Y)]
+            list_3d = [
+                        [
+                            [
+                                int(list_1d[z + x * Z + y * X * Z]) for z in range(Z)
+                            ] for x in range(X)
+                        ] for y in range(Y)
+                    ]
 
             del list_1d  # Cleanup
 
@@ -269,7 +260,13 @@ def pnm2list(in_filename: str) -> tuple[int, int, int, int, list[list[list[int]]
             """ Removing any formatting by consecutive split/join, then changing types to turn bit char into int while reshaping to 3D nested list probably is not the fastest solution but I will think about it tomorrow. """
             list_1d = list(str(b''.join(filtered_bytes.split())))[2:-1]  # Slicing off junk chars like 'b', "'"
 
-            list_3d = [[[(255 * (1 - int(list_1d[z + x * Z + y * X * Z]))) for z in range(Z)] for x in range(X)] for y in range(Y)]
+            list_3d = [
+                        [
+                            [
+                                (255 * (1 - int(list_1d[z + x * Z + y * X * Z]))) for z in range(Z)
+                            ] for x in range(X)
+                        ] for y in range(Y)
+                    ]
 
             del list_1d  # Cleanup
 
@@ -277,6 +274,7 @@ def pnm2list(in_filename: str) -> tuple[int, int, int, int, list[list[list[int]]
 
     else:
         raise ValueError(f'Unsupported format {in_filename}: {full_bytes[:32]}')
+# End of pnm2list PNM reading function
 
 
 """ ╔══════════╗
@@ -354,7 +352,7 @@ def list2bin(list_3d: list[list[list[int]]], maxcolors: int, show_chessboard: bo
 
     content.byteswap()  # Critical for 16 bits per channel
 
-    return f'{magic}\n{X} {Y}\n{maxcolors}\n'.encode('ascii') + content.tobytes()
+    return b''.join((f'{magic}\n{X} {Y}\n{maxcolors}\n'.encode('ascii'), content.tobytes()))
 # End of 'list2bin' list to in-memory PNM conversion function
 
 
@@ -398,7 +396,7 @@ def list2pnm(out_filename: str, list_3d: list[list[list[int]]], maxcolors: int) 
         datatype = 'H'
 
     with open(out_filename, 'wb') as file_pnm:
-        file_pnm.write(array.array('B', f'{magic}\n{X} {Y}\n{maxcolors}\n'.encode('ascii')))  # Writing PNM header to file
+        file_pnm.write(f'{magic}\n{X} {Y}\n{maxcolors}\n'.encode('ascii'))  # Writing PNM header to file
         for y in range(Y):
             row_1d = [list_3d[y][x][z] for x in range(X) for z in range(Z_READ)]  # Flattening row
             row_array = array.array(datatype, row_1d)  # list[int] to array
@@ -450,7 +448,7 @@ def list2pnmascii(out_filename: str, list_3d: list[list[list[int]]], maxcolors: 
         Z_READ = 3  # To skip alpha later
 
     with open(out_filename, 'w') as file_pnm:
-        file_pnm.write(f'{magic}\n{X} {Y}\n{maxcolors}\n')  # Writing file header
+        file_pnm.write(f'{magic}\n{X} {Y}\n{maxcolors}\n')  # Writing PNM header to file
         sample_count = 0  # Start counting samples to break line <= 60 char
         for y in range(Y):
             for x in range(X):
