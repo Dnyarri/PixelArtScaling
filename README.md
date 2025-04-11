@@ -46,10 +46,12 @@ Currently **Scale2x** (aka AdvMAME2x), **Scale3x** (aka AdvMAME3x), **Scale2xSFX
 
 4. [ScaleNx at PyPI](https://pypi.org/project/ScaleNx/) - install current ScaleNx core library via *pip*. Does not contain shell, image I/O, and GUI, only ScaleNx core for developers.
 
-## Related
+### Related
 
-1. [Dnyarri website](https://dnyarri.github.io) - the rest of Dnyarri stuff with previews etc.
+[Dnyarri website](https://dnyarri.github.io) - other Python freeware by the same author.
 
-2. [github Dnyarri](https://github.com/Dnyarri).
+[ScaleNx page](https://dnyarri.github.io/scalenx.html) with illustrations, explanations etc.
 
-3. [gitflic Dnyarri](https://gitflic.ru/user/dnyarri) mirror.
+[ScaleNx source at github](https://github.com/Dnyarri/PixelArtScaling)
+
+[ScaleNx source at gitflic mirror](https://gitflic.ru/project/dnyarri/pixelartscaling)

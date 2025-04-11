@@ -48,8 +48,10 @@
 
 ## Родственное
 
-1. [Dnyarri website](https://dnyarri.github.io) - остальной товар от Жабы Огромной Умственной Силы.
+[Dnyarri website](https://dnyarri.github.io) - остальной товар от Жабы Огромной Умственной Силы.
 
-2. [github Dnyarri](https://github.com/Dnyarri).
+[ScaleNx page](https://dnyarri.github.io/scalenx.html) with illustrations, explanations etc.
 
-3. [gitflic Dnyarri](https://gitflic.ru/user/dnyarri) - зеркало.
+[ScaleNx source at github](https://github.com/Dnyarri/PixelArtScaling)
+
+[ScaleNx source at gitflic mirror](https://gitflic.ru/project/dnyarri/pixelartscaling)
