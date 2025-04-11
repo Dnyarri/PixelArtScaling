@@ -26,7 +26,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.03.01.01'
+__version__ = '25.04.11.11'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -368,8 +368,8 @@ if __name__ == '__main__':
     label00 = Label(frame_left, text='ScaleNx', font=('helvetica', 24), justify='center', borderwidth=2, relief='groove', foreground='brown', background='light grey')
     label00.pack(side='top', pady=(0, 6), fill='both')
 
-    label01 = Label(frame_left, text='Single image rescaling (PNG, PPM, PGM)'.center(42, ' '), font=('helvetica', 10), justify='center', borderwidth=2, relief='flat', foreground='dark blue')
-    label01.pack(side='top', pady=(12, 0))
+    label01 = Label(frame_left, text='Single image rescaling (PNG, PPM, PGM)'.center(42, ' '), font=('helvetica', 10), justify='center', borderwidth=2, relief='flat', foreground='dark blue', background='light blue')
+    label01.pack(side='top', pady=(12, 0), fill='both')
 
     butt01 = Button(frame_left, text='Open file ➔ 2x', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FileNx(2, False))
     butt01.pack(side='top', padx=4, pady=2, fill='both')
@@ -377,8 +377,8 @@ if __name__ == '__main__':
     butt02 = Button(frame_left, text='Open file ➔ 3x', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FileNx(3, False))
     butt02.pack(side='top', padx=4, pady=2, fill='both')
 
-    label02 = Label(frame_left, text='Folder batch process (PNG, PPM, PGM)', font=('helvetica', 10), justify='center', borderwidth=2, relief='flat', foreground='dark blue')
-    label02.pack(side='top', pady=(12, 0))
+    label02 = Label(frame_left, text='Folder batch process (PNG, PPM, PGM)', font=('helvetica', 10), justify='center', borderwidth=2, relief='flat', foreground='dark blue', background='light blue')
+    label02.pack(side='top', pady=(12, 0), fill='both')
 
     butt03 = Button(frame_left, text='Select folder ➔ 2x', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FolderNx(2, False))
     butt03.pack(side='top', padx=4, pady=2, fill='both')
@@ -389,8 +389,8 @@ if __name__ == '__main__':
     label10 = Label(frame_right, text='ScaleNxSFX', font=('helvetica', 24), justify='center', borderwidth=2, relief='groove', foreground='brown', background='light grey')
     label10.pack(side='top', pady=(0, 6), fill='both')
 
-    label11 = Label(frame_right, text='Single image rescaling (PNG, PPM, PGM)'.center(42, ' '), font=('helvetica', 10), justify='center', borderwidth=2, relief='flat', foreground='dark blue')
-    label11.pack(side='top', pady=(12, 0))
+    label11 = Label(frame_right, text='Single image rescaling (PNG, PPM, PGM)'.center(42, ' '), font=('helvetica', 10), justify='center', borderwidth=2, relief='flat', foreground='dark blue', background='light blue')
+    label11.pack(side='top', pady=(12, 0), fill='both')
 
     butt11 = Button(frame_right, text='Open file ➔ 2xSFX', font=('helvetica', 14), cursor='hand2', justify='center', command=lambda: FileNx(2, True))
     butt11.pack(side='top', padx=4, pady=2, fill='both')
@@ -398,8 +398,8 @@ if __name__ == '__main__':
     butt12 = Button(frame_right, text='Open file ➔ 3xSFX', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FileNx(3, True))
     butt12.pack(side='top', padx=4, pady=2, fill='both')
 
-    label12 = Label(frame_right, text='Folder batch process (PNG, PPM, PGM)', font=('helvetica', 10), justify='center', borderwidth=2, relief='flat', foreground='dark blue')
-    label12.pack(side='top', pady=(12, 0))
+    label12 = Label(frame_right, text='Folder batch process (PNG, PPM, PGM)', font=('helvetica', 10), justify='center', borderwidth=2, relief='flat', foreground='dark blue', background='light blue')
+    label12.pack(side='top', pady=(12, 0), fill='both')
 
     butt13 = Button(frame_right, text='Select folder ➔ 2xSFX', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FolderNx(2, True))
     butt13.pack(side='top', padx=4, pady=2, fill='both')
