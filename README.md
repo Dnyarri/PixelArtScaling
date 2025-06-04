@@ -28,7 +28,8 @@ Currently **Scale2x** (aka AdvMAME2x), **Scale3x** (aka AdvMAME3x), **Scale2xSFX
 
 1. [PyPNG](https://gitlab.com/drj11/pypng). Copy included into current ScaleNx distribution.
 2. [PyPNM](https://pypi.org/project/PyPNM/). Copy included into current ScaleNx distribution.
-3. Tkinter, multiprocessing. Included into standard CPython distribution.
+3. Multiprocessing. Included into standard CPython distribution.
+4. Tkinter. Normally included into standard CPython distribution for "big" OS-es, although Linux users may need installing it separately.
 
 > [!NOTE]
 > Programs are written entirely on Python, using image representation as list of lists of lists.
@@ -42,16 +43,16 @@ Currently **Scale2x** (aka AdvMAME2x), **Scale3x** (aka AdvMAME3x), **Scale2xSFX
 
 2. [Scale2xSFX and Scale3xSFX](https://web.archive.org/web/20160527015550/https://libretro.com/forums/archive/index.php?t-1655.html) algorithms description at forums archive.
 
-3. [Pixel-art scaling algorithms](https://en.wikipedia.org/wiki/Pixel-art_scaling_algorithms) review at Wikipedia.
-
-4. [ScaleNx at PyPI](https://pypi.org/project/ScaleNx/) - install current ScaleNx core library via *pip*. Does not contain shell, image I/O, and GUI, only ScaleNx core for developers.
+3. [Pixel-art scaling algorithms review](https://en.wikipedia.org/wiki/Pixel-art_scaling_algorithms) at Wikipedia.
 
 ### Related
 
-[Dnyarri website](https://dnyarri.github.io) - other Python freeware by the same author.
+[Dnyarri website - more Python freeware](https://dnyarri.github.io) by the same author.
 
-[ScaleNx page](https://dnyarri.github.io/scalenx.html) with illustrations, explanations etc.
+[ScaleNx page with illustrations](https://dnyarri.github.io/scalenx.html), explanations etc.
 
 [ScaleNx source at github](https://github.com/Dnyarri/PixelArtScaling)
 
 [ScaleNx source at gitflic mirror](https://gitflic.ru/project/dnyarri/pixelartscaling)
+
+[ScaleNx at PyPI](https://pypi.org/project/ScaleNx/) - install current ScaleNx core library via *pip*. Does not contain shell, image I/O, and GUI, only ScaleNx core for developers.

@@ -2,7 +2,7 @@
 | [〖EN〗](README.md) | 【RU】 |
 | --- | --- |
 
-# Программы для масштабирования пиксельных картинок - Pixel Art Scaling
+# Масштабирование пиксельных картинок - Pixel Art Scaling
 
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/scalenx)](https://pypi.org/project/ScaleNx/)
 
@@ -28,7 +28,8 @@
 
 1. [PyPNG](https://gitlab.com/drj11/pypng). Копия включена в дистрибутив ScaleNx.
 2. [PyPNM](https://pypi.org/project/PyPNM/). Копия включена в дистрибутив ScaleNx.
-3. Tkinter, multiprocessing. Входят в состав стандартного дистрибутива CPython.
+3. Multiprocessing. Входит в состав стандартного дистрибутива CPython.
+4. Tkinter. Обычно поставляется в составе стандартного дистрибутива CPython, но пользователям некоторых операционок может потребоваться отдельная установка.
 
 > [!NOTE]
 > Программы написаны целиком на Python, и используют логичное представление картинки как списка списков списков.
@@ -44,14 +45,14 @@
 
 3. [Алгоритмы масштабирования пиксельной графики](https://ru.wikipedia.org/wiki/Алгоритмы_масштабирования_пиксельной_графики) - краткий обзор на Wikipedia.
 
-4. [ScaleNx на PyPI](https://pypi.org/project/ScaleNx/) - ядро ScaleNx, установка через *pip*. Чистое ядро без примеров, гуёв и т.п.
-
 ## Родственное
 
-[Dnyarri website](https://dnyarri.github.io) - остальной товар от Жабы Огромной Умственной Силы.
+[Dnyarri website - больше программ на Python](https://dnyarri.github.io) и остальной товар от Жабы Огромной Умственной Силы.
 
-[ScaleNx page](https://dnyarri.github.io/scalenx.html) with illustrations, explanations etc.
+[ScaleNx с картинками и объяснениями](https://dnyarri.github.io/scalenx.html) и т.п.
 
-[ScaleNx source at github](https://github.com/Dnyarri/PixelArtScaling)
+[ScaleNx source at github](https://github.com/Dnyarri/PixelArtScaling).
 
-[ScaleNx source at gitflic mirror](https://gitflic.ru/project/dnyarri/pixelartscaling)
+[ScaleNx source at gitflic mirror](https://gitflic.ru/project/dnyarri/pixelartscaling).
+
+[ScaleNx на PyPI](https://pypi.org/project/ScaleNx/) - ядро ScaleNx, установка через *pip*. Чистое ядро без примеров, гуёв и т.п.
