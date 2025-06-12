@@ -26,7 +26,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.04.11.11'
+__version__ = '25.06.12.8'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -91,7 +91,7 @@ def FileNx(size: int, sfx: bool) -> None:
     UIWaiting()
 
     # Open source file
-    sourcefilename = filedialog.askopenfilename(title='Open image file to rescale', filetypes=[('Supported formats', '.png .ppm .pgm .pbm'), ('PNG', '.png'), ('PNM', '.ppm .pgm .pbm')])
+    sourcefilename = filedialog.askopenfilename(title='Open image file to rescale', filetypes=[('Supported formats', '.png .ppm .pgm .pbm'), ('Portable network graphics', '.png'), ('Portable network map', '.ppm .pgm .pbm')])
     if sourcefilename == '':
         UINormal()
         return None
@@ -156,9 +156,9 @@ def FileNx(size: int, sfx: bool) -> None:
 
     # Adjusting "Save to" formats to be displayed according to bitdepth
     if Z < 3:
-        format = [('PNG', '.png'), ('Portable grey map', '.pgm')]
+        format = [('Portable network graphics', '.png'), ('Portable grey map', '.pgm')]
     else:
-        format = [('PNG', '.png'), ('Portable pixel map', '.ppm')]
+        format = [('Portable network graphics', '.png'), ('Portable pixel map', '.ppm')]
 
     UIWaiting()
 
@@ -337,7 +337,6 @@ def FolderNx(size: int, sfx: bool) -> None:
     ╚═══════════╝ """
 
 if __name__ == '__main__':
-
     freeze_support()  # Freezing for exe
 
     sortir = Tk()
