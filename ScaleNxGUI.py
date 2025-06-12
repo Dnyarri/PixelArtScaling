@@ -26,7 +26,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.03.01.34'
+__version__ = '25.06.12.34'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -91,7 +91,7 @@ def FileNx(size, sfx):
     UIWaiting()
 
     # Open source file
-    sourcefilename = filedialog.askopenfilename(title='Open image file to rescale', filetypes=[('Supported formats', '.png .ppm .pgm .pbm'), ('PNG', '.png'), ('PNM', '.ppm .pgm .pbm')])
+    sourcefilename = filedialog.askopenfilename(title='Open image file to rescale', filetypes=[('Supported formats', '.png .ppm .pgm .pbm'), ('Portable network graphics', '.png'), ('Portable network map', '.ppm .pgm .pbm')])
     if sourcefilename == '':
         UINormal()
         return None
@@ -156,9 +156,9 @@ def FileNx(size, sfx):
 
     # Adjusting "Save to" formats to be displayed according to bitdepth
     if Z < 3:
-        format = [('PNG', '.png'), ('Portable grey map', '.pgm')]
+        format = [('Portable network graphics', '.png'), ('Portable grey map', '.pgm')]
     else:
-        format = [('PNG', '.png'), ('Portable pixel map', '.ppm')]
+        format = [('Portable network graphics', '.png'), ('Portable pixel map', '.ppm')]
 
     UIWaiting()
 
@@ -371,19 +371,19 @@ if __name__ == '__main__':
     label01 = Label(frame_left, text='Single image rescaling (PNG, PPM, PGM)'.center(42, ' '), font=('helvetica', 10), justify='center', borderwidth=2, relief='flat', foreground='dark blue')
     label01.pack(side='top', pady=(12, 0))
 
-    butt01 = Button(frame_left, text='Open file ➔ 2x', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FileNx(2, False))
+    butt01 = Button(frame_left, text='Open file => 2x', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FileNx(2, False))
     butt01.pack(side='top', padx=4, pady=2, fill='both')
 
-    butt02 = Button(frame_left, text='Open file ➔ 3x', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FileNx(3, False))
+    butt02 = Button(frame_left, text='Open file => 3x', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FileNx(3, False))
     butt02.pack(side='top', padx=4, pady=2, fill='both')
 
     label02 = Label(frame_left, text='Folder batch process (PNG, PPM, PGM)', font=('helvetica', 10), justify='center', borderwidth=2, relief='flat', foreground='dark blue')
     label02.pack(side='top', pady=(12, 0))
 
-    butt03 = Button(frame_left, text='Select folder ➔ 2x', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FolderNx(2, False))
+    butt03 = Button(frame_left, text='Select folder => 2x', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FolderNx(2, False))
     butt03.pack(side='top', padx=4, pady=2, fill='both')
 
-    butt04 = Button(frame_left, text='Select folder ➔ 3x', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FolderNx(3, False))
+    butt04 = Button(frame_left, text='Select folder => 3x', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FolderNx(3, False))
     butt04.pack(side='top', padx=4, pady=2, fill='both')
 
     label10 = Label(frame_right, text='ScaleNxSFX', font=('helvetica', 24), justify='center', borderwidth=2, relief='groove', foreground='brown', background='light grey')
@@ -392,19 +392,19 @@ if __name__ == '__main__':
     label11 = Label(frame_right, text='Single image rescaling (PNG, PPM, PGM)'.center(42, ' '), font=('helvetica', 10), justify='center', borderwidth=2, relief='flat', foreground='dark blue')
     label11.pack(side='top', pady=(12, 0))
 
-    butt11 = Button(frame_right, text='Open file ➔ 2xSFX', font=('helvetica', 14), cursor='hand2', justify='center', command=lambda: FileNx(2, True))
+    butt11 = Button(frame_right, text='Open file => 2xSFX', font=('helvetica', 14), cursor='hand2', justify='center', command=lambda: FileNx(2, True))
     butt11.pack(side='top', padx=4, pady=2, fill='both')
 
-    butt12 = Button(frame_right, text='Open file ➔ 3xSFX', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FileNx(3, True))
+    butt12 = Button(frame_right, text='Open file => 3xSFX', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FileNx(3, True))
     butt12.pack(side='top', padx=4, pady=2, fill='both')
 
     label12 = Label(frame_right, text='Folder batch process (PNG, PPM, PGM)', font=('helvetica', 10), justify='center', borderwidth=2, relief='flat', foreground='dark blue')
     label12.pack(side='top', pady=(12, 0))
 
-    butt13 = Button(frame_right, text='Select folder ➔ 2xSFX', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FolderNx(2, True))
+    butt13 = Button(frame_right, text='Select folder => 2xSFX', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FolderNx(2, True))
     butt13.pack(side='top', padx=4, pady=2, fill='both')
 
-    butt14 = Button(frame_right, text='Select folder ➔ 3xSFX', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FolderNx(3, True))
+    butt14 = Button(frame_right, text='Select folder => 3xSFX', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FolderNx(3, True))
     butt14.pack(side='top', padx=4, pady=2, fill='both')
 
     sortir.mainloop()
