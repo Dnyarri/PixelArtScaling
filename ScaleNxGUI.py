@@ -9,16 +9,18 @@ Created by: Ilya Razmanov <ilyarazmanov@gmail.com> aka Ilyich the Toad <amphisof
 History:
 ---
 
-25.01.17.00 Initial.
+25.01.17.00 Initial GUI version for ScaleNx.
 
 25.01.17.21 Fully operational.
 
 25.03.01.01 PNM batch processing added. GUI simplified to reduce imports.
 
----
-Main site:  <https://dnyarri.github.io>
+25.07.01.07 Compression for PNG batch processing diminished from 9 to 3 to increase batch speed.
 
-Project at Github:  <https://github.com/Dnyarri/PixelArtScaling>
+---
+Main site: <https://dnyarri.github.io>
+
+Source at Github: <https://github.com/Dnyarri/PixelArtScaling>
 
 """
 
@@ -26,7 +28,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.06.12.8'
+__version__ = '25.07.01.07'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -40,12 +42,13 @@ from pypnm import pnmlpnm
 from scalenx import scalenx, scalenxsfx
 
 
-def DisMiss():
+def DisMiss() -> None:
     """Kill dialog and continue"""
     sortir.destroy()
+    return None
 
 
-def UINormal():
+def UINormal() -> None:
     """Normal UI state, buttons enabled"""
     for widget in frame_left.winfo_children():
         if widget.winfo_class() in ('Label', 'Button'):
@@ -54,9 +57,10 @@ def UINormal():
         if widget.winfo_class() in ('Label', 'Button'):
             widget.config(state='normal')
     info_string.config(text=info_normal['txt'], foreground=info_normal['fg'], background=info_normal['bg'])
+    return None
 
 
-def UIWaiting():
+def UIWaiting() -> None:
     """Waiting UI state, buttons disabled"""
     for widget in frame_left.winfo_children():
         if widget.winfo_class() in ('Label', 'Button'):
@@ -66,9 +70,10 @@ def UIWaiting():
             widget.config(state='disabled')
     info_string.config(text=info_waiting['txt'], foreground=info_waiting['fg'], background=info_waiting['bg'])
     sortir.update()
+    return None
 
 
-def UIBusy():
+def UIBusy() -> None:
     """Busy UI state, buttons disabled"""
     for widget in frame_left.winfo_children():
         if widget.winfo_class() in ('Label', 'Button'):
@@ -78,6 +83,7 @@ def UIBusy():
             widget.config(state='disabled')
     info_string.config(text=info_busy['txt'], foreground=info_busy['fg'], background=info_busy['bg'])
     sortir.update()
+    return None
 
 
 def FileNx(size: int, sfx: bool) -> None:
@@ -86,6 +92,7 @@ def FileNx(size: int, sfx: bool) -> None:
     Arguments:
         size: scale size, either 2 or 3;
         sfx: use either sfx or classic scaler version.
+
     """
 
     UIWaiting()
@@ -107,7 +114,7 @@ def FileNx(size: int, sfx: bool) -> None:
         X, Y, Z, maxcolors, image3d = pnmlpnm.pnm2list(sourcefilename)
         # Creating dummy info
         info = {}
-        # Fixing color mode. The rest is fixed with pnglpng v. 25.01.07.
+        # Fixing color mode. The rest is fixed with pnglpng since ver. 25.01.07.
         if maxcolors > 255:
             info['bitdepth'] = 16
         else:
@@ -151,7 +158,7 @@ def FileNx(size: int, sfx: bool) -> None:
     # Resolution changed
     # --------------------------------------------------------------
 
-    # Explicitly setting compression
+    # Explicitly setting compression to maximum for a single file processing
     info['compression'] = 9
 
     # Adjusting "Save to" formats to be displayed according to bitdepth
@@ -184,13 +191,14 @@ def FileNx(size: int, sfx: bool) -> None:
     return None
 
 
-def scale_file_png(runningfilename: str, size: int, sfx: bool) -> None:
+def scale_file_png(runningfilename: Path, size: int, sfx: bool) -> None:
     """Function upscales one PNG file and keeps quite.
 
     Arguments:
         runningfilename: name of file to process;
         size: scale size, either 2 or 3;
         sfx: use either sfx or classic scaler version.
+
     """
 
     oldfile = str(runningfilename)
@@ -234,8 +242,8 @@ def scale_file_png(runningfilename: str, size: int, sfx: bool) -> None:
     # Resolution changed
     # --------------------------------------------------------------
 
-    # Explicitly setting compression
-    info['compression'] = 9
+    # Explicitly setting compression low to improve batch processing speed
+    info['compression'] = 3
 
     # Writing PNG file
     pnglpng.list2png(newfile, scaled_image, info)
@@ -243,13 +251,14 @@ def scale_file_png(runningfilename: str, size: int, sfx: bool) -> None:
     return None
 
 
-def scale_file_pnm(runningfilename: str, size: int, sfx: bool) -> None:
+def scale_file_pnm(runningfilename: Path, size: int, sfx: bool) -> None:
     """Function upscales one PNM file and keeps quite.
 
     Arguments:
         runningfilename: name of file to process;
         size: scale size, either 2 or 3;
         sfx: use either sfx or classic scaler version.
+
     """
 
     oldfile = str(runningfilename)
@@ -285,6 +294,7 @@ def FolderNx(size: int, sfx: bool) -> None:
     Arguments:
         size: scale size, either 2 or 3;
         sfx: use either sfx or classic scaler version.
+
     """
 
     UIWaiting()
