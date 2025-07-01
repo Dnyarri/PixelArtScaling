@@ -161,15 +161,15 @@ When the bit depth is 8 this is the same as a sequence of rows;
 when the bit depth is less than 8 (1, 2 and 4),
 several pixels are packed into each byte;
 when the bit depth is 16 each pixel value is decomposed into 2 bytes
-(and `packed` is a misnomer).
-This format is used by the :meth:`Writer.write_packed` method.
+(and *packed* is a misnomer).
+This format is used by the `Writer.write_packed` method.
 It isn't usually a convenient format,
 but may be just right if the source data for
 the PNG image comes from something that uses a similar format
 (for example, 1-bit BMPs, or another PNG file).
 """
 
-__version__ = "0.20231004.0"
+__version__ = "0.20250521.0"
 
 import collections
 import io  # For io.BytesIO
@@ -186,7 +186,7 @@ import zlib
 from array import array
 
 
-__all__ = ["Image", "Reader", "Writer", "write_chunks", "from_array"]
+__all__ = ["ProtocolError", "Image", "Reader", "Writer", "write_chunks", "from_array"]
 
 
 # The PNG signature.
@@ -411,39 +411,35 @@ class Writer:
         chunk_limit
           Write multiple ``IDAT`` chunks to save memory.
         physical
-          Write `pHYs` chunk using 3 values in a list.
+          Write ``pHYs`` chunk using 3 values in a list.
         x_pixels_per_unit
-          Number of pixels a unit along the x axis (write a
-          `pHYs` chunk).
+          Use *physical* argument instead.
         y_pixels_per_unit
-          Number of pixels a unit along the y axis (write a
-          `pHYs` chunk). Along with `x_pixel_unit`, this gives
-          the pixel size ratio.
+          Use *physical* argument instead.
         unit_is_meter
-          `True` to indicate that the unit (for the `pHYs`
-          chunk) is metre.
+          Use *physical* argument instead.
 
         The image size (in pixels) can be specified either by using the
-        `width` and `height` arguments, or with the single `size`
+        *width* and *height* arguments, or with the single *size*
         argument.
-        If `size` is used it should be a pair (*width*, *height*).
+        If *size* is used it should be a pair (*width*, *height*).
 
-        The `greyscale` argument indicates whether input pixels
+        The *greyscale* argument indicates whether input pixels
         are greyscale (when true), or colour (when false).
-        The default is true unless `palette=` is used.
+        The default is true unless *palette* is used.
 
-        The `alpha` argument (a boolean) specifies
+        The *alpha* argument (a boolean) specifies
         whether input pixels have an alpha channel (or not).
 
-        `bitdepth` specifies the bit depth of the source pixel values.
+        *bitdepth* specifies the bit depth of the source pixel values.
         Each channel may have a different bit depth.
         Each source pixel must have values that are
         an integer between 0 and ``2**bitdepth-1``, where
-        `bitdepth` is the bit depth for the corresponding channel.
+        *bitdepth* is the bit depth for the corresponding channel.
         For example, 8-bit images have values between 0 and 255.
         PNG only stores images with bit depths of
         1,2,4,8, or 16 (the same for all channels).
-        When `bitdepth` is not one of these values or where
+        When *bitdepth* is not one of these values or where
         channels have different bit depths,
         the next highest valid bit depth is selected,
         and an ``sBIT`` (significant bits) chunk is generated
@@ -461,29 +457,29 @@ class Writer:
         colour mapped images cannot have bit depth 16.
 
         For colour mapped images
-        (when the `colormap` argument is true,
-        or has been implicitly made true via the `palette`
+        (when the *colormap* argument is true,
+        or has been implicitly made true via the *palette*
         argument)
-        the `bitdepth` argument must match one of
+        the *bitdepth* argument must match one of
         the valid PNG bit depths: 1, 2, 4, or 8.
         (It is valid to have a PNG image with a palette and
         an ``sBIT`` chunk, but the meaning is slightly different;
-        it would be awkward to use the `bitdepth` argument for this.)
+        it would be awkward to use the *bitdepth* argument for this.)
 
-        The `colormap` option, when true,
+        The *colormap* option, when true,
         the PNG colour type is set to 3;
-        `greyscale` must not be true; `alpha` must not be true;
-        `transparent` must not be set.
+        *greyscale* must not be true; *alpha* must not be true;
+        *transparent* must not be set.
         The bit depth must be 1,2,4, or 8.
         When a colour mapped image is created,
         the pixel values are palette indexes and
-        the `bitdepth` argument specifies the size of these indexes
+        the *bitdepth* argument specifies the size of these indexes
         (not the size of the colour values in the palette).
 
-        The `palette` argument adds a palette.
-        It also implicitly sets the `colormap` (to True) if
-        the `colormap` option is defaulted
-        (thus making a colour type 4 PNG).
+        The *palette* argument adds a palette.
+        It also implicitly sets the *colormap* (to True) if
+        the *colormap* option is defaulted
+        (thus making a colour type 3 PNG).
 
         The palette argument value should be a sequence of 3- or
         4-tuples.
@@ -498,12 +494,12 @@ class Writer:
         all the 4-tuples, in the same sequence.
         Palette entries are always 8-bit.
 
-        If specified, the `transparent` and `background` parameters must be
+        If specified, the *transparent* and *background* parameters must be
         a tuple with one element for each channel in the image.
         Either a 3-tuple of integer (RGB) values for a colour image, or
         a 1-tuple of a single integer for a greyscale image.
 
-        If specified, the `gamma` parameter must be a positive number
+        If specified, the *gamma* parameter must be a positive number
         (generally, a `float`).
         A ``gAMA`` chunk will be created.
         Note that this will not change the values of the pixels as
@@ -511,30 +507,30 @@ class Writer:
         they are assumed to have already
         been converted appropriately for the gamma specified.
 
-        The `compression` argument specifies the compression level.
+        The *compression* argument specifies the compression level.
         It is passed to the ``zlib`` module (unless it is `None`,
-        in which case nothing is passed, and `zlib` defaults are used).
+        in which case nothing is passed, and ``zlib`` defaults are used).
         Values from 1 to 9 (highest) specify compression.
         0 means no compression.
         -1 is the ``zlib`` default (and so will also be used
         when this argument is `None`) and indicates
         the default level of compression (which is generally acceptable).
 
-        `chunk_limit` is used to limit the amount of memory used whilst
+        *chunk_limit* is used to limit the amount of memory used whilst
         compressing the image.
         In order to avoid using large amounts of memory,
         multiple ``IDAT`` chunks may be created.
 
-        `physical` should be a list of up to 3 items: [xpp, ypp, ism].
-        xpp is x-pixels-per-unit; ypp is y-pixels-per-unit
-        (defaults to xpp if not present); ism is is-meter, True
-        when the x- and y-resolutions are specified per meter
-        (defaults to False if not present).
+        *physical* should be a list of up to 3 items: [xpp, ypp, ism].
+        *xpp* is x-pixels-per-unit; *ypp* is y-pixels-per-unit
+        (defaults to xpp if not present); *ism* is is-meter,
+        ``True`` when the x- and y-resolutions are specified per meter
+        (defaults to ``False`` if not present).
 
-        `x_pixels_per_unit`
-        `y_pixels_per_unit`
-        `unit_is_meter`
-        alternative to using `physical` keyword. `physical` will
+        *x_pixels_per_unit*
+        *y_pixels_per_unit*
+        *unit_is_meter*
+        alternative to using *physical* keyword. *physical* will
         override these values.
 
         """
@@ -657,12 +653,14 @@ class Writer:
     def write(self, outfile, rows):
         """
         Write a PNG image to the output file.
-        `rows` should be an iterable that yields each row
+        *rows* should be an iterable that yields each row
         (each row is a sequence of values).
-        The first `self.height` rows will be used for the PNG file.
+
+        This method only consumes sufficient rows for the PNG
+        file (``self.height`` rows).
         Extra rows are left unconsumed, but insufficient rows
         will raise a `ProtocolError`.
-        Each row should have `self.width * self.planes` values.
+        Each row should have ``self.width * self.planes`` values.
         """
 
         # Values per row
@@ -695,8 +693,8 @@ class Writer:
         """
         Write a PNG image to the output file.
 
-        Most users are expected to find the :meth:`write` or
-        :meth:`write_array` method more convenient.
+        Most users are expected to find the `write` or
+        `write_array` method more convenient.
 
         The rows should be given to this method in the order that
         they appear in the output file.
@@ -705,7 +703,7 @@ class Writer:
         passing them to this function (though PyPNG no longer
         writes interlaced images).
 
-        `rows` should be an iterable that yields each row
+        *rows* should be an iterable that yields each row
         (each row being a sequence of values).
         """
 
@@ -724,12 +722,12 @@ class Writer:
 
     def write_packed(self, outfile, rows):
         """
-        Write PNG file to `outfile`.
-        `rows` should be an iterator that yields each packed row;
+        Write PNG file to *outfile*.
+        *rows* should be an iterator that yields each packed row;
         a packed row being a sequence of packed bytes.
 
         The rows have a filter byte prefixed and
-        are then compressed into one or more IDAT chunks.
+        are then compressed into one or more ``IDAT`` chunks.
         They are not processed any further,
         so if bitdepth is other than 1, 2, 4, 8, 16,
         the pixel values should have been scaled
@@ -1060,7 +1058,7 @@ RegexModeDecode = re.compile("(LA?|RGBA?);?([0-9]*)", flags=re.IGNORECASE)
 
 def from_array(a, mode=None, info={}):
     """
-    Create a PNG :class:`Image` object from a 2-dimensional array.
+    Create a PNG `Image` object from a 2-dimensional array.
     One application of this function is easy PIL-style saving:
     ``png.from_array(pixels, 'L').save('foo.png')``.
 
@@ -1070,12 +1068,12 @@ def from_array(a, mode=None, info={}):
 
     Unless they are specified using the *info* parameter,
     the PNG's height and width are taken from the array size.
-    The height is the length of the sequence `a`;
+    The height is the length of the sequence *a*;
     the width is the length of the first row divided by the
     number of channels.
 
-    The argument `a` is assumed to be a sequence of rows,
-    each row being a sequence of values (`width*channels` in number).
+    The argument *a* is assumed to be a sequence of rows,
+    each row being a sequence of values (``width*channels`` in number).
     So an RGB image that is 20 pixels high and 32 wide will
     occupy a 2-dimensional array that is 20x96
     (each row will be 32*3 = 96 sample values).
@@ -1093,14 +1091,14 @@ def from_array(a, mode=None, info={}):
       colour image with alpha (4 channel)
 
     The bit depth defaults to 8, but can be changed by
-    appending `';16'` to the mode;
+    appending ``';16'`` to *mode*;
     any decimal from 1 to 16 can be used to specify the bit depth.
 
     *mode* determines how many channels the image has, and
     so allows the width to be derived from the row length
     (the second array dimension).
 
-    Canonically the argument `a` is a list of lists:
+    Canonically the argument *a* is a list of lists:
     ``png.from_array([[0, 255, 0], [255, 0, 255]], 'L')``.
     Other forms may be suitable, particular if they are made
     from Python Standard Library types.
@@ -1112,7 +1110,7 @@ def from_array(a, mode=None, info={}):
 
     The *info* parameter is a dictionary that can
     be used to specify metadata (in the same style as
-    the arguments to the :class:`png.Writer` class).
+    the arguments to the `png.Writer` class).
     For this function the keys that are useful are:
 
     height
@@ -1386,9 +1384,9 @@ class Reader:
     def undo_filter(self, filter_type, scanline, previous):
         """
         Undo the filter for a scanline.
-        `scanline` is a sequence of bytes that
+        *scanline* is a sequence of bytes that
         does not include the initial filter type byte.
-        `previous` is decoded previous scanline
+        *previous* is decoded previous scanline
         (for straightlaced images this is the previous pixel row,
         but for interlaced images, it is
         the previous scanline in the reduced image,
@@ -1759,11 +1757,11 @@ class Reader:
     def read(self):
         """
         Read the PNG file and decode it.
-        Returns (`width`, `height`, `rows`, `info`).
+        Returns (*width*, *height*, *rows*, *info*).
 
         May use excessive memory.
 
-        `rows` is a sequence of rows;
+        *rows* is a sequence of rows;
         each row is a sequence of values.
         """
 
@@ -1827,9 +1825,9 @@ class Reader:
 
         May use excessive memory.
 
-        `values` is a single array.
+        *values* is a single array.
 
-        The :meth:`read` method is more stream-friendly than this,
+        The `read` method is more stream-friendly than this,
         because it returns a sequence of rows.
         """
 
@@ -1843,7 +1841,7 @@ class Reader:
         Returns a palette that is a sequence of 3-tuples or 4-tuples,
         synthesizing it from the ``PLTE`` and ``tRNS`` chunks.
         These chunks should have already been processed (for example,
-        by calling the :meth:`preamble` method).
+        by calling the `preamble` method).
         All the tuples are the same size:
         3-tuples if there is no ``tRNS`` chunk,
         4-tuples when there is a ``tRNS`` chunk.
@@ -1851,7 +1849,7 @@ class Reader:
         Assumes that the image is colour type
         3 and therefore a ``PLTE`` chunk is required.
 
-        If the `alpha` argument is ``'force'`` then an alpha channel is
+        If the *alpha* argument is ``'force'`` then an alpha channel is
         always added, forcing the result to be a sequence of 4-tuples.
         """
 
@@ -1877,7 +1875,7 @@ class Reader:
         the colour value directly without needing to refer
         to palettes or transparency information.
 
-        Like the :meth:`read` method this method returns a 4-tuple:
+        Like the `read` method this method returns a 4-tuple:
 
         (*width*, *height*, *rows*, *info*)
 
@@ -1885,7 +1883,7 @@ class Reader:
         the bit depth they have in the source image.
 
         The *info* dictionary that is returned reflects
-        the `direct` format and not the original source image.
+        the *direct* format and not the original source image.
         For example, an RGB source image with a ``tRNS`` chunk
         to represent a transparent colour,
         will start with ``planes=3`` and ``alpha=False`` for the
