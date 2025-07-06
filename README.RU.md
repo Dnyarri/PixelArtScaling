@@ -14,6 +14,10 @@
 
 **ScaleNxGUI.py** представляет собой общую программу с GUI, объединяющую модули графических форматов и масштабирования. Программа обеспечивает как масштабирование отдельных картинок, так и оптовое batch-масштабирование всех картинок в директории и поддиректориях.
 
+| ScaleNxGUI |
+| :---: |
+| [![Основная программа ScaleNx с GUI](https://dnyarri.github.io/imgscalenx/guismall.png "Основная программа ScaleNx с GUI")](https://dnyarri.github.io/scalenx.html) |
+
 > [!NOTE]
 > При batch-обработке все PPM и PGM файлы сохраняются в бинарных форматах (P6 и P5, соответственно) независимо от формата оригинала, поскольку бинарные форматы неожиданно оказались более совместимыми с разными версиями Photoshop.
 
@@ -22,7 +26,7 @@
 
 ## Пример прогона Scale3x дважды по одной картинке
 
-[![Пример прогона Scale3x дважды](https://dnyarri.github.io/imgscalenx/x3x3.png)](https://dnyarri.github.io/scalenx.html)
+[![Пример прогона Scale3x дважды](https://dnyarri.github.io/imgscalenx/x3x3.png "Пример прогона Scale3x дважды по одной картинке")](https://dnyarri.github.io/scalenx.html)
 
 ## Внешние зависимости
 

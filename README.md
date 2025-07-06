@@ -14,6 +14,10 @@ Currently **Scale2x** (aka AdvMAME2x), **Scale3x** (aka AdvMAME3x), **Scale2xSFX
 
 **ScaleNxGUI.py** is a common shell joining together image formats reading/writing and image rescaling modules. Program provides suitable GUI to access both single file and batch files processing.
 
+| ScaleNxGUI |
+| :---: |
+| [![Main ScaleNx program GUI](https://dnyarri.github.io/imgscalenx/guismall.png "Main ScaleNx program GUI")](https://dnyarri.github.io/scalenx.html) |
+
 > [!NOTE]
 > During batch processing PPM and PGM files are saved as binary formats (P6 and P5 respectively) regardless of source format since binary formats surprisingly appeared to be more compatible with software like Photoshop.
 
@@ -22,7 +26,7 @@ Currently **Scale2x** (aka AdvMAME2x), **Scale3x** (aka AdvMAME3x), **Scale2xSFX
 
 ## Sample of Scale3x (twice)
 
-[![Example of Scale3x run twice](https://dnyarri.github.io/imgscalenx/x3x3.png)](https://dnyarri.github.io/scalenx.html)
+[![Example of Scale3x run twice](https://dnyarri.github.io/imgscalenx/x3x3.png "Example of Scale3x run twice")](https://dnyarri.github.io/scalenx.html)
 
 ## Dependencies
 
