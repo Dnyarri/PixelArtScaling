@@ -28,7 +28,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.07.01.07'
+__version__ = '25.07.07.07'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -112,7 +112,7 @@ def FileNx(size: int, sfx: bool) -> None:
     elif Path(sourcefilename).suffix in ('.ppm', '.pgm', '.pbm'):
         # Reading image as list
         X, Y, Z, maxcolors, image3d = pnmlpnm.pnm2list(sourcefilename)
-        # Creating dummy info
+        # Creating dummy info for PyPNG
         info = {}
         # Fixing color mode. The rest is fixed with pnglpng since ver. 25.01.07.
         if maxcolors > 255:
@@ -123,7 +123,7 @@ def FileNx(size: int, sfx: bool) -> None:
     else:
         raise ValueError('Extension not recognized')
 
-    # Choosing working scaler from the list of imported scalers
+    # Choosing working chosen_scaler from the list of imported scalers
     if sfx:
         if size == 2:
             chosen_scaler = scalenxsfx.scale2x
@@ -135,7 +135,7 @@ def FileNx(size: int, sfx: bool) -> None:
         if size == 3:
             chosen_scaler = scalenx.scale3x
 
-    # Scaling using scaler chosen above
+    # Scaling image using chosen_scaler chosen above
     scaled_image = chosen_scaler(image3d)
 
     # --------------------------------------------------------------
