@@ -349,7 +349,7 @@ if __name__ == '__main__':
         sortir.iconbitmap(str(iconpath))
 
     # Info statuses dictionaries
-    info_normal = {'txt': 'ScaleNx for Python 3.4 at your command', 'fg': 'grey', 'bg': 'light grey'}
+    info_normal = {'txt': ' '.join(('ScaleNx', __version__, 'at your command')), 'fg': 'grey', 'bg': 'light grey'}
     info_waiting = {'txt': 'Waiting for input', 'fg': 'green', 'bg': 'light grey'}
     info_busy = {'txt': 'BUSY, PLEASE WAIT', 'fg': 'red', 'bg': 'yellow'}
 
