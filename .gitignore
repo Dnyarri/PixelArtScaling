@@ -7,7 +7,6 @@ test*/
 __pycache__/
 *.json
 *.txt
-*.png
 *.7z
 *.zip
 *.bz2
