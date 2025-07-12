@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Module contain Scale2xSFX and Scale3xSFX image rescaling functions. NOTE: This is special Python 3.4 compatible build.
+"""Scale2xSFX and Scale3xSFX image rescaling functions for Python >= 3.4.
 
 Overview
 ---------
@@ -25,19 +25,14 @@ Syntaxis example:
 
     `scaled_image = scalenxsfx.scale3x(source_image)`
 
-Current Python implementation of ScaleNxSFX developed by `Ilya Razmanov <https://dnyarri.github.io/>`_
-(hereinafter referred to as "the Developer"), based on `brief algorithm description<https://web.archive.org/web/20160527015550/https://libretro.com/forums/archive/index.php?t-1655.html>`_.
-Real name of the author unknown, therefore due credits not given.
+where both `image` are list[list[list[int]]].
+Note that `image` X and Y sized are determined automatically, Z not used and remains unchanged.
 
-Current implementation may be freely used, included and modified anywhere by anyone.
-In case of useful modifications sharing it with the Developer is almost obligatory.
+References
+-----------
 
-History
---------
-
-2025.01.16  Initial implementation of ScaleNxSFX.
-
-2025.02.01  FIR and conditional optimization. Speed gain, % of original: ca.50% 2x, ca. 40% 3x.
+1. `Original invention <https://web.archive.org/web/20160527015550/https://libretro.com/forums/archive/index.php?t-1655.html>`_.
+2. `Current Python implementation <https://github.com/Dnyarri/PixelArtScaling>`_ by `Ilya Razmanov <https://dnyarri.github.io/>`_.
 
 """
 
@@ -45,7 +40,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '2025.03.34'
+__version__ = '2025.07.34'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -112,12 +107,10 @@ def scale2x(image3d):
         └────┴────┘
     """
     for y in range(Y):
-        """
-            ┌───────────────────────┐
+        """ ┌───────────────────────┐
             │ First pixel in a row. │
             │ "Repeat edge" mode.   │
-            └───────────────────────┘
-        """
+            └───────────────────────┘ """
         A = B = image3d[max(y - 1, 0)][0]
         C = image3d[max(y - 1, 0)][min(1, X - 1)]
         D = E = K = image3d[y][0]
@@ -133,13 +126,11 @@ def scale2x(image3d):
         row_rez = [r1, r2]
         row_dvo = [r3, r4]
 
-        """
-            ┌───────────────────────────────────────────┐
+        """ ┌───────────────────────────────────────────┐
             │ Next pixels in a row (below).             │
             │ Reusing pixels from previous kernel.      │
             │ Only rightmost pixels are read from list. │
-            └───────────────────────────────────────────┘
-        """
+            └───────────────────────────────────────────┘ """
         for x in range(1, X):
             A = B
             B = C
@@ -271,12 +262,10 @@ def scale3x(image3d):
         └────┴────┴────┘
     """
     for y in range(Y):
-        """
-            ┌───────────────────────┐
+        """ ┌───────────────────────┐
             │ First pixel in a row. │
             │ "Repeat edge" mode.   │
-            └───────────────────────┘
-        """
+            └───────────────────────┘ """
         A = B = image3d[max(y - 1, 0)][0]
         C = image3d[max(y - 1, 0)][min(1, X - 1)]
         D = E = K = image3d[y][0]
@@ -293,13 +282,11 @@ def scale3x(image3d):
         row_dvo = [r4, r5, r6]
         row_tre = [r7, r8, r9]
 
-        """
-            ┌───────────────────────────────────────────┐
+        """ ┌───────────────────────────────────────────┐
             │ Next pixels in a row (below).             │
             │ Reusing pixels from previous kernel.      │
             │ Only rightmost pixels are read from list. │
-            └───────────────────────────────────────────┘
-        """
+            └───────────────────────────────────────────┘ """
         for x in range(1, X):
             A = B
             B = C

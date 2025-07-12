@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Module contain Scale2x and Scale3x image rescaling functions. NOTE: This is special Python 3.4 compatible build.
+"""Scale2x and Scale3x image rescaling functions for Python >= 3.4.
 
 Overview
 ---------
@@ -28,33 +28,11 @@ Syntaxis example:
 where both `image` are list[list[list[int]]].
 Note that `image` X and Y sized are determined automatically, Z not used and remains unchanged.
 
+References
+-----------
 
-Copyright and redistribution
------------------------------
-
-Current Python implementation of ScaleNx developed by `Ilya Razmanov <https://dnyarri.github.io/>`_
-(hereinafter referred to as "the Developer"), based on `brief algorithm description <https://www.scale2x.it/algorithm>`_
-by `Andrea Mazzoleni <https://www.scale2x.it/>`_ (hereinafter referred to as "the Inventor").
-
-Current implementation may be freely used, included and modified anywhere by anyone.
-In case of useful modifications sharing it with the Developer is almost obligatory.
-
-History
---------
-
-2024.02.24  Release as shared module, versioning changed to YYYY.MM.DD.
-
-2024.05.14  Arguments and return format changed. Incompatible with previous versions!
-
-2024.07.03  Small improvements, one more retest with new test corpse, as you were, corpus.
-
-2024.10.01  Internal restructure, imports change, maintenance release.
-
-2024.11.24  Improved documentation.
-
-2025.01.15  Conditional optimization. Some appends replaced with extends.
-
-2025.02.01  FIR optimization. Speed gain, % of original: ca.15% 2x, ca. 50% 3x.
+1. `Original invention <https://www.scale2x.it/algorithm>`_ by `Andrea Mazzoleni <https://www.scale2x.it/>`_.
+2. `Current Python implementation <https://github.com/Dnyarri/PixelArtScaling>`_ by `Ilya Razmanov <https://dnyarri.github.io/>`_.
 
 """
 
@@ -62,7 +40,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024-2025 Ilya Razmanov'
 __credits__ = ['Ilya Razmanov', 'Andrea Mazzoleni']
 __license__ = 'unlicense'
-__version__ = '2025.03.34'
+__version__ = '2025.07.34'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -123,12 +101,10 @@ def scale2x(image3d):
         └────┴────┘
     """
     for y in range(Y):
-        """
-            ┌───────────────────────┐
+        """ ┌───────────────────────┐
             │ First pixel in a row. │
             │ "Repeat edge" mode.   │
-            └───────────────────────┘
-        """
+            └───────────────────────┘ """
         A = image3d[max(y - 1, 0)][0]
         B = image3d[y][min(1, X - 1)]
         C = E = image3d[y][0]
@@ -139,13 +115,11 @@ def scale2x(image3d):
         row_rez = [r1, r2]
         row_dvo = [r3, r4]
 
-        """
-            ┌───────────────────────────────────────────┐
+        """ ┌───────────────────────────────────────────┐
             │ Next pixels in a row (below).             │
             │ Reusing pixels from previous kernel.      │
             │ Only rightmost pixels are read from list. │
-            └───────────────────────────────────────────┘
-        """
+            └───────────────────────────────────────────┘ """
         for x in range(1, X):
             C = E
             E = B
@@ -231,12 +205,10 @@ def scale3x(image3d):
         └────┴────┴────┘
     """
     for y in range(Y):
-        """
-            ┌───────────────────────┐
+        """ ┌───────────────────────┐
             │ First pixel in a row. │
             │ "Repeat edge" mode.   │
-            └───────────────────────┘
-        """
+            └───────────────────────┘ """
         A = B = image3d[max(y - 1, 0)][0]
         C = image3d[max(y - 1, 0)][min(1, X - 1)]
         D = E = image3d[y][0]
@@ -250,13 +222,11 @@ def scale3x(image3d):
         row_dvo = [r4, r5, r6]
         row_tre = [r7, r8, r9]
 
-        """
-            ┌───────────────────────────────────────────┐
+        """ ┌───────────────────────────────────────────┐
             │ Next pixels in a row (below).             │
             │ Reusing pixels from previous kernel.      │
             │ Only rightmost pixels are read from list. │
-            └───────────────────────────────────────────┘
-        """
+            └───────────────────────────────────────────┘ """
         for x in range(1, X):
             A = B
             B = C

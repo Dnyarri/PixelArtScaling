@@ -26,17 +26,18 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.06.12.34'
+__version__ = '25.07.12.34'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
 
 from multiprocessing import Pool, freeze_support
 from pathlib import Path
-from tkinter import Button, Frame, Label, Tk, filedialog
+from tkinter import Button, Frame, Label, Tk
+from tkinter.filedialog import askdirectory, askopenfilename, asksaveasfilename
 
-from pypng import pnglpng
-from pypnm import pnmlpnm
+from pypng.pnglpng import list2png, png2list
+from pypnm.pnmlpnm import list2pnm, pnm2list
 from scalenx import scalenx, scalenxsfx
 
 
@@ -91,7 +92,7 @@ def FileNx(size, sfx):
     UIWaiting()
 
     # Open source file
-    sourcefilename = filedialog.askopenfilename(title='Open image file to rescale', filetypes=[('Supported formats', '.png .ppm .pgm .pbm'), ('Portable network graphics', '.png'), ('Portable network map', '.ppm .pgm .pbm')])
+    sourcefilename = askopenfilename(title='Open image file to rescale', filetypes=[('Supported formats', '.png .ppm .pgm .pbm'), ('Portable network graphics', '.png'), ('Portable network map', '.ppm .pgm .pbm')])
     if sourcefilename == '':
         UINormal()
         return None
@@ -100,11 +101,11 @@ def FileNx(size, sfx):
 
     if Path(sourcefilename).suffix == '.png':
         # Reading image as list
-        X, Y, Z, maxcolors, image3d, info = pnglpng.png2list(sourcefilename)
+        X, Y, Z, maxcolors, image3d, info = png2list(sourcefilename)
 
     elif Path(sourcefilename).suffix in ('.ppm', '.pgm', '.pbm'):
         # Reading image as list
-        X, Y, Z, maxcolors, image3d = pnmlpnm.pnm2list(sourcefilename)
+        X, Y, Z, maxcolors, image3d = pnm2list(sourcefilename)
         # Creating dummy info
         info = {}
         # Fixing color mode. The rest is fixed with pnglpng v. 25.01.07.
@@ -163,7 +164,7 @@ def FileNx(size, sfx):
     UIWaiting()
 
     # Open export file
-    resultfilename = filedialog.asksaveasfilename(
+    resultfilename = asksaveasfilename(
         title='Save image file',
         filetypes=format,
         defaultextension=('PNG file', '.png'),
@@ -175,9 +176,9 @@ def FileNx(size, sfx):
     UIBusy()
 
     if Path(resultfilename).suffix == '.png':
-        pnglpng.list2png(resultfilename, scaled_image, info)
+        list2png(resultfilename, scaled_image, info)
     elif Path(resultfilename).suffix in ('.ppm', '.pgm'):
-        pnmlpnm.list2pnm(resultfilename, scaled_image, maxcolors)
+        list2pnm(resultfilename, scaled_image, maxcolors)
 
     UINormal()
 
@@ -197,7 +198,7 @@ def scale_file_png(runningfilename, size, sfx):
     newfile = oldfile  # Previous version used backup newfile = oldfile + '.2x.png'
 
     # Reading image as list
-    X, Y, Z, maxcolors, image3d, info = pnglpng.png2list(oldfile)
+    X, Y, Z, maxcolors, image3d, info = png2list(oldfile)
 
     # Choosing working scaler from the list of imported scalers
     if sfx:
@@ -238,7 +239,7 @@ def scale_file_png(runningfilename, size, sfx):
     info['compression'] = 9
 
     # Writing PNG file
-    pnglpng.list2png(newfile, scaled_image, info)
+    list2png(newfile, scaled_image, info)
 
     return None
 
@@ -256,7 +257,7 @@ def scale_file_pnm(runningfilename, size, sfx):
     newfile = oldfile  # Overwrite!
 
     # Reading image as list
-    X, Y, Z, maxcolors, image3d = pnmlpnm.pnm2list(oldfile)
+    X, Y, Z, maxcolors, image3d = pnm2list(oldfile)
 
     # Choosing working scaler from the list of imported scalers
     if sfx:
@@ -274,7 +275,7 @@ def scale_file_pnm(runningfilename, size, sfx):
     scaled_image = chosen_scaler(image3d)
 
     # Writing PNM file
-    pnmlpnm.list2pnm(newfile, scaled_image, maxcolors)
+    list2pnm(newfile, scaled_image, maxcolors)
 
     return None
 
@@ -290,7 +291,7 @@ def FolderNx(size, sfx):
     UIWaiting()
 
     # Open source dir
-    sourcedir = filedialog.askdirectory(title='Open folder to rescale images')
+    sourcedir = askdirectory(title='Open folder to rescale images')
     if sourcedir == '':
         UINormal()
         return None
@@ -337,7 +338,6 @@ def FolderNx(size, sfx):
     ╚═══════════╝ """
 
 if __name__ == '__main__':
-
     freeze_support()  # Freezing for exe
 
     sortir = Tk()
