@@ -62,7 +62,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024-2025 Ilya Razmanov'
 __credits__ = ['Ilya Razmanov', 'Andrea Mazzoleni']
 __license__ = 'unlicense'
-__version__ = '2025.03.01'
+__version__ = '2025.07.12'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -123,12 +123,10 @@ def scale2x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
         └────┴────┘
     """
     for y in range(Y):
-        """
-            ┌───────────────────────┐
+        """ ┌───────────────────────┐
             │ First pixel in a row. │
             │ "Repeat edge" mode.   │
-            └───────────────────────┘
-        """
+            └───────────────────────┘ """
         A = image3d[max(y - 1, 0)][0]
         B = image3d[y][min(1, X - 1)]
         C = E = image3d[y][0]
@@ -139,13 +137,11 @@ def scale2x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
         row_rez = [r1, r2]
         row_dvo = [r3, r4]
 
-        """
-            ┌───────────────────────────────────────────┐
+        """ ┌───────────────────────────────────────────┐
             │ Next pixels in a row (below).             │
             │ Reusing pixels from previous kernel.      │
             │ Only rightmost pixels are read from list. │
-            └───────────────────────────────────────────┘
-        """
+            └───────────────────────────────────────────┘ """
         for x in range(1, X):
             C = E
             E = B
@@ -231,12 +227,10 @@ def scale3x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
         └────┴────┴────┘
     """
     for y in range(Y):
-        """
-            ┌───────────────────────┐
+        """ ┌───────────────────────┐
             │ First pixel in a row. │
             │ "Repeat edge" mode.   │
-            └───────────────────────┘
-        """
+            └───────────────────────┘ """
         A = B = image3d[max(y - 1, 0)][0]
         C = image3d[max(y - 1, 0)][min(1, X - 1)]
         D = E = image3d[y][0]
@@ -250,13 +244,11 @@ def scale3x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
         row_dvo = [r4, r5, r6]
         row_tre = [r7, r8, r9]
 
-        """
-            ┌───────────────────────────────────────────┐
+        """ ┌───────────────────────────────────────────┐
             │ Next pixels in a row (below).             │
             │ Reusing pixels from previous kernel.      │
             │ Only rightmost pixels are read from list. │
-            └───────────────────────────────────────────┘
-        """
+            └───────────────────────────────────────────┘ """
         for x in range(1, X):
             A = B
             B = C

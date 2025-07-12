@@ -28,17 +28,18 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.07.07.07'
+__version__ = '25.07.12.07'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
 
 from multiprocessing import Pool, freeze_support
 from pathlib import Path
-from tkinter import Button, Frame, Label, Tk, filedialog
+from tkinter import Button, Frame, Label, Tk
+from tkinter.filedialog import askdirectory, askopenfilename, asksaveasfilename
 
-from pypng import pnglpng
-from pypnm import pnmlpnm
+from pypng.pnglpng import list2png, png2list
+from pypnm.pnmlpnm import list2pnm, pnm2list
 from scalenx import scalenx, scalenxsfx
 
 
@@ -98,7 +99,7 @@ def FileNx(size: int, sfx: bool) -> None:
     UIWaiting()
 
     # Open source file
-    sourcefilename = filedialog.askopenfilename(title='Open image file to rescale', filetypes=[('Supported formats', '.png .ppm .pgm .pbm'), ('Portable network graphics', '.png'), ('Portable network map', '.ppm .pgm .pbm')])
+    sourcefilename = askopenfilename(title='Open image file to rescale', filetypes=[('Supported formats', '.png .ppm .pgm .pbm'), ('Portable network graphics', '.png'), ('Portable network map', '.ppm .pgm .pbm')])
     if sourcefilename == '':
         UINormal()
         return None
@@ -107,11 +108,11 @@ def FileNx(size: int, sfx: bool) -> None:
 
     if Path(sourcefilename).suffix == '.png':
         # Reading image as list
-        X, Y, Z, maxcolors, image3d, info = pnglpng.png2list(sourcefilename)
+        X, Y, Z, maxcolors, image3d, info = png2list(sourcefilename)
 
     elif Path(sourcefilename).suffix in ('.ppm', '.pgm', '.pbm'):
         # Reading image as list
-        X, Y, Z, maxcolors, image3d = pnmlpnm.pnm2list(sourcefilename)
+        X, Y, Z, maxcolors, image3d = pnm2list(sourcefilename)
         # Creating dummy info for PyPNG
         info = {}
         # Fixing color mode. The rest is fixed with pnglpng since ver. 25.01.07.
@@ -170,7 +171,7 @@ def FileNx(size: int, sfx: bool) -> None:
     UIWaiting()
 
     # Open export file
-    resultfilename = filedialog.asksaveasfilename(
+    resultfilename = asksaveasfilename(
         title='Save image file',
         filetypes=format,
         defaultextension=('PNG file', '.png'),
@@ -182,9 +183,9 @@ def FileNx(size: int, sfx: bool) -> None:
     UIBusy()
 
     if Path(resultfilename).suffix == '.png':
-        pnglpng.list2png(resultfilename, scaled_image, info)
+        list2png(resultfilename, scaled_image, info)
     elif Path(resultfilename).suffix in ('.ppm', '.pgm'):
-        pnmlpnm.list2pnm(resultfilename, scaled_image, maxcolors)
+        list2pnm(resultfilename, scaled_image, maxcolors)
 
     UINormal()
 
@@ -205,7 +206,7 @@ def scale_file_png(runningfilename: Path, size: int, sfx: bool) -> None:
     newfile = oldfile  # Previous version used backup newfile = oldfile + '.2x.png'
 
     # Reading image as list
-    X, Y, Z, maxcolors, image3d, info = pnglpng.png2list(oldfile)
+    X, Y, Z, maxcolors, image3d, info = png2list(oldfile)
 
     # Choosing working scaler from the list of imported scalers
     if sfx:
@@ -246,7 +247,7 @@ def scale_file_png(runningfilename: Path, size: int, sfx: bool) -> None:
     info['compression'] = 3
 
     # Writing PNG file
-    pnglpng.list2png(newfile, scaled_image, info)
+    list2png(newfile, scaled_image, info)
 
     return None
 
@@ -265,7 +266,7 @@ def scale_file_pnm(runningfilename: Path, size: int, sfx: bool) -> None:
     newfile = oldfile  # Overwrite!
 
     # Reading image as list
-    X, Y, Z, maxcolors, image3d = pnmlpnm.pnm2list(oldfile)
+    X, Y, Z, maxcolors, image3d = pnm2list(oldfile)
 
     # Choosing working scaler from the list of imported scalers
     if sfx:
@@ -283,7 +284,7 @@ def scale_file_pnm(runningfilename: Path, size: int, sfx: bool) -> None:
     scaled_image = chosen_scaler(image3d)
 
     # Writing PNM file
-    pnmlpnm.list2pnm(newfile, scaled_image, maxcolors)
+    list2pnm(newfile, scaled_image, maxcolors)
 
     return None
 
@@ -300,7 +301,7 @@ def FolderNx(size: int, sfx: bool) -> None:
     UIWaiting()
 
     # Open source dir
-    sourcedir = filedialog.askdirectory(title='Open folder to rescale images')
+    sourcedir = askdirectory(title='Open folder to rescale images')
     if sourcedir == '':
         UINormal()
         return None
@@ -362,6 +363,10 @@ if __name__ == '__main__':
     info_waiting = {'txt': 'Waiting for input', 'fg': 'green', 'bg': 'light grey'}
     info_busy = {'txt': 'BUSY, PLEASE WAIT', 'fg': 'red', 'bg': 'yellow'}
 
+    # Frequently used formatting
+    blue_pady = (12, 0)
+    blue_center = 42
+
     butt99 = Button(sortir, text='Exit', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=DisMiss)
     butt99.pack(side='bottom', padx=4, pady=2, fill='both')
 
@@ -377,8 +382,8 @@ if __name__ == '__main__':
     label00 = Label(frame_left, text='ScaleNx', font=('helvetica', 24), justify='center', borderwidth=2, relief='groove', foreground='brown', background='light grey')
     label00.pack(side='top', pady=(0, 6), fill='both')
 
-    label01 = Label(frame_left, text='Single image rescaling (PNG, PPM, PGM)'.center(42, ' '), font=('helvetica', 10), justify='center', borderwidth=2, relief='flat', foreground='dark blue', background='light blue')
-    label01.pack(side='top', pady=(12, 0), fill='both')
+    label01 = Label(frame_left, text='Single image rescaling (PNG, PPM, PGM)'.center(blue_center, ' '), font=('helvetica', 10), justify='center', borderwidth=2, relief='flat', foreground='dark blue', background='light blue')
+    label01.pack(side='top', pady=blue_pady, fill='both')
 
     butt01 = Button(frame_left, text='Open file ➔ 2x', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FileNx(2, False))
     butt01.pack(side='top', padx=4, pady=2, fill='both')
@@ -387,7 +392,7 @@ if __name__ == '__main__':
     butt02.pack(side='top', padx=4, pady=2, fill='both')
 
     label02 = Label(frame_left, text='Folder batch process (PNG, PPM, PGM)', font=('helvetica', 10), justify='center', borderwidth=2, relief='flat', foreground='dark blue', background='light blue')
-    label02.pack(side='top', pady=(12, 0), fill='both')
+    label02.pack(side='top', pady=blue_pady, fill='both')
 
     butt03 = Button(frame_left, text='Select folder ➔ 2x', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FolderNx(2, False))
     butt03.pack(side='top', padx=4, pady=2, fill='both')
@@ -398,8 +403,8 @@ if __name__ == '__main__':
     label10 = Label(frame_right, text='ScaleNxSFX', font=('helvetica', 24), justify='center', borderwidth=2, relief='groove', foreground='brown', background='light grey')
     label10.pack(side='top', pady=(0, 6), fill='both')
 
-    label11 = Label(frame_right, text='Single image rescaling (PNG, PPM, PGM)'.center(42, ' '), font=('helvetica', 10), justify='center', borderwidth=2, relief='flat', foreground='dark blue', background='light blue')
-    label11.pack(side='top', pady=(12, 0), fill='both')
+    label11 = Label(frame_right, text='Single image rescaling (PNG, PPM, PGM)'.center(blue_center, ' '), font=('helvetica', 10), justify='center', borderwidth=2, relief='flat', foreground='dark blue', background='light blue')
+    label11.pack(side='top', pady=blue_pady, fill='both')
 
     butt11 = Button(frame_right, text='Open file ➔ 2xSFX', font=('helvetica', 14), cursor='hand2', justify='center', command=lambda: FileNx(2, True))
     butt11.pack(side='top', padx=4, pady=2, fill='both')
@@ -408,7 +413,7 @@ if __name__ == '__main__':
     butt12.pack(side='top', padx=4, pady=2, fill='both')
 
     label12 = Label(frame_right, text='Folder batch process (PNG, PPM, PGM)', font=('helvetica', 10), justify='center', borderwidth=2, relief='flat', foreground='dark blue', background='light blue')
-    label12.pack(side='top', pady=(12, 0), fill='both')
+    label12.pack(side='top', pady=blue_pady, fill='both')
 
     butt13 = Button(frame_right, text='Select folder ➔ 2xSFX', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FolderNx(2, True))
     butt13.pack(side='top', padx=4, pady=2, fill='both')

@@ -33,5 +33,4 @@ versioning changed to YYYY.MM.DD.
 **2025.02.01**  FIR optimization. Speed gain, % of original (median):
 ca.15% Scale2x, ca. 50% Scale3x, ca.50% Scale2xSFX, ca. 40% Scale2xSFX.
 
-**2025.03.34**  26 Mar 2025 from now on only py34 branch, compatible with Python 3.4,
-will be used for publishing at PyPI; last digits "34" in version number reflect Python 3.4 compatibility.
+**2025.07.12**  12 Jul 2025 "Kutuzov" release. Compacting, hinting.
