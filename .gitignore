@@ -1,6 +1,6 @@
 .vscode
 backup/
-build-*/
+build*/
 development*/
 temp/
 test*/
