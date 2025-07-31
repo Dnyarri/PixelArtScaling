@@ -85,13 +85,13 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024-2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '1.17.9.1'
+__version__ = '1.17.9.2'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
 
 import array
-import re
+from re import search, sub
 
 """ ╔══════════╗
     ║ pnm2list ║
@@ -108,7 +108,7 @@ def pnm2list(in_filename: str) -> tuple[int, int, int, int, list[list[list[int]]
     for reading data from PPM/PGM, where:
 
         - `X`, `Y`, `Z`:    image dimensions (int);
-        - `maxcolors`:      maximum of color per channel for current image (int), 255 for 8 bit and 65535 for 16 bit;
+        - `maxcolors`:      maximum of color per channel for current image (int), 255 for 8 bit and 65535 for 16 bit. Note that 1 bit images get promoted to 8 bit;
         - `list_3d`:        image pixel data as list(list(list(int)));
         - `in_filename`:    PPM/PGM file name (str).
 
@@ -122,7 +122,7 @@ def pnm2list(in_filename: str) -> tuple[int, int, int, int, list[list[list[int]]
             │ IF Continuous tone │
             └────────────────────┘ """
         # Getting header by pattern
-        header: list[bytes] = re.search(
+        header: list[bytes] = search(
             rb'(^P\d\s(?:\s*#.*\s)*'  # last \s gives better compatibility than [\r\n]
             rb'\s*(\d+)\s(?:\s*#.*\s)*'  # first \s further improves compatibility
             rb'\s*(\d+)\s(?:\s*#.*\s)*'
@@ -135,10 +135,14 @@ def pnm2list(in_filename: str) -> tuple[int, int, int, int, list[list[list[int]]
         magic = (magic.split()[0]).decode()
         X = int(X)
         Y = int(Y)
+        if (magic == 'P6') or (magic == 'P3'):
+            Z = 3
+        elif (magic == 'P5') or (magic == 'P2'):
+            Z = 1
         maxcolors = int(maxcolors)
 
         # Removing header by the same pattern, leaving only image data
-        filtered_bytes = re.sub(
+        filtered_bytes = sub(
             rb'(^P\d\s(?:\s*#.*\s)*'  # pattern to replace to
             rb'\s*(\d+)\s(?:\s*#.*\s)*'
             rb'\s*(\d+)\s(?:\s*#.*\s)*'
@@ -149,11 +153,6 @@ def pnm2list(in_filename: str) -> tuple[int, int, int, int, list[list[list[int]]
 
         del full_bytes  # Cleanup
 
-        if (magic == 'P6') or (magic == 'P3'):
-            Z = 3
-        elif (magic == 'P5') or (magic == 'P2'):
-            Z = 1
-
         if (magic == 'P6') or (magic == 'P5'):
             """ ┌───────────────────────────┐
                 │ IF Binary continuous tone │
@@ -163,6 +162,8 @@ def pnm2list(in_filename: str) -> tuple[int, int, int, int, list[list[list[int]]
             else:
                 array_1d = array.array('H', filtered_bytes)
                 array_1d.byteswap()  # Critical for 16 bits per channel
+
+            del filtered_bytes  # Cleanup
 
             list_1d = array_1d.tolist()
 
@@ -203,7 +204,7 @@ def pnm2list(in_filename: str) -> tuple[int, int, int, int, list[list[list[int]]
             │ IF 1 Bit/pixel │
             └────────────────┘ """
         # Getting header by pattern. Note that for 1 bit pattern does not include maxcolors
-        header: list[bytes] = re.search(
+        header: list[bytes] = search(
             rb'(^P\d\s(?:\s*#.*\s)*'  # last \s gives better compatibility than [\r\n]
             rb'\s*(\d+)\s(?:\s*#.*\s)*'  # first \s further improves compatibility
             rb'\s*(\d+)\s)',
@@ -219,7 +220,7 @@ def pnm2list(in_filename: str) -> tuple[int, int, int, int, list[list[list[int]]
         maxcolors = 255  # Forcing conversion to L
 
         # Removing header by the same pattern, leaving only image data
-        filtered_bytes = re.sub(
+        filtered_bytes = sub(
             rb'(^P\d\s(?:\s*#.*\s)*'  # pattern to replace to
             rb'\s*(\d+)\s(?:\s*#.*\s)*'
             rb'\s*(\d+)\s)',
@@ -242,7 +243,7 @@ def pnm2list(in_filename: str) -> tuple[int, int, int, int, list[list[list[int]]
                 for x in range(row_width):
                     single_byte = filtered_bytes[(y * row_width) + x]
                     single_byte_bits = [int(bit) for bit in bin(single_byte)[2:].zfill(8)]
-                    single_byte_bits_normalized = [[255 * (1 - c)] for c in single_byte_bits]  # renormalizing colors from ink on/off to L model, replacing int with [int]
+                    single_byte_bits_normalized = [[maxcolors * (1 - c)] for c in single_byte_bits]  # renormalizing colors from ink on/off to L model, replacing int with [int]
                     row.extend(single_byte_bits_normalized)  # assembling row, junk included
 
                 list_3d.append(row[0:X])  # apparently cutting junk off
@@ -260,7 +261,7 @@ def pnm2list(in_filename: str) -> tuple[int, int, int, int, list[list[list[int]]
             list_3d = [
                         [
                             [
-                                (255 * (1 - int(list_1d[z + x * Z + y * X * Z]))) for z in range(Z)
+                                (maxcolors * (1 - int(list_1d[z + x * Z + y * X * Z]))) for z in range(Z)
                             ] for x in range(X)
                         ] for y in range(Y)
                     ]
