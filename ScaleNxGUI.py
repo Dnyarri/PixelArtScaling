@@ -28,7 +28,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.07.12.07'
+__version__ = '25.08.08.22'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -43,7 +43,7 @@ from pypnm.pnmlpnm import list2pnm, pnm2list
 from scalenx import scalenx, scalenxsfx
 
 
-def DisMiss() -> None:
+def DisMiss(event=None) -> None:
     """Kill dialog and continue"""
     sortir.destroy()
     return None
@@ -352,11 +352,11 @@ if __name__ == '__main__':
 
     sortir = Tk()
     sortir.title('ScaleNx')
-    sortir.geometry('+200+100')
     sortir.minsize(560, 370)
     iconpath = Path(__file__).resolve().parent / '32.ico'
     if iconpath.exists():
         sortir.iconbitmap(str(iconpath))
+    sortir.geometry(f'+{sortir.winfo_screenwidth() // 2 - 280}+{sortir.winfo_screenheight() // 2 - 185}')
 
     # Info statuses dictionaries
     info_normal = {'txt': f'ScaleNx ver. {__version__} at your command', 'fg': 'grey', 'bg': 'light grey'}
@@ -420,5 +420,7 @@ if __name__ == '__main__':
 
     butt14 = Button(frame_right, text='Select folder ➔ 3xSFX', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FolderNx(3, True))
     butt14.pack(side='top', padx=4, pady=2, fill='both')
+
+    sortir.bind_all('<Control-q>', DisMiss)
 
     sortir.mainloop()
