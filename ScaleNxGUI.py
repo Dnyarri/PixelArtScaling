@@ -26,7 +26,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.07.12.34'
+__version__ = '25.08.08.34'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -41,7 +41,7 @@ from pypnm.pnmlpnm import list2pnm, pnm2list
 from scalenx import scalenx, scalenxsfx
 
 
-def DisMiss():
+def DisMiss(event=None) -> None:
     """Kill dialog and continue"""
     sortir.destroy()
 
@@ -406,5 +406,7 @@ if __name__ == '__main__':
 
     butt14 = Button(frame_right, text='Select folder => 3xSFX', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FolderNx(3, True))
     butt14.pack(side='top', padx=4, pady=2, fill='both')
+
+    sortir.bind_all('<Control-q>', DisMiss)
 
     sortir.mainloop()
