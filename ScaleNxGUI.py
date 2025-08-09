@@ -9,7 +9,7 @@ Created by: Ilya Razmanov <ilyarazmanov@gmail.com> aka Ilyich the Toad <amphisof
 History:
 ---
 
-25.01.17.00 Initial.
+25.01.17.00 Initial GUI version.
 
 25.01.17.21 Fully operational.
 
@@ -26,7 +26,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.08.08.34'
+__version__ = '25.08.10.34'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -342,7 +342,6 @@ if __name__ == '__main__':
 
     sortir = Tk()
     sortir.title('ScaleNx')
-    sortir.geometry('+200+100')
     sortir.minsize(560, 370)
     iconpath = Path(__file__).resolve().parent / '32.ico'
     if iconpath.exists():
@@ -408,5 +407,9 @@ if __name__ == '__main__':
     butt14.pack(side='top', padx=4, pady=2, fill='both')
 
     sortir.bind_all('<Control-q>', DisMiss)
+
+    # ↓ Center window horizontally, and at 64 above the middle vertically
+    sortir.update()
+    sortir.geometry(''.join(('+', str((sortir.winfo_screenwidth() - sortir.winfo_width()) // 2), '+', str((sortir.winfo_screenheight() - sortir.winfo_height()) // 2 - 64))))
 
     sortir.mainloop()
