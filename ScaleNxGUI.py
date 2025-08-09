@@ -28,7 +28,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.08.08.22'
+__version__ = '25.08.10.02'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -422,5 +422,9 @@ if __name__ == '__main__':
     butt14.pack(side='top', padx=4, pady=2, fill='both')
 
     sortir.bind_all('<Control-q>', DisMiss)
+
+    # ↓ Center window horizontally, slightly higher vertically
+    sortir.update()
+    sortir.geometry(f'+{(sortir.winfo_screenwidth() - sortir.winfo_width()) // 2}+{(sortir.winfo_screenheight() - sortir.winfo_height()) // 2 - 64}')
 
     sortir.mainloop()
