@@ -26,7 +26,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.08.10.34'
+__version__ = '25.08.12.34'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -91,7 +91,7 @@ def FileNx(size, sfx):
 
     UIWaiting()
 
-    # Open source file
+    # ↓ Open source file
     sourcefilename = askopenfilename(title='Open image file to rescale', filetypes=[('Supported formats', '.png .ppm .pgm .pbm'), ('Portable network graphics', '.png'), ('Portable network map', '.ppm .pgm .pbm')])
     if sourcefilename == '':
         UINormal()
@@ -100,24 +100,21 @@ def FileNx(size, sfx):
     UIBusy()
 
     if Path(sourcefilename).suffix == '.png':
-        # Reading image as list
+        # ↓ Reading image as list
         X, Y, Z, maxcolors, image3d, info = png2list(sourcefilename)
 
     elif Path(sourcefilename).suffix in ('.ppm', '.pgm', '.pbm'):
-        # Reading image as list
+        # ↓ Reading image as list
         X, Y, Z, maxcolors, image3d = pnm2list(sourcefilename)
-        # Creating dummy info
+        # ↓ Creating dummy info
         info = {}
-        # Fixing color mode. The rest is fixed with pnglpng v. 25.01.07.
-        if maxcolors > 255:
-            info['bitdepth'] = 16
-        else:
-            info['bitdepth'] = 8
+        # ↓ Fixing color mode. The rest is fixed with pnglpng v. 25.01.07.
+        info['bitdepth'] = 16 if maxcolors > 255 else 8
 
     else:
         raise ValueError('Extension not recognized')
 
-    # Choosing working scaler from the list of imported scalers
+    # ↓ Choosing working scaler from the list of imported scalers
     if sfx:
         if size == 2:
             chosen_scaler = scalenxsfx.scale2x
@@ -129,12 +126,11 @@ def FileNx(size, sfx):
         if size == 3:
             chosen_scaler = scalenx.scale3x
 
-    # Scaling using scaler chosen above
+    # ↓ Scaling using scaler chosen above
     scaled_image = chosen_scaler(image3d)
 
-    # --------------------------------------------------------------
-    # Fixing resolution to match original print size.
-    # If no pHYs found in original, 96 ppi is assumed as original value.
+    # ↓ Fixing resolution to match original print size.
+    #   If no pHYs found in original, 96 ppi is assumed as original value.
     if 'physical' in info:
         res = info['physical']  # Reading resolution as tuple
         x_pixels_per_unit = res[0]
@@ -149,13 +145,12 @@ def FileNx(size, sfx):
     y_pixels_per_unit = size * y_pixels_per_unit  # Change resolution to keep print size
 
     info['physical'] = [x_pixels_per_unit, y_pixels_per_unit, unit_is_meter]
-    # Resolution changed
-    # --------------------------------------------------------------
+    # ↑ Resolution changed
 
-    # Explicitly setting compression
+    # ↓ Explicitly setting compression hight for single file processing
     info['compression'] = 9
 
-    # Adjusting "Save to" formats to be displayed according to bitdepth
+    # ↓ Adjusting "Save to" formats to be displayed according to bitdepth
     if Z < 3:
         format = [('Portable network graphics', '.png'), ('Portable grey map', '.pgm')]
     else:
@@ -163,7 +158,7 @@ def FileNx(size, sfx):
 
     UIWaiting()
 
-    # Open export file
+    # ↓ Open export file
     resultfilename = asksaveasfilename(
         title='Save image file',
         filetypes=format,
@@ -197,10 +192,10 @@ def scale_file_png(runningfilename, size, sfx):
     oldfile = str(runningfilename)
     newfile = oldfile  # Previous version used backup newfile = oldfile + '.2x.png'
 
-    # Reading image as list
+    # ↓ Reading image as list
     X, Y, Z, maxcolors, image3d, info = png2list(oldfile)
 
-    # Choosing working scaler from the list of imported scalers
+    # ↓ Choosing working scaler from the list of imported scalers
     if sfx:
         if size == 2:
             chosen_scaler = scalenxsfx.scale2x
@@ -212,12 +207,11 @@ def scale_file_png(runningfilename, size, sfx):
         if size == 3:
             chosen_scaler = scalenx.scale3x
 
-    # Scaling using scaler chosen above
+    # ↓ Scaling using scaler chosen above
     scaled_image = chosen_scaler(image3d)
 
-    # --------------------------------------------------------------
-    # Fixing resolution to match original print size.
-    # If no pHYs found in original, 96 ppi is assumed as original value.
+    # ↓ Fixing resolution to match original print size.
+    #   If no pHYs found in original, 96 ppi is assumed as original value.
     if 'physical' in info:
         res = info['physical']  # Reading resolution as tuple
         x_pixels_per_unit = res[0]
@@ -232,13 +226,12 @@ def scale_file_png(runningfilename, size, sfx):
     y_pixels_per_unit = size * y_pixels_per_unit  # Change resolution to keep print size
 
     info['physical'] = [x_pixels_per_unit, y_pixels_per_unit, unit_is_meter]
-    # Resolution changed
-    # --------------------------------------------------------------
+    # ↑ Resolution changed
 
-    # Explicitly setting compression
-    info['compression'] = 9
+    # ↓ Explicitly setting compression low for batch processing to increase speed
+    info['compression'] = 3
 
-    # Writing PNG file
+    # ↓ Writing PNG file
     list2png(newfile, scaled_image, info)
 
     return None
@@ -256,10 +249,10 @@ def scale_file_pnm(runningfilename, size, sfx):
     oldfile = str(runningfilename)
     newfile = oldfile  # Overwrite!
 
-    # Reading image as list
+    # ↓ Reading image as list
     X, Y, Z, maxcolors, image3d = pnm2list(oldfile)
 
-    # Choosing working scaler from the list of imported scalers
+    # ↓ Choosing working scaler from the list of imported scalers
     if sfx:
         if size == 2:
             chosen_scaler = scalenxsfx.scale2x
@@ -271,10 +264,10 @@ def scale_file_pnm(runningfilename, size, sfx):
         if size == 3:
             chosen_scaler = scalenx.scale3x
 
-    # Scaling using scaler chosen above
+    # ↓ Scaling using scaler chosen above
     scaled_image = chosen_scaler(image3d)
 
-    # Writing PNM file
+    # ↓ Writing PNM file
     list2pnm(newfile, scaled_image, maxcolors)
 
     return None
@@ -290,7 +283,7 @@ def FolderNx(size, sfx):
 
     UIWaiting()
 
-    # Open source dir
+    # ↓ Open source dir
     sourcedir = askdirectory(title='Open folder to rescale images')
     if sourcedir == '':
         UINormal()
@@ -300,10 +293,10 @@ def FolderNx(size, sfx):
 
     UIBusy()
 
-    # Creating pool
+    # ↓ Creating pool
     scalepool = Pool()
 
-    # Feeding the pool (no pun!)
+    # ↓ Feeding the pool (no pun!)
     for runningfilename in path.rglob('*.*'):
         if runningfilename.suffix == '.png':
             scalepool.apply_async(
@@ -324,7 +317,7 @@ def FolderNx(size, sfx):
                 ),
             )
 
-    # Everything fed into the pool, waiting and closing
+    # ↓ Everything fed into the pool, waiting and closing
     scalepool.close()
     scalepool.join()
 
@@ -347,11 +340,12 @@ if __name__ == '__main__':
     if iconpath.exists():
         sortir.iconbitmap(str(iconpath))
 
-    # Info statuses dictionaries
-    info_normal = {'txt': ' '.join(('ScaleNx', __version__, 'at your command')), 'fg': 'grey', 'bg': 'light grey'}
+    # ↓ Info statuses dictionaries
+    info_normal = {'txt': 'ScaleNx {} at your command'.format(__version__), 'fg': 'grey', 'bg': 'light grey'}
     info_waiting = {'txt': 'Waiting for input', 'fg': 'green', 'bg': 'light grey'}
     info_busy = {'txt': 'BUSY, PLEASE WAIT', 'fg': 'red', 'bg': 'yellow'}
 
+    # ↓ Widgets
     butt99 = Button(sortir, text='Exit', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=DisMiss)
     butt99.pack(side='bottom', padx=4, pady=2, fill='both')
 
@@ -406,10 +400,10 @@ if __name__ == '__main__':
     butt14 = Button(frame_right, text='Select folder => 3xSFX', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FolderNx(3, True))
     butt14.pack(side='top', padx=4, pady=2, fill='both')
 
-    sortir.bind_all('<Control-q>', DisMiss)
+    sortir.bind_all('<Control-q>', DisMiss) # Ctrl+Q exit I used to use
 
-    # ↓ Center window horizontally, and at 64 above the middle vertically
+    # ↓ Center window horizontally, one third vertically
     sortir.update()
-    sortir.geometry(''.join(('+', str((sortir.winfo_screenwidth() - sortir.winfo_width()) // 2), '+', str((sortir.winfo_screenheight() - sortir.winfo_height()) // 2 - 64))))
+    sortir.geometry('+{x_position:d}+{y_position:d}'.format(x_position=(sortir.winfo_screenwidth() - sortir.winfo_width()) // 2, y_position=(sortir.winfo_screenheight() - sortir.winfo_height()) // 3))
 
     sortir.mainloop()
