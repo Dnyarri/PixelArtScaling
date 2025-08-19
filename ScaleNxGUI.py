@@ -15,6 +15,8 @@ History:
 
 25.03.01.01 PNM batch processing added. GUI simplified to reduce imports.
 
+25.08.20.34 Numerous GUI updates; simulating MRU for old Tkinter.
+
 ---
 Main site:  <https://dnyarri.github.io>
 
@@ -26,7 +28,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.08.12.34'
+__version__ = '25.08.20.34'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -89,14 +91,16 @@ def FileNx(size, sfx):
         sfx: use either sfx or classic scaler version.
     """
 
+    global mru  # Remember MRU directory for old Tkinter
+
     UIWaiting()
 
     # ↓ Open source file
-    sourcefilename = askopenfilename(title='Open image file to rescale', filetypes=[('Supported formats', '.png .ppm .pgm .pbm'), ('Portable network graphics', '.png'), ('Portable network map', '.ppm .pgm .pbm')])
+    sourcefilename = askopenfilename(title='Open image file to rescale', initialdir=mru, filetypes=[('Supported formats', '.png .ppm .pgm .pbm'), ('Portable network graphics', '.png'), ('Portable network map', '.ppm .pgm .pbm')])
     if sourcefilename == '':
         UINormal()
         return None
-
+    mru = Path(sourcefilename).parent
     UIBusy()
 
     if Path(sourcefilename).suffix == '.png':
@@ -161,6 +165,7 @@ def FileNx(size, sfx):
     # ↓ Open export file
     resultfilename = asksaveasfilename(
         title='Save image file',
+        initialdir=mru,
         filetypes=format,
         defaultextension=('PNG file', '.png'),
     )
@@ -281,14 +286,16 @@ def FolderNx(size, sfx):
         sfx: use either sfx or classic scaler version.
     """
 
+    global mru  # Remember MRU directory for old Tkinter
+
     UIWaiting()
 
     # ↓ Open source dir
-    sourcedir = askdirectory(title='Open folder to rescale images')
+    sourcedir = askdirectory(title='Open folder to rescale images', initialdir=mru)
     if sourcedir == '':
         UINormal()
         return None
-
+    mru = sourcedir
     path = Path(sourcedir)
 
     UIBusy()
@@ -329,6 +336,7 @@ def FolderNx(size, sfx):
 """ ╔═══════════╗
     ║ Main body ║
     ╚═══════════╝ """
+mru = ''  # For storing MRU directory
 
 if __name__ == '__main__':
     freeze_support()  # Freezing for exe
@@ -400,7 +408,7 @@ if __name__ == '__main__':
     butt14 = Button(frame_right, text='Select folder => 3xSFX', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FolderNx(3, True))
     butt14.pack(side='top', padx=4, pady=2, fill='both')
 
-    sortir.bind_all('<Control-q>', DisMiss) # Ctrl+Q exit I used to use
+    sortir.bind_all('<Control-q>', DisMiss)  # Ctrl+Q exit I used to use
 
     # ↓ Center window horizontally, one third vertically
     sortir.update()
