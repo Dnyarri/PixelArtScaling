@@ -17,7 +17,8 @@ History:
 
 25.08.20.34 Numerous GUI updates; simulating MRU for old Tkinter.
 
-25.08.22.34 Intentionally downgraded from pathlib to os.
+25.08.22.34 Intentionally downgraded from `pathlib` to `os`.
+PNG compression and PNM format prefs may be saved/loaded to/from file.
 
 ---
 Main site:  <https://dnyarri.github.io>
@@ -36,7 +37,9 @@ __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
 
 import os
+from json import dump, load
 from multiprocessing import Pool, freeze_support
+from time import ctime, time
 from tkinter import Button, Frame, Label, Tk
 from tkinter.filedialog import askdirectory, askopenfilename, asksaveasfilename
 
@@ -50,6 +53,8 @@ def DisMiss(event=None) -> None:
 
     sortir.destroy()
 
+    return None
+
 
 def UINormal():
     """Normal UI state, buttons enabled"""
@@ -61,6 +66,9 @@ def UINormal():
         if widget.winfo_class() in ('Label', 'Button'):
             widget.config(state='normal')
     info_string.config(text=info_normal['txt'], foreground=info_normal['fg'], background=info_normal['bg'])
+    sortir.update()
+
+    return None
 
 
 def UIWaiting():
@@ -75,6 +83,8 @@ def UIWaiting():
     info_string.config(text=info_waiting['txt'], foreground=info_waiting['fg'], background=info_waiting['bg'])
     sortir.update()
 
+    return None
+
 
 def UIBusy():
     """Busy UI state, buttons disabled"""
@@ -87,6 +97,8 @@ def UIBusy():
             widget.config(state='disabled')
     info_string.config(text=info_busy['txt'], foreground=info_busy['fg'], background=info_busy['bg'])
     sortir.update()
+
+    return None
 
 
 def FileNx(size, sfx):
@@ -157,8 +169,8 @@ def FileNx(size, sfx):
     info['physical'] = [x_pixels_per_unit, y_pixels_per_unit, unit_is_meter]
     # ↑ Resolution changed
 
-    # ↓ Explicitly setting compression hight for single file processing
-    info['compression'] = 9
+    # ↓ Explicitly setting compression for a single file processing
+    info['compression'] = prefs['single_deflation']
 
     # ↓ Adjusting "Save to" formats to be displayed according to bitdepth
     if Z == 1:
@@ -186,14 +198,14 @@ def FileNx(size, sfx):
     if os.path.splitext(sourcefilename)[1] == '.png':
         list2png(resultfilename, scaled_image, info)
     elif os.path.splitext(sourcefilename)[1] in ('.ppm', '.pgm'):
-        list2pnm(resultfilename, scaled_image, maxcolors)
+        list2pnm(resultfilename, scaled_image, maxcolors, bin=prefs['single_binarity'])
 
     UINormal()
 
     return None
 
 
-def scale_file_png(runningfilename, size, sfx):
+def scale_file_png(runningfilename, size, sfx, compression):
     """Function upscales one PNG file and keeps quite.
 
     Arguments:
@@ -241,8 +253,8 @@ def scale_file_png(runningfilename, size, sfx):
     info['physical'] = [x_pixels_per_unit, y_pixels_per_unit, unit_is_meter]
     # ↑ Resolution changed
 
-    # ↓ Explicitly setting compression low for batch processing to increase speed
-    info['compression'] = 3
+    # ↓ Explicitly setting compression for batch processing
+    info['compression'] = compression
 
     # ↓ Writing PNG file
     list2png(newfile, scaled_image, info)
@@ -250,7 +262,7 @@ def scale_file_png(runningfilename, size, sfx):
     return None
 
 
-def scale_file_pnm(runningfilename, size, sfx):
+def scale_file_pnm(runningfilename, size, sfx, bin):
     """Function upscales one PNM file and keeps quite.
 
     Arguments:
@@ -281,7 +293,7 @@ def scale_file_pnm(runningfilename, size, sfx):
     scaled_image = chosen_scaler(image3d)
 
     # ↓ Writing PNM file
-    list2pnm(newfile, scaled_image, maxcolors)
+    list2pnm(newfile, scaled_image, maxcolors, bin)
 
     return None
 
@@ -316,6 +328,11 @@ def FolderNx(size, sfx):
 
     UIBusy()
 
+    # ↓ Reading global prefs dict and converting some values to local vars
+    #   to transmit to pool functions since pool don't digest globals.
+    compression = prefs['batch_deflation']
+    bin = prefs['batch_binarity']
+
     # ↓ Creating pool
     scalepool = Pool()
 
@@ -328,6 +345,7 @@ def FolderNx(size, sfx):
                     runningfilename,
                     size,
                     sfx,
+                    compression,
                 ),
             )
         if os.path.splitext(runningfilename)[1] in ('.ppm', '.pgm'):
@@ -337,6 +355,7 @@ def FolderNx(size, sfx):
                     runningfilename,
                     size,
                     sfx,
+                    bin,
                 ),
             )
 
@@ -345,6 +364,64 @@ def FolderNx(size, sfx):
     scalepool.join()
 
     UINormal()
+
+    return None
+
+
+def IniFileLoad(event=None) -> dict:
+    """Try to read scalenx.ini, if none or defective - fix it with factory settings."""
+
+    global prefs
+    # ↓ Preferences dictionary, hardcoded factory settings
+    factory = {
+        'ScaleNx': __version__,  # useless comment
+        'Time': ctime(time()),
+        'batch_deflation': 3,
+        'batch_binarity': True,
+        'single_deflation': 9,
+        'single_binarity': True,
+    }
+    # ↓ Checking external preference file existence,
+    #   loading if one exist, otherwise writing factory settings.
+    pref_path = os.path.expanduser('~') + '/scalenx.ini'
+    if os.path.exists(pref_path) and os.path.isfile(pref_path):
+        with open(pref_path, 'r') as pref_file:
+            prefs = load(pref_file)
+    else:
+        prefs = factory.copy()
+    # ↓ Checking keys existence, then value types, then values,
+    #   loading if ok, otherwise writing factory settings.
+    if (
+        ('batch_deflation' not in prefs)
+        or ('batch_binarity' not in prefs)
+        or ('single_binarity' not in prefs)
+        or ('single_deflation' not in prefs)
+        or (type(prefs['batch_deflation']) is not int)
+        or (type(prefs['single_deflation']) is not int)
+        or (type(prefs['batch_binarity']) is not bool)
+        or (type(prefs['single_binarity']) is not bool)
+    ):
+        prefs = factory.copy()
+    if prefs['batch_deflation'] not in range(10):
+        prefs['batch_deflation'] = 3
+    if prefs['single_deflation'] not in range(10):
+        prefs['single_deflation'] = 9
+    info_string.config(text='Batch comp:{} bin:{}; Single comp:{} bin:{} loaded'.format(prefs["batch_deflation"], prefs["batch_binarity"], prefs["single_deflation"], prefs["single_binarity"]))
+    info_string.bind_all('<Leave>', lambda event=None: info_string.config(text=info_normal['txt']))
+
+    return None
+
+
+def IniFileSave(event=None) -> None:
+    """Dump preferences as json"""
+
+    global prefs
+    prefs['Time'] = ctime(time())
+    pref_path = os.path.expanduser('~') + '/scalenx.ini'
+    with open(pref_path, 'w') as pref_file:
+        dump(prefs, pref_file, sort_keys=False, indent=4)
+    info_string.config(text='Saved preferences as {}'.format(pref_path))
+    info_string.bind_all('<Leave>', lambda event=None: info_string.config(text=info_normal['txt']))
 
     return None
 
@@ -375,6 +452,13 @@ if __name__ == '__main__':
 
     info_string = Label(sortir, text=info_normal['txt'], font=('courier', 10), foreground=info_normal['fg'], background=info_normal['bg'], relief='groove')
     info_string.pack(side='bottom', padx=2, pady=(6, 1), fill='both')
+
+    # ↓ Info string binding
+    # info_string.bind('<Alt-Enter>', lambda event=None: info_string.config(text='Alt+Click: reload prefs, Ctrl+Click: save, Ctrl+Alt+Click: delete'))
+    info_string.bind('<Leave>', lambda event=None: UINormal)
+    info_string.bind('<Alt-Button-1>', IniFileLoad)
+    info_string.bind('<Control-Button-1>', IniFileSave)
+    info_string.bind('<Control-Alt-Button-1>', lambda event=None: os.unlink(os.path.expanduser('~') + '/scalenx.ini'))
 
     frame_left = Frame(sortir, borderwidth=2, relief='groove')
     frame_left.pack(side='left', anchor='nw', padx=(2, 6), pady=0)
@@ -425,6 +509,10 @@ if __name__ == '__main__':
     butt14.pack(side='top', padx=4, pady=2, fill='both')
 
     sortir.bind_all('<Control-q>', DisMiss)  # Ctrl+Q exit I used to use
+
+    # ↓ Loading file formats prefs
+    IniFileLoad()
+    info_string.config(text=info_normal['txt'])
 
     # ↓ Center window horizontally, one third vertically
     sortir.update()
