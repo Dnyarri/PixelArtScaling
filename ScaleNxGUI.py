@@ -52,7 +52,6 @@ def DisMiss(event=None) -> None:
     """Kill dialog and continue"""
 
     sortir.destroy()
-
     return None
 
 
@@ -67,7 +66,6 @@ def UINormal():
             widget.config(state='normal')
     info_string.config(text=info_normal['txt'], foreground=info_normal['fg'], background=info_normal['bg'])
     sortir.update()
-
     return None
 
 
@@ -82,7 +80,6 @@ def UIWaiting():
             widget.config(state='disabled')
     info_string.config(text=info_waiting['txt'], foreground=info_waiting['fg'], background=info_waiting['bg'])
     sortir.update()
-
     return None
 
 
@@ -97,7 +94,6 @@ def UIBusy():
             widget.config(state='disabled')
     info_string.config(text=info_busy['txt'], foreground=info_busy['fg'], background=info_busy['bg'])
     sortir.update()
-
     return None
 
 
@@ -201,7 +197,6 @@ def FileNx(size, sfx):
         list2pnm(resultfilename, scaled_image, maxcolors, bin=prefs['single_binarity'])
 
     UINormal()
-
     return None
 
 
@@ -258,7 +253,6 @@ def scale_file_png(runningfilename, size, sfx, compression):
 
     # ↓ Writing PNG file
     list2png(newfile, scaled_image, info)
-
     return None
 
 
@@ -294,7 +288,6 @@ def scale_file_pnm(runningfilename, size, sfx, bin):
 
     # ↓ Writing PNM file
     list2pnm(newfile, scaled_image, maxcolors, bin)
-
     return None
 
 
@@ -364,7 +357,6 @@ def FolderNx(size, sfx):
     scalepool.join()
 
     UINormal()
-
     return None
 
 
@@ -408,7 +400,6 @@ def IniFileLoad(event=None) -> dict:
         prefs['single_deflation'] = 9
     info_string.config(text='Batch comp:{} bin:{}; Single comp:{} bin:{} loaded'.format(prefs["batch_deflation"], prefs["batch_binarity"], prefs["single_deflation"], prefs["single_binarity"]))
     info_string.bind_all('<Leave>', lambda event=None: info_string.config(text=info_normal['txt']))
-
     return None
 
 
@@ -422,9 +413,15 @@ def IniFileSave(event=None) -> None:
         dump(prefs, pref_file, sort_keys=False, indent=4)
     info_string.config(text='Saved preferences as {}'.format(pref_path))
     info_string.bind_all('<Leave>', lambda event=None: info_string.config(text=info_normal['txt']))
-
     return None
 
+def IniFileDel(event=None) -> None:
+    """Delete preference file without questions"""
+
+    pref_path = os.path.expanduser('~') + '/scalenx.ini'
+    if os.path.exists(pref_path):
+        os.unlink(os.path.expanduser('~') + '/scalenx.ini')
+    return None
 
 """ ╔═══════════╗
     ║ Main body ║
@@ -454,11 +451,11 @@ if __name__ == '__main__':
     info_string.pack(side='bottom', padx=2, pady=(6, 1), fill='both')
 
     # ↓ Info string binding
-    # info_string.bind('<Alt-Enter>', lambda event=None: info_string.config(text='Alt+Click: reload prefs, Ctrl+Click: save, Ctrl+Alt+Click: delete'))
+    info_string.bind('<Enter>', lambda event=None: info_string.config(text='Alt+Click: reload prefs, Ctrl+Click: save, Ctrl+Alt+Click: delete'))
     info_string.bind('<Leave>', lambda event=None: UINormal)
     info_string.bind('<Alt-Button-1>', IniFileLoad)
     info_string.bind('<Control-Button-1>', IniFileSave)
-    info_string.bind('<Control-Alt-Button-1>', lambda event=None: os.unlink(os.path.expanduser('~') + '/scalenx.ini'))
+    info_string.bind('<Control-Alt-Button-1>', IniFileDel)
 
     frame_left = Frame(sortir, borderwidth=2, relief='groove')
     frame_left.pack(side='left', anchor='nw', padx=(2, 6), pady=0)
