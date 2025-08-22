@@ -17,6 +17,8 @@ History:
 
 25.08.20.34 Numerous GUI updates; simulating MRU for old Tkinter.
 
+25.08.22.34 Intentionally downgraded from pathlib to os.
+
 ---
 Main site:  <https://dnyarri.github.io>
 
@@ -28,13 +30,13 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.08.20.34'
+__version__ = '25.08.22.34'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
 
+import os
 from multiprocessing import Pool, freeze_support
-from pathlib import Path
 from tkinter import Button, Frame, Label, Tk
 from tkinter.filedialog import askdirectory, askopenfilename, asksaveasfilename
 
@@ -45,11 +47,13 @@ from scalenx import scalenx, scalenxsfx
 
 def DisMiss(event=None) -> None:
     """Kill dialog and continue"""
+
     sortir.destroy()
 
 
 def UINormal():
     """Normal UI state, buttons enabled"""
+
     for widget in frame_left.winfo_children():
         if widget.winfo_class() in ('Label', 'Button'):
             widget.config(state='normal')
@@ -61,6 +65,7 @@ def UINormal():
 
 def UIWaiting():
     """Waiting UI state, buttons disabled"""
+
     for widget in frame_left.winfo_children():
         if widget.winfo_class() in ('Label', 'Button'):
             widget.config(state='disabled')
@@ -73,6 +78,7 @@ def UIWaiting():
 
 def UIBusy():
     """Busy UI state, buttons disabled"""
+
     for widget in frame_left.winfo_children():
         if widget.winfo_class() in ('Label', 'Button'):
             widget.config(state='disabled')
@@ -100,14 +106,14 @@ def FileNx(size, sfx):
     if sourcefilename == '':
         UINormal()
         return None
-    mru = Path(sourcefilename).parent
+    mru = os.path.dirname(sourcefilename)
     UIBusy()
 
-    if Path(sourcefilename).suffix == '.png':
+    if os.path.splitext(sourcefilename)[1] == '.png':
         # ↓ Reading image as list
         X, Y, Z, maxcolors, image3d, info = png2list(sourcefilename)
 
-    elif Path(sourcefilename).suffix in ('.ppm', '.pgm', '.pbm'):
+    elif os.path.splitext(sourcefilename)[1] in ('.ppm', '.pgm', '.pbm'):
         # ↓ Reading image as list
         X, Y, Z, maxcolors, image3d = pnm2list(sourcefilename)
         # ↓ Creating dummy info
@@ -155,10 +161,12 @@ def FileNx(size, sfx):
     info['compression'] = 9
 
     # ↓ Adjusting "Save to" formats to be displayed according to bitdepth
-    if Z < 3:
+    if Z == 1:
         format = [('Portable network graphics', '.png'), ('Portable grey map', '.pgm')]
-    else:
+    elif Z == 3:
         format = [('Portable network graphics', '.png'), ('Portable pixel map', '.ppm')]
+    else:
+        format = [('Portable network graphics', '.png')]
 
     UIWaiting()
 
@@ -167,7 +175,7 @@ def FileNx(size, sfx):
         title='Save image file',
         initialdir=mru,
         filetypes=format,
-        defaultextension=('PNG file', '.png'),
+        defaultextension='.png',
     )
     if resultfilename == '':
         UINormal()
@@ -175,9 +183,9 @@ def FileNx(size, sfx):
 
     UIBusy()
 
-    if Path(resultfilename).suffix == '.png':
+    if os.path.splitext(sourcefilename)[1] == '.png':
         list2png(resultfilename, scaled_image, info)
-    elif Path(resultfilename).suffix in ('.ppm', '.pgm'):
+    elif os.path.splitext(sourcefilename)[1] in ('.ppm', '.pgm'):
         list2pnm(resultfilename, scaled_image, maxcolors)
 
     UINormal()
@@ -278,6 +286,15 @@ def scale_file_pnm(runningfilename, size, sfx):
     return None
 
 
+def ListDir(directory):
+    """Replacement for recursive glob which does not exist in Python 3.4"""
+
+    for root, dirs, files in os.walk(directory):
+        for basename in files:
+            filename = os.path.join(root, basename)
+            yield filename
+
+
 def FolderNx(size, sfx):
     """Multiprocessing pool to feed `scale_file_*` processes to.
 
@@ -296,7 +313,6 @@ def FolderNx(size, sfx):
         UINormal()
         return None
     mru = sourcedir
-    path = Path(sourcedir)
 
     UIBusy()
 
@@ -304,8 +320,8 @@ def FolderNx(size, sfx):
     scalepool = Pool()
 
     # ↓ Feeding the pool (no pun!)
-    for runningfilename in path.rglob('*.*'):
-        if runningfilename.suffix == '.png':
+    for runningfilename in ListDir(sourcedir):
+        if os.path.splitext(runningfilename)[1] == '.png':
             scalepool.apply_async(
                 scale_file_png,
                 args=(
@@ -314,7 +330,7 @@ def FolderNx(size, sfx):
                     sfx,
                 ),
             )
-        if runningfilename.suffix in ('.ppm', '.pgm'):
+        if os.path.splitext(runningfilename)[1] in ('.ppm', '.pgm'):
             scalepool.apply_async(
                 scale_file_pnm,
                 args=(
@@ -344,9 +360,9 @@ if __name__ == '__main__':
     sortir = Tk()
     sortir.title('ScaleNx')
     sortir.minsize(560, 370)
-    iconpath = Path(__file__).resolve().parent / '32.ico'
-    if iconpath.exists():
-        sortir.iconbitmap(str(iconpath))
+    iconpath = os.path.dirname(__file__) + '/32.ico'
+    if os.path.exists(iconpath):
+        sortir.iconbitmap(iconpath)
 
     # ↓ Info statuses dictionaries
     info_normal = {'txt': 'ScaleNx {} at your command'.format(__version__), 'fg': 'grey', 'bg': 'light grey'}
