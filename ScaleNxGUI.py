@@ -17,7 +17,7 @@ History:
 
 25.07.01.07 Compression for PNG batch processing diminished from 9 to 3 to increase batch speed.
 
-25.08.22.12 PNG compression and PNM format prefs may be save/loaded to/from file.
+25.08.22.12 PNG compression and PNM format prefs may be saved/loaded to/from file.
 
 ---
 Main site: <https://dnyarri.github.io>
@@ -167,10 +167,12 @@ def FileNx(size: int, sfx: bool) -> None:
     info['compression'] = prefs['single_deflation']
 
     # ↓ Adjusting "Save to" formats to be displayed according to bitdepth
-    if Z < 3:
+    if Z == 1:
         format = [('Portable network graphics', '.png'), ('Portable grey map', '.pgm')]
-    else:
+    elif Z == 3:
         format = [('Portable network graphics', '.png'), ('Portable pixel map', '.ppm')]
+    else:
+        format = [('Portable network graphics', '.png')]
 
     UIWaiting()
 
