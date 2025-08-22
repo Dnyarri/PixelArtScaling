@@ -30,7 +30,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.08.22.12'
+__version__ = '25.08.22.18'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -192,7 +192,6 @@ def FileNx(size: int, sfx: bool) -> None:
         list2pnm(resultfilename, scaled_image, maxcolors, bin=prefs['single_binarity'])
 
     UINormal()
-
     return None
 
 
@@ -251,7 +250,6 @@ def scale_file_png(runningfilename: Path, size: int, sfx: bool, compression: int
 
     # ↓ Writing PNG file
     list2png(newfile, scaled_image, info)
-
     return None
 
 
@@ -289,7 +287,6 @@ def scale_file_pnm(runningfilename: Path, size: int, sfx: bool, bin: bool = True
 
     # ↓ Writing PNM file
     list2pnm(newfile, scaled_image, maxcolors, bin)
-
     return None
 
 
@@ -350,7 +347,6 @@ def FolderNx(size: int, sfx: bool) -> None:
     scalepool.join()
 
     UINormal()
-
     return None
 
 
@@ -394,7 +390,6 @@ def IniFileLoad(event=None) -> dict:
         prefs['single_deflation'] = 9
     info_string.config(text=f'Batch comp:{prefs["batch_deflation"]} bin:{prefs["batch_binarity"]}; Single comp:{prefs["single_deflation"]} bin:{prefs["single_binarity"]} loaded')
     info_string.bind_all('<Leave>', lambda event=None: info_string.config(text=info_normal['txt']))
-
     return None
 
 
@@ -410,7 +405,6 @@ def IniFileSave(event=None) -> None:
     info_string.bind_all('<Leave>', lambda event=None: info_string.config(text=info_normal['txt']))
     sortir.clipboard_clear()
     sortir.clipboard_append(pref_path.parent)
-
     return None
 
 
@@ -446,10 +440,10 @@ if __name__ == '__main__':
     info_string.pack(side='bottom', padx=2, pady=(6, 1), fill='both')
 
     # ↓ Info string binding
-    info_string.bind('<Alt-Enter>', lambda event=None: info_string.config(text='Alt+Click: reload prefs, Ctrl+Click: save, Ctrl+Alt+Click: delete'))
+    info_string.bind('<Enter>', lambda event=None: info_string.config(text='Prefs: Alt+Click: reload, Ctrl+Click: save, Ctrl+Alt+Click: delete'))
     info_string.bind('<Leave>', lambda event=None: UINormal)
     info_string.bind('<Alt-Button-1>', IniFileLoad)
-    info_string.bind('<Control-Button-1>', IniFileSave) # Path.home() / 'scalenx.ini'
+    info_string.bind('<Control-Button-1>', IniFileSave)  # Path.home() / 'scalenx.ini'
     info_string.bind('<Control-Alt-Button-1>', lambda event=None: (Path.home() / 'scalenx.ini').unlink(missing_ok=True))
 
     frame_left = Frame(sortir, borderwidth=2, relief='groove')
