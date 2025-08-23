@@ -19,7 +19,7 @@ Currently **Scale2x** (aka AdvMAME2x), **Scale3x** (aka AdvMAME3x), **Scale2xSFX
 | [![Main ScaleNx program GUI](https://dnyarri.github.io/imgscalenx/guismall.png "Main ScaleNx program GUI")](https://dnyarri.github.io/scalenx.html) |
 
 > [!NOTE]
-> During batch processing PPM and PGM files are saved as binary formats (P6 and P5 respectively) regardless of source format since binary formats surprisingly appeared to be more compatible with software like Photoshop.
+> In version 25.08.22.22 PNG compression options and PPM/PGM format preferences may be saved to disk as JSON file `scalenx.ini`, edited with any text editor, and loaded back to ScaleNx. Currently file is saved to your user directory (for easy access location is copied to clipboard when saving). Simply point you mouse to status field right above "Exit" button to display the reminder.
 
 > [!CAUTION]
 > Batch processing programs replace original files with scaled copies. Batch processing programs in this version use async multiprocessing, thus drastically reducing processing time but loading all CPUs at 100% and rendering GUI almost unresponsive.  
