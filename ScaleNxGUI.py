@@ -64,7 +64,7 @@ def UINormal():
     for widget in frame_right.winfo_children():
         if widget.winfo_class() in ('Label', 'Button'):
             widget.config(state='normal')
-    info_string.config(text=info_normal['txt'], foreground=info_normal['fg'], background=info_normal['bg'])
+    info_string.config(text=info_normal['txt'], foreground=info_normal['fg'], background=info_normal['bg'], state=info_normal['status'])
     sortir.update()
     return None
 
@@ -78,7 +78,7 @@ def UIWaiting():
     for widget in frame_right.winfo_children():
         if widget.winfo_class() in ('Label', 'Button'):
             widget.config(state='disabled')
-    info_string.config(text=info_waiting['txt'], foreground=info_waiting['fg'], background=info_waiting['bg'])
+    info_string.config(text=info_waiting['txt'], foreground=info_waiting['fg'], background=info_waiting['bg'], disabledforeground=info_waiting['fg'], state=info_waiting['status'])
     sortir.update()
     return None
 
@@ -92,7 +92,7 @@ def UIBusy():
     for widget in frame_right.winfo_children():
         if widget.winfo_class() in ('Label', 'Button'):
             widget.config(state='disabled')
-    info_string.config(text=info_busy['txt'], foreground=info_busy['fg'], background=info_busy['bg'])
+    info_string.config(text=info_busy['txt'], foreground=info_busy['fg'], background=info_busy['bg'], disabledforeground=info_busy['fg'], state=info_busy['status'])
     sortir.update()
     return None
 
@@ -366,8 +366,11 @@ def IniFileLoad(event=None) -> dict:
     global prefs
     # ↓ Preferences dictionary, hardcoded factory settings
     factory = {
-        'ScaleNx': __version__,  # useless comment
-        'Time': ctime(time()),
+        # ↓ some fields used for debug and possibly good for compatibility
+        'program': 'ScaleNx',
+        'version': __version__,
+        'time': ctime(time()),
+        # ↓ now necessary fields
         'batch_deflation': 3,
         'batch_binarity': True,
         'single_deflation': 9,
@@ -398,8 +401,9 @@ def IniFileLoad(event=None) -> dict:
         prefs['batch_deflation'] = 3
     if prefs['single_deflation'] not in range(10):
         prefs['single_deflation'] = 9
-    info_string.config(text='Batch comp:{} bin:{}; Single comp:{} bin:{} loaded'.format(prefs["batch_deflation"], prefs["batch_binarity"], prefs["single_deflation"], prefs["single_binarity"]))
-    info_string.bind_all('<Leave>', lambda event=None: info_string.config(text=info_normal['txt']))
+    info_string.config(text='Batch comp:{} bin:{}; Single comp:{} bin:{} loaded'.format(prefs['batch_deflation'], prefs['batch_binarity'], prefs['single_deflation'], prefs['single_binarity']))
+    info_string.bind('<Leave>', lambda event=None: info_string.config(text=info_normal['txt']))
+    info_string.focus_set()
     return None
 
 
@@ -407,13 +411,16 @@ def IniFileSave(event=None) -> None:
     """Dump preferences as json"""
 
     global prefs
-    prefs['Time'] = ctime(time())
+    prefs['time'] = ctime(time())
     pref_path = os.path.expanduser('~') + '/scalenx.ini'
     with open(pref_path, 'w') as pref_file:
         dump(prefs, pref_file, sort_keys=False, indent=4)
     info_string.config(text='Saved preferences as {}'.format(pref_path))
-    info_string.bind_all('<Leave>', lambda event=None: info_string.config(text=info_normal['txt']))
+    sortir.clipboard_clear()
+    sortir.clipboard_append(os.path.dirname(pref_path))
+    info_string.focus_set()
     return None
+
 
 def IniFileDel(event=None) -> None:
     """Delete preference file without questions"""
@@ -421,7 +428,9 @@ def IniFileDel(event=None) -> None:
     pref_path = os.path.expanduser('~') + '/scalenx.ini'
     if os.path.exists(pref_path):
         os.unlink(os.path.expanduser('~') + '/scalenx.ini')
+    info_string.focus_set()
     return None
+
 
 """ ╔═══════════╗
     ║ Main body ║
@@ -439,19 +448,19 @@ if __name__ == '__main__':
         sortir.iconbitmap(iconpath)
 
     # ↓ Info statuses dictionaries
-    info_normal = {'txt': 'ScaleNx {} at your command'.format(__version__), 'fg': 'grey', 'bg': 'light grey'}
-    info_waiting = {'txt': 'Waiting for input', 'fg': 'green', 'bg': 'light grey'}
-    info_busy = {'txt': 'BUSY, PLEASE WAIT', 'fg': 'red', 'bg': 'yellow'}
+    info_normal = {'txt': 'ScaleNx {} at your command'.format(__version__), 'fg': 'grey', 'bg': 'light grey', 'status': 'normal'}
+    info_waiting = {'txt': 'Waiting for input', 'fg': 'green', 'bg': 'light grey', 'status': 'disabled'}
+    info_busy = {'txt': 'BUSY, PLEASE WAIT', 'fg': 'red', 'bg': 'yellow', 'status': 'disabled'}
 
     # ↓ Widgets
     butt99 = Button(sortir, text='Exit', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=DisMiss)
     butt99.pack(side='bottom', padx=4, pady=2, fill='both')
 
-    info_string = Label(sortir, text=info_normal['txt'], font=('courier', 10), foreground=info_normal['fg'], background=info_normal['bg'], relief='groove')
+    info_string = Label(sortir, text=info_normal['txt'], font=('courier', 10), foreground=info_normal['fg'], background=info_normal['bg'], relief='groove', state=info_normal['status'])
     info_string.pack(side='bottom', padx=2, pady=(6, 1), fill='both')
 
     # ↓ Info string binding
-    info_string.bind('<Enter>', lambda event=None: info_string.config(text='Alt+Click: reload prefs, Ctrl+Click: save, Ctrl+Alt+Click: delete'))
+    info_string.bind('<Enter>', lambda event=None: info_string.config(text='Prefs reload: Alt+Click, save: Ctrl+Click, delete: Ctrl+Alt+Click'))
     info_string.bind('<Leave>', lambda event=None: UINormal)
     info_string.bind('<Alt-Button-1>', IniFileLoad)
     info_string.bind('<Control-Button-1>', IniFileSave)
