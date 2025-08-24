@@ -31,7 +31,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.08.22.34'
+__version__ = '25.08.24.34'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -105,16 +105,16 @@ def FileNx(size, sfx):
         sfx: use either sfx or classic scaler version.
     """
 
-    global mru  # Remember MRU directory for old Tkinter
+    global prefs  # Remember MRU directory for old Tkinter
 
     UIWaiting()
 
     # ↓ Open source file
-    sourcefilename = askopenfilename(title='Open image file to rescale', initialdir=mru, filetypes=[('Supported formats', '.png .ppm .pgm .pbm'), ('Portable network graphics', '.png'), ('Portable network map', '.ppm .pgm .pbm')])
+    sourcefilename = askopenfilename(title='Open image file to rescale', initialdir=prefs['mru'], filetypes=[('Supported formats', '.png .ppm .pgm .pbm'), ('Portable network graphics', '.png'), ('Portable network map', '.ppm .pgm .pbm')])
     if sourcefilename == '':
         UINormal()
         return None
-    mru = os.path.dirname(sourcefilename)
+    prefs['mru'] = os.path.dirname(sourcefilename)
     UIBusy()
 
     if os.path.splitext(sourcefilename)[1] == '.png':
@@ -181,7 +181,7 @@ def FileNx(size, sfx):
     # ↓ Open export file
     resultfilename = asksaveasfilename(
         title='Save image file',
-        initialdir=mru,
+        initialdir=prefs['mru'],
         filetypes=format,
         defaultextension='.png',
     )
@@ -308,16 +308,16 @@ def FolderNx(size, sfx):
         sfx: use either sfx or classic scaler version.
     """
 
-    global mru  # Remember MRU directory for old Tkinter
+    global prefs  # Remember MRU directory for old Tkinter
 
     UIWaiting()
 
     # ↓ Open source dir
-    sourcedir = askdirectory(title='Open folder to rescale images', initialdir=mru)
+    sourcedir = askdirectory(title='Open folder to rescale images', initialdir=prefs['mru'])
     if sourcedir == '':
         UINormal()
         return None
-    mru = sourcedir
+    prefs['mru'] = sourcedir
 
     UIBusy()
 
@@ -375,6 +375,7 @@ def IniFileLoad(event=None) -> dict:
         'batch_binarity': True,
         'single_deflation': 9,
         'single_binarity': True,
+        'mru': '{}'.format(os.path.dirname(__file__)),
     }
     # ↓ Checking external preference file existence,
     #   loading if one exist, otherwise writing factory settings.
@@ -401,6 +402,8 @@ def IniFileLoad(event=None) -> dict:
         prefs['batch_deflation'] = 3
     if prefs['single_deflation'] not in range(10):
         prefs['single_deflation'] = 9
+    if 'mru' not in prefs or (type(prefs['mru']) is not str):
+        prefs['mru'] = '{}'.format(os.path.dirname(__file__))
     info_string.config(text='Batch comp:{} bin:{}; Single comp:{} bin:{} loaded'.format(prefs['batch_deflation'], prefs['batch_binarity'], prefs['single_deflation'], prefs['single_binarity']))
     info_string.bind('<Leave>', lambda event=None: info_string.config(text=info_normal['txt']))
     info_string.focus_set()
@@ -435,7 +438,6 @@ def IniFileDel(event=None) -> None:
 """ ╔═══════════╗
     ║ Main body ║
     ╚═══════════╝ """
-mru = ''  # For storing MRU directory
 
 if __name__ == '__main__':
     freeze_support()  # Freezing for exe
