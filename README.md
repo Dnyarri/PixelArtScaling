@@ -18,7 +18,9 @@ Currently **Scale2x** (aka AdvMAME2x), **Scale3x** (aka AdvMAME3x), **Scale2xSFX
 **ScaleNxGUI.py** is a common shell joining together image formats reading/writing and image rescaling modules. Program provides suitable GUI to access both single file and batch files processing.
 
 > [!NOTE]
-> During batch processing PPM and PGM files are saved as binary formats (P6 and P5 respectively) regardless of source format since binary formats surprisingly appeared to be more compatible with software like Photoshop.
+> In version 25.08.22.34 PNG compression options and PPM/PGM format preferences may be saved to disk as JSON file `scalenx.ini`, edited with any text editor, and loaded back to ScaleNx. Currently file is saved to your user directory (for easy access location is copied to clipboard when saving). Simply point you mouse to status field right above "Exit" button to display the reminder.
+
+Version 25.08.22.34 of main program was intentionally downgraded from `pathlib` to `os` to provide extra compatibility with really antique Python versions.
 
 > [!CAUTION]
 > Batch processing programs replace original files with scaled copies. Batch processing programs in this version use async multiprocessing, thus drastically reducing processing time but loading CPU at 100% and rendering GUI almost unresponsive.  
@@ -36,8 +38,8 @@ Currently **Scale2x** (aka AdvMAME2x), **Scale3x** (aka AdvMAME3x), **Scale2xSFX
 > [!NOTE]
 > Programs are written entirely on Python, using image representation as list of lists of lists.
 > While this representation is logical for human understanding, Python processing of this is slow.
-> Moreover, programs contain lists reshaping for PNG I/O purposes, also performed using Python native means only.
-> As a result, programs are slow but quite compatible with anything capable of running Python, and don't require large external packages causing version conflicts.
+> Moreover, programs contain lists reshaping for PNG and PNM I/O purposes, also performed using Python native means only.
+> As a result, programs under discussion are slow as compared to C or C++, but quite compatible with anything capable of running Python, and don't require large external packages causing version conflicts.
 
 ## References
 
