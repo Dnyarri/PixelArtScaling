@@ -17,7 +17,8 @@ History:
 
 25.07.01.07 Compression for PNG batch processing diminished from 9 to 3 to increase batch speed.
 
-25.08.22.12 PNG compression and PNM format prefs may be saved/loaded to/from file.
+25.08.27.10 PNG compression and PNM format prefs may be saved/loaded to/from file.
+Prefs OptionMenu added to GUI.
 
 ---
 Main site: <https://dnyarri.github.io>
@@ -30,7 +31,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.08.22.22'
+__version__ = '25.08.27.10'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -39,7 +40,7 @@ from json import dump, load
 from multiprocessing import Pool, freeze_support
 from pathlib import Path
 from time import ctime, time
-from tkinter import Button, Frame, Label, Tk
+from tkinter import Button, Frame, Label, LabelFrame, OptionMenu, StringVar, Tk
 from tkinter.filedialog import askdirectory, askopenfilename, asksaveasfilename
 
 from pypng.pnglpng import list2png, png2list
@@ -63,7 +64,7 @@ def UINormal() -> None:
     for widget in frame_right.winfo_children():
         if widget.winfo_class() in ('Label', 'Button'):
             widget.config(state='normal')
-    info_string.config(text=info_normal['txt'], foreground=info_normal['fg'], background=info_normal['bg'], state=info_normal['status'])
+    info_string.config(text=info_normal['txt'], font=info_normal['font'], foreground=info_normal['fg'], background=info_normal['bg'], state=info_normal['status'])
     sortir.update()
     return None
 
@@ -77,7 +78,7 @@ def UIWaiting() -> None:
     for widget in frame_right.winfo_children():
         if widget.winfo_class() in ('Label', 'Button'):
             widget.config(state='disabled')
-    info_string.config(text=info_waiting['txt'], foreground=info_waiting['fg'], background=info_waiting['bg'], state=info_waiting['status'], disabledforeground=info_waiting['fg'])
+    info_string.config(text=info_waiting['txt'], font=info_waiting['font'], foreground=info_waiting['fg'], background=info_waiting['bg'], state=info_waiting['status'], disabledforeground=info_waiting['fg'])
     sortir.update()
     return None
 
@@ -91,7 +92,7 @@ def UIBusy() -> None:
     for widget in frame_right.winfo_children():
         if widget.winfo_class() in ('Label', 'Button'):
             widget.config(state='disabled')
-    info_string.config(text=info_busy['txt'], foreground=info_busy['fg'], background=info_busy['bg'], state=info_busy['status'], disabledforeground=info_busy['fg'])
+    info_string.config(text=info_busy['txt'], font=info_busy['font'], foreground=info_busy['fg'], background=info_busy['bg'], state=info_busy['status'], disabledforeground=info_busy['fg'])
     sortir.update()
     return None
 
@@ -106,7 +107,8 @@ def FileNx(size: int, sfx: bool) -> None:
     """
 
     UIWaiting()
-
+    # ↓ Getting prefs from UI
+    FormatPrefs()
     # ↓ Open source file
     sourcefilename = askopenfilename(title='Open image file to rescale', filetypes=[('Supported formats', '.png .ppm .pgm .pbm'), ('Portable network graphics', '.png'), ('Portable network map', '.ppm .pgm .pbm')])
     if sourcefilename == '':
@@ -302,7 +304,8 @@ def FolderNx(size: int, sfx: bool) -> None:
     """
 
     UIWaiting()
-
+    # ↓ Getting prefs from UI
+    FormatPrefs()
     # ↓ Open source dir
     sourcedir = askdirectory(title='Open folder to rescale images')
     if sourcedir == '':
@@ -393,17 +396,30 @@ def IniFileLoad(event=None) -> dict:
         prefs['batch_deflation'] = 3
     if prefs['single_deflation'] not in range(10):
         prefs['single_deflation'] = 9
+    # ↓ Feeding values to UI
+    png_single.set(str(prefs['single_deflation']))
+    pnm_single.set('bin' if prefs['single_binarity'] else 'ascii')
+    png_batch.set(str(prefs['batch_deflation']))
+    pnm_batch.set('bin' if prefs['batch_binarity'] else 'ascii')
+    # ↓ Changing status
     info_string.config(text=f'Batch comp:{prefs["batch_deflation"]} bin:{prefs["batch_binarity"]}; Single comp:{prefs["single_deflation"]} bin:{prefs["single_binarity"]} loaded')
-    info_string.bind('<Leave>', lambda event=None: info_string.config(text=info_normal['txt']))
     info_string.focus_set()
+    sortir.update()
     return None
 
 
 def IniFileSave(event=None) -> None:
-    """Dump preferences as json"""
+    """Dump preferences as json.
+
+    Saves current file saving preferences to `scalenx.ini` file in User directory.
+    User directory is chosen to provide compiling to exe
+    since User directory is not related to file location.
+
+    """
 
     global prefs
-    prefs['Time'] = ctime(time())
+    FormatPrefs()
+    prefs['time'] = ctime(time())
     pref_path = Path.home() / 'scalenx.ini'
     with open(pref_path, 'w') as pref_file:
         dump(prefs, pref_file, sort_keys=False, indent=4)
@@ -411,6 +427,16 @@ def IniFileSave(event=None) -> None:
     sortir.clipboard_clear()
     sortir.clipboard_append(str(pref_path.parent))
     info_string.focus_set()
+    return None
+
+
+def FormatPrefs() -> None:
+    """Reading file output settings from UI and pushing it into global prefs dict"""
+
+    prefs['single_deflation'] = int(png_single.get())
+    prefs['single_binarity'] = False if pnm_single.get() == 'ascii' else True
+    prefs['batch_deflation'] = int(png_batch.get())
+    prefs['batch_binarity'] = False if pnm_batch.get() == 'ascii' else True
     return None
 
 
@@ -423,90 +449,175 @@ if __name__ == '__main__':
 
     sortir = Tk()
     sortir.title('ScaleNx')
-    sortir.minsize(560, 370)
+    sortir.minsize(602, 448)
     iconpath = Path(__file__).resolve().parent / '32.ico'
     if iconpath.exists():
         sortir.iconbitmap(str(iconpath))
 
     # ↓ Info statuses dictionaries
-    info_normal = {'txt': f'ScaleNx ver. {__version__} at your command', 'fg': 'grey', 'bg': 'light grey', 'status': 'normal'}
-    info_waiting = {'txt': 'Waiting for input', 'fg': 'green', 'bg': 'light grey', 'status': 'disabled'}
-    info_busy = {'txt': 'BUSY, PLEASE WAIT', 'fg': 'red', 'bg': 'yellow', 'status': 'disabled'}
+    info_normal = {
+        'txt': f'ScaleNx ver. {__version__} at your command',
+        'font': ('courier', 10),
+        'fg': 'grey',
+        'bg': 'light grey',
+        'status': 'normal',
+    }
+    info_waiting = {
+        'txt': 'Waiting for input',
+        'font': ('courier', 10),
+        'fg': 'green',
+        'bg': 'light grey',
+        'status': 'disabled',
+    }
+    info_busy = {
+        'txt': 'BUSY, PLEASE WAIT',
+        'font': ('courier', 10),
+        'fg': 'red',
+        'bg': 'yellow',
+        'status': 'disabled',
+    }
 
     # ↓ Frequently used formatting
-    blue_pady = (12, 0)
-    blue_center = 42
+    blue = {
+        'pady': (12, 0),
+        'center': 48,
+        'font': ('helvetica', 10),
+        'foreground': 'dark blue',
+        'background': 'light blue',
+    }
+    butt = {
+        'font': ('helvetica', 14),
+        'cursor': 'hand2',
+    }
 
     # ↓ Widgets
-    butt99 = Button(sortir, text='Exit', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=DisMiss)
+    butt99 = Button(sortir, text='Exit', font=butt['font'], cursor=butt['cursor'], state='normal', command=DisMiss)
     butt99.pack(side='bottom', padx=4, pady=2, fill='both')
 
-    info_string = Label(sortir, text=info_normal['txt'], font=('courier', 10), foreground=info_normal['fg'], background=info_normal['bg'], relief='groove', state=info_normal['status'])
+    info_string = Label(sortir, text=info_normal['txt'], font=info_normal['font'], foreground=info_normal['fg'], background=info_normal['bg'], relief='groove', state=info_normal['status'])
     info_string.pack(side='bottom', padx=2, pady=(6, 1), fill='both')
 
     # ↓ Info string binding
-    info_string.bind('<Enter>', lambda event=None: info_string.config(text='Prefs reload: Alt+Click, save: Ctrl+Click, delete: Ctrl+Alt+Click'))
-    info_string.bind('<Leave>', lambda event=None: UINormal)
+    info_string.bind('<Enter>', lambda event=None: info_string.config(text='Prefs save: Ctrl+Click, reload: Alt+Click, delete: Ctrl+Alt+Click', font=('courier', 10)))
+    info_string.bind('<Leave>', lambda event=None: UINormal())
     info_string.bind('<Alt-Button-1>', IniFileLoad)
     info_string.bind('<Control-Button-1>', IniFileSave)  # Path.home() / 'scalenx.ini'
     info_string.bind('<Control-Alt-Button-1>', lambda event=None: (Path.home() / 'scalenx.ini').unlink(missing_ok=True))
 
+    # ↓ Main UI frames
     frame_left = Frame(sortir, borderwidth=2, relief='groove')
     frame_left.pack(side='left', anchor='nw', padx=(2, 6), pady=0)
 
     frame_right = Frame(sortir, borderwidth=2, relief='groove')
     frame_right.pack(side='right', anchor='ne', padx=(6, 2), pady=0)
 
-    label00 = Label(frame_left, text='ScaleNx', font=('helvetica', 24), justify='center', borderwidth=2, relief='groove', foreground='brown', background='light grey')
-    label00.pack(side='top', pady=(0, 6), fill='both')
+    # ↓ Left frame
+    label00 = Label(frame_left, text='Single file rescaling', wraplength=200, font=('helvetica', 24), justify='right', borderwidth=2, relief='groove', foreground='brown', background='light grey')
+    label00.pack(side='top', anchor='e', padx=0, pady=(0, 6), fill='both')
 
-    label01 = Label(frame_left, text='Single image rescaling (PNG, PPM, PGM)'.center(blue_center, ' '), font=('helvetica', 10), justify='center', borderwidth=2, relief='flat', foreground='dark blue', background='light blue')
-    label01.pack(side='top', pady=blue_pady, fill='both')
+    label01 = Label(frame_left, text='ScaleNx'.center(blue['center'], ' '), font=blue['font'], borderwidth=2, relief='flat', foreground=blue['foreground'], background=blue['background'])
+    label01.pack(side='top', pady=blue['pady'], fill='both')
 
-    butt01 = Button(frame_left, text='Open file ➔ 2x', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FileNx(2, False))
+    butt01 = Button(frame_left, text='Open file ➔ 2x', font=butt['font'], cursor=butt['cursor'], state='normal', command=lambda: FileNx(2, False))
     butt01.pack(side='top', padx=4, pady=2, fill='both')
 
-    butt02 = Button(frame_left, text='Open file ➔ 3x', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FileNx(3, False))
+    butt02 = Button(frame_left, text='Open file ➔ 3x', font=butt['font'], cursor=butt['cursor'], state='normal', command=lambda: FileNx(3, False))
     butt02.pack(side='top', padx=4, pady=2, fill='both')
 
-    label02 = Label(frame_left, text='Folder batch process (PNG, PPM, PGM)', font=('helvetica', 10), justify='center', borderwidth=2, relief='flat', foreground='dark blue', background='light blue')
-    label02.pack(side='top', pady=blue_pady, fill='both')
+    label11 = Label(frame_left, text='ScaleNxSFX', font=blue['font'], borderwidth=2, relief='flat', foreground=blue['foreground'], background=blue['background'])
+    label11.pack(side='top', pady=blue['pady'], fill='both')
 
-    butt03 = Button(frame_left, text='Select folder ➔ 2x', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FolderNx(2, False))
-    butt03.pack(side='top', padx=4, pady=2, fill='both')
-
-    butt04 = Button(frame_left, text='Select folder ➔ 3x', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FolderNx(3, False))
-    butt04.pack(side='top', padx=4, pady=2, fill='both')
-
-    label10 = Label(frame_right, text='ScaleNxSFX', font=('helvetica', 24), justify='center', borderwidth=2, relief='groove', foreground='brown', background='light grey')
-    label10.pack(side='top', pady=(0, 6), fill='both')
-
-    label11 = Label(frame_right, text='Single image rescaling (PNG, PPM, PGM)'.center(blue_center, ' '), font=('helvetica', 10), justify='center', borderwidth=2, relief='flat', foreground='dark blue', background='light blue')
-    label11.pack(side='top', pady=blue_pady, fill='both')
-
-    butt11 = Button(frame_right, text='Open file ➔ 2xSFX', font=('helvetica', 14), cursor='hand2', justify='center', command=lambda: FileNx(2, True))
+    butt11 = Button(frame_left, text='Open file ➔ 2xSFX', font=butt['font'], cursor=butt['cursor'], command=lambda: FileNx(2, True))
     butt11.pack(side='top', padx=4, pady=2, fill='both')
 
-    butt12 = Button(frame_right, text='Open file ➔ 3xSFX', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FileNx(3, True))
+    butt12 = Button(frame_left, text='Open file ➔ 3xSFX', font=butt['font'], cursor=butt['cursor'], state='normal', command=lambda: FileNx(3, True))
     butt12.pack(side='top', padx=4, pady=2, fill='both')
 
-    label12 = Label(frame_right, text='Folder batch process (PNG, PPM, PGM)', font=('helvetica', 10), justify='center', borderwidth=2, relief='flat', foreground='dark blue', background='light blue')
-    label12.pack(side='top', pady=blue_pady, fill='both')
+    # ↓ Right frame
+    label10 = Label(frame_right, text='Batch folder processing', wraplength=200, font=('helvetica', 24), justify='left', borderwidth=2, relief='groove', foreground='brown', background='light grey')
+    label10.pack(side='top', anchor='w', padx=0, pady=(0, 6), fill='both')
 
-    butt13 = Button(frame_right, text='Select folder ➔ 2xSFX', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FolderNx(2, True))
+    label12 = Label(frame_right, text='ScaleNx'.center(blue['center'], ' '), font=blue['font'], borderwidth=2, relief='flat', foreground=blue['foreground'], background=blue['background'])
+    label12.pack(side='top', pady=blue['pady'], fill='both')
+
+    butt03 = Button(frame_right, text='Select folder ➔ 2x', font=butt['font'], cursor=butt['cursor'], state='normal', command=lambda: FolderNx(2, False))
+    butt03.pack(side='top', padx=4, pady=2, fill='both')
+
+    butt04 = Button(frame_right, text='Select folder ➔ 3x', font=butt['font'], cursor=butt['cursor'], state='normal', command=lambda: FolderNx(3, False))
+    butt04.pack(side='top', padx=4, pady=2, fill='both')
+
+    label02 = Label(frame_right, text='ScaleNxSFX', font=blue['font'], borderwidth=2, relief='flat', foreground=blue['foreground'], background=blue['background'])
+    label02.pack(side='top', pady=blue['pady'], fill='both')
+
+    butt13 = Button(frame_right, text='Select folder ➔ 2xSFX', font=butt['font'], cursor=butt['cursor'], state='normal', command=lambda: FolderNx(2, True))
     butt13.pack(side='top', padx=4, pady=2, fill='both')
 
-    butt14 = Button(frame_right, text='Select folder ➔ 3xSFX', font=('helvetica', 14), cursor='hand2', justify='center', state='normal', command=lambda: FolderNx(3, True))
+    butt14 = Button(frame_right, text='Select folder ➔ 3xSFX', font=butt['font'], cursor=butt['cursor'], state='normal', command=lambda: FolderNx(3, True))
     butt14.pack(side='top', padx=4, pady=2, fill='both')
 
-    sortir.bind_all('<Control-q>', DisMiss)
+    # ↓ Left frame file output options
+    options_left = LabelFrame(frame_left, text='Single file saving options', font=('helvetica', 8))
+    options_left.pack(side='top', anchor='ne', fill='x')
 
-    # ↓ Loading file formats prefs
+    options_left_png_label = Label(options_left, text='PNG Compression:', font=('helvetica', 8))
+    options_left_png_label.pack(side='left', anchor='w')
+    png_single = StringVar(value=9)
+    options_left_png = OptionMenu(
+        options_left,
+        png_single,
+        *['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+    )
+    options_left_png.pack(side='left', anchor='w')
+    options_left_png.configure(font=('courier', 8), width=1)
+
+    options_left_pnm_label = Label(options_left, text='PNM Type:', font=('helvetica', 8))
+    options_left_pnm_label.pack(side='left', anchor='e')
+    pnm_single = StringVar(value='bin')
+    options_left_pnm = OptionMenu(
+        options_left,
+        pnm_single,
+        *['bin', 'ascii'],
+    )
+    options_left_pnm.pack(side='right', anchor='e')
+    options_left_pnm.configure(font=('courier', 8), width=5)
+
+    # ↓ Right frame file output options
+    options_right = LabelFrame(frame_right, text='Batch file saving options', font=('helvetica', 8))
+    options_right.pack(side='top', anchor='ne', fill='x')
+
+    options_right_png_label = Label(options_right, text='PNG Compression:', font=('helvetica', 8))
+    options_right_png_label.pack(side='left', anchor='w')
+    png_batch = StringVar(value=3)
+    options_right_png = OptionMenu(
+        options_right,
+        png_batch,
+        *['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+    )
+    options_right_png.pack(side='left', anchor='w')
+    options_right_png.configure(font=('courier', 8), width=1)
+
+    options_right_pnm_label = Label(options_right, text='PNM Type:', font=('helvetica', 8))
+    options_right_pnm_label.pack(side='left', anchor='e')
+    pnm_batch = StringVar(value='bin')
+    options_right_pnm = OptionMenu(
+        options_right,
+        pnm_batch,
+        *['bin', 'ascii'],
+    )
+    options_right_pnm.pack(side='right', anchor='e')
+    options_right_pnm.configure(font=('courier', 8), width=5)
+
+    # ↓ Loading file formats prefs from ini file to dict
     IniFileLoad()
     info_string.config(text=info_normal['txt'])
+
+    # ↓ Pushing prefs from UI to dict
+    FormatPrefs()
+
+    sortir.bind_all('<Control-q>', DisMiss)
 
     # ↓ Center window horizontally, one third vertically
     sortir.update()
     sortir.geometry(f'+{(sortir.winfo_screenwidth() - sortir.winfo_width()) // 2}+{(sortir.winfo_screenheight() - sortir.winfo_height()) // 3}')
 
-    sortir.mainloop()
+    sortir.mainloop()  # That's the end, little girl la-la-la
