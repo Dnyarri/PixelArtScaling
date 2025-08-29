@@ -41,7 +41,7 @@ import os
 from json import dump, load
 from multiprocessing import Pool, freeze_support
 from time import ctime, time
-from tkinter import Button, Frame, Label, LabelFrame, OptionMenu, StringVar, Tk
+from tkinter import Button, Frame, Label, LabelFrame, OptionMenu, PhotoImage, StringVar, Tk
 from tkinter.filedialog import askdirectory, askopenfilename, asksaveasfilename
 
 from pypng.pnglpng import list2png, png2list
@@ -478,9 +478,12 @@ if __name__ == '__main__':
     sortir = Tk()
     sortir.title('ScaleNx')
     sortir.minsize(602, 448)
-    iconpath = os.path.dirname(__file__) + '/32.ico'
-    if os.path.exists(iconpath):
-        sortir.iconbitmap(iconpath)
+
+    # ↓ Building icon from PNGs since Tkinter sucks with Windows ICO
+    iconpath_32 = os.path.dirname(os.path.realpath(__file__)) + '/32.png'
+    iconpath_16 = os.path.dirname(os.path.realpath(__file__)) + '/16.png'
+    if os.path.exists(iconpath_16) and os.path.exists(iconpath_32):
+        sortir.iconphoto(False, PhotoImage(file=iconpath_32), PhotoImage(file=iconpath_16))
 
     # ↓ Info statuses dictionaries
     info_normal = {
