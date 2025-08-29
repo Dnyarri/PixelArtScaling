@@ -40,7 +40,7 @@ from json import dump, load
 from multiprocessing import Pool, freeze_support
 from pathlib import Path
 from time import ctime, time
-from tkinter import Button, Frame, Label, LabelFrame, OptionMenu, StringVar, Tk
+from tkinter import Button, Frame, Label, LabelFrame, OptionMenu, PhotoImage, StringVar, Tk
 from tkinter.filedialog import askdirectory, askopenfilename, asksaveasfilename
 
 from pypng.pnglpng import list2png, png2list
@@ -450,9 +450,20 @@ if __name__ == '__main__':
     sortir = Tk()
     sortir.title('ScaleNx')
     sortir.minsize(602, 448)
-    iconpath = Path(__file__).resolve().parent / '32.ico'
-    if iconpath.exists():
-        sortir.iconbitmap(str(iconpath))
+
+    # ↓ ICO icon.
+    #   Tkinter seem to read number 0 one and interpolate.
+    # iconpath = Path(__file__).resolve().parent / '32.ico'
+    # if iconpath.exists():
+    #    sortir.iconbitmap(str(iconpath))
+
+    # ↓ PNG icon.
+    #   Requires PhotoImage which makes exe bigger
+    #   but result looks sharper on screen.
+    iconpath_32 = Path(__file__).resolve().parent / '32.png'
+    iconpath_16 = Path(__file__).resolve().parent / '16.png'
+    if iconpath_32.exists() and iconpath_16.exists():
+        sortir.iconphoto(True, PhotoImage(file=iconpath_32), PhotoImage(file=iconpath_16))
 
     # ↓ Info statuses dictionaries
     info_normal = {
