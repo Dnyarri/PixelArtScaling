@@ -32,7 +32,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.08.27.34'
+__version__ = '25.08.30.34'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -480,10 +480,11 @@ if __name__ == '__main__':
     sortir.minsize(602, 448)
 
     # ↓ Building icon from PNGs since Tkinter sucks with Windows ICO
-    iconpath_32 = os.path.dirname(os.path.realpath(__file__)) + '/32.png'
-    iconpath_16 = os.path.dirname(os.path.realpath(__file__)) + '/16.png'
-    if os.path.exists(iconpath_16) and os.path.exists(iconpath_32):
-        sortir.iconphoto(False, PhotoImage(file=iconpath_32), PhotoImage(file=iconpath_16))
+    icon_path_48 = os.path.dirname(os.path.realpath(__file__)) + '/48.png'
+    icon_path_32 = os.path.dirname(os.path.realpath(__file__)) + '/32.png'
+    icon_path_16 = os.path.dirname(os.path.realpath(__file__)) + '/16.png'
+    if os.path.exists(icon_path_48) and os.path.exists(icon_path_32) and os.path.exists(icon_path_16):
+        sortir.iconphoto(False, PhotoImage(file=icon_path_48), PhotoImage(file=icon_path_32), PhotoImage(file=icon_path_16))
 
     # ↓ Info statuses dictionaries
     info_normal = {
