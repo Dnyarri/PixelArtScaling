@@ -31,7 +31,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.08.27.10'
+__version__ = '25.08.30.06'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -451,19 +451,23 @@ if __name__ == '__main__':
     sortir.title('ScaleNx')
     sortir.minsize(602, 448)
 
-    # ↓ ICO icon.
-    #   Tkinter seem to read number 0 one and interpolate.
-    # iconpath = Path(__file__).resolve().parent / '32.ico'
-    # if iconpath.exists():
-    #    sortir.iconbitmap(str(iconpath))
-
     # ↓ PNG icon.
     #   Requires PhotoImage which makes exe bigger
-    #   but result looks sharper on screen.
-    iconpath_32 = Path(__file__).resolve().parent / '32.png'
-    iconpath_16 = Path(__file__).resolve().parent / '16.png'
-    if iconpath_32.exists() and iconpath_16.exists():
-        sortir.iconphoto(True, PhotoImage(file=iconpath_32), PhotoImage(file=iconpath_16))
+    #   but result looks sharper than ICO below.
+    icon_path_48 = Path(__file__).resolve().parent / '48.png'
+    icon_path_32 = Path(__file__).resolve().parent / '32.png'
+    icon_path_16 = Path(__file__).resolve().parent / '16.png'
+
+    # ↓ ICO icon.
+    #   Tkinter seem to read icon with index=0 and interpolate to unknown size.
+    icon_path = Path(__file__).resolve().parent / '32.ico'
+
+    if icon_path_48.exists() and icon_path_32.exists() and icon_path_16.exists():
+        sortir.iconphoto(True, PhotoImage(file=icon_path_48), PhotoImage(file=icon_path_32), PhotoImage(file=icon_path_16))
+    elif icon_path.exists():
+        sortir.iconbitmap(icon_path)
+    else:
+        sortir.iconphoto(True, PhotoImage(data=b'P6\n2 2\n255\n\xff\x00\x00\xff\xff\x00\x00\x00\xff\x00\xff\x00'))
 
     # ↓ Info statuses dictionaries
     info_normal = {
