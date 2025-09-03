@@ -32,7 +32,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.08.30.34'
+__version__ = '25.09.03.34'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -549,19 +549,19 @@ if __name__ == '__main__':
     label01 = Label(frame_left, text='ScaleNx'.center(blue['center'], ' '), font=blue['font'], borderwidth=2, relief='flat', foreground=blue['foreground'], background=blue['background'])
     label01.pack(side='top', pady=blue['pady'], fill='both')
 
-    butt01 = Button(frame_left, text='Open file ➔ 2x', font=butt['font'], cursor=butt['cursor'], state='normal', command=lambda: FileNx(2, False))
+    butt01 = Button(frame_left, text='Open file -> 2x', font=butt['font'], cursor=butt['cursor'], state='normal', command=lambda: FileNx(2, False))
     butt01.pack(side='top', padx=4, pady=2, fill='both')
 
-    butt02 = Button(frame_left, text='Open file ➔ 3x', font=butt['font'], cursor=butt['cursor'], state='normal', command=lambda: FileNx(3, False))
+    butt02 = Button(frame_left, text='Open file -> 3x', font=butt['font'], cursor=butt['cursor'], state='normal', command=lambda: FileNx(3, False))
     butt02.pack(side='top', padx=4, pady=2, fill='both')
 
     label11 = Label(frame_left, text='ScaleNxSFX', font=blue['font'], borderwidth=2, relief='flat', foreground=blue['foreground'], background=blue['background'])
     label11.pack(side='top', pady=blue['pady'], fill='both')
 
-    butt11 = Button(frame_left, text='Open file ➔ 2xSFX', font=butt['font'], cursor=butt['cursor'], command=lambda: FileNx(2, True))
+    butt11 = Button(frame_left, text='Open file -> 2xSFX', font=butt['font'], cursor=butt['cursor'], command=lambda: FileNx(2, True))
     butt11.pack(side='top', padx=4, pady=2, fill='both')
 
-    butt12 = Button(frame_left, text='Open file ➔ 3xSFX', font=butt['font'], cursor=butt['cursor'], state='normal', command=lambda: FileNx(3, True))
+    butt12 = Button(frame_left, text='Open file -> 3xSFX', font=butt['font'], cursor=butt['cursor'], state='normal', command=lambda: FileNx(3, True))
     butt12.pack(side='top', padx=4, pady=2, fill='both')
 
     # ↓ Right frame
@@ -571,19 +571,19 @@ if __name__ == '__main__':
     label12 = Label(frame_right, text='ScaleNx'.center(blue['center'], ' '), font=blue['font'], borderwidth=2, relief='flat', foreground=blue['foreground'], background=blue['background'])
     label12.pack(side='top', pady=blue['pady'], fill='both')
 
-    butt03 = Button(frame_right, text='Select folder ➔ 2x', font=butt['font'], cursor=butt['cursor'], state='normal', command=lambda: FolderNx(2, False))
+    butt03 = Button(frame_right, text='Select folder -> 2x', font=butt['font'], cursor=butt['cursor'], state='normal', command=lambda: FolderNx(2, False))
     butt03.pack(side='top', padx=4, pady=2, fill='both')
 
-    butt04 = Button(frame_right, text='Select folder ➔ 3x', font=butt['font'], cursor=butt['cursor'], state='normal', command=lambda: FolderNx(3, False))
+    butt04 = Button(frame_right, text='Select folder -> 3x', font=butt['font'], cursor=butt['cursor'], state='normal', command=lambda: FolderNx(3, False))
     butt04.pack(side='top', padx=4, pady=2, fill='both')
 
     label02 = Label(frame_right, text='ScaleNxSFX', font=blue['font'], borderwidth=2, relief='flat', foreground=blue['foreground'], background=blue['background'])
     label02.pack(side='top', pady=blue['pady'], fill='both')
 
-    butt13 = Button(frame_right, text='Select folder ➔ 2xSFX', font=butt['font'], cursor=butt['cursor'], state='normal', command=lambda: FolderNx(2, True))
+    butt13 = Button(frame_right, text='Select folder -> 2xSFX', font=butt['font'], cursor=butt['cursor'], state='normal', command=lambda: FolderNx(2, True))
     butt13.pack(side='top', padx=4, pady=2, fill='both')
 
-    butt14 = Button(frame_right, text='Select folder ➔ 3xSFX', font=butt['font'], cursor=butt['cursor'], state='normal', command=lambda: FolderNx(3, True))
+    butt14 = Button(frame_right, text='Select folder -> 3xSFX', font=butt['font'], cursor=butt['cursor'], state='normal', command=lambda: FolderNx(3, True))
     butt14.pack(side='top', padx=4, pady=2, fill='both')
 
     # ↓ Left frame file output options
