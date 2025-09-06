@@ -11,14 +11,12 @@ History:
 
 25.01.17.00 Initial GUI version for ScaleNx.
 
-25.01.17.21 Fully operational.
+25.01.17.21 Fully operational GUI for ScaleNx.
 
 25.03.01.01 PNM batch processing added. GUI simplified to reduce imports.
 
-25.07.01.07 Compression for PNG batch processing diminished from 9 to 3 to increase batch speed.
-
-25.08.27.10 PNG compression and PNM format prefs may be saved/loaded to/from file.
-Prefs OptionMenu added to GUI.
+25.09.03.11 OptionMenu for PNG compression and PNM format preferences added to GUI;
+preferences may be saved/loaded to/from file.
 
 ---
 Main site: <https://dnyarri.github.io>
@@ -31,7 +29,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.09.03.11'
+__version__ = '25.09.09.09'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -449,7 +447,7 @@ if __name__ == '__main__':
 
     sortir = Tk()
     sortir.title('ScaleNx')
-    sortir.minsize(602, 448)
+    sortir.minsize(602, 440)
 
     # ↓ PNG icon.
     #   Requires PhotoImage which makes exe bigger
@@ -501,19 +499,28 @@ if __name__ == '__main__':
         'background': 'light blue',
     }
     butt = {
-        'font': ('helvetica', 14),
+        'font': ('helvetica', 16),
         'cursor': 'hand2',
+        'border': '2',
+        'relief': 'groove',
+        'overrelief': 'ridge',
+        'foreground': 'SystemButtonText',
+        'background': 'SystemButtonFace',
+        'activeforeground': 'dark blue',
+        'activebackground': '#E5F1FB',
     }
 
     # ↓ Widgets
-    butt99 = Button(sortir, text='Exit', font=butt['font'], cursor=butt['cursor'], state='normal', command=DisMiss)
-    butt99.pack(side='bottom', padx=4, pady=2, fill='both')
+    butt99 = Button(sortir, text='Exit', font=(butt['font'][0], butt['font'][1] + 2), cursor=butt['cursor'], state='normal', border=butt['border'], relief=butt['relief'], overrelief=butt['overrelief'], command=DisMiss)
+    butt99.pack(side='bottom', padx=2, pady=(4, 2), fill='both')
+    butt99.bind('<Enter>', lambda event=None: butt99.config(foreground=butt['activeforeground'], background=butt['activebackground']))
+    butt99.bind('<Leave>', lambda event=None: butt99.config(foreground=butt['foreground'], background=butt['background']))
 
     info_string = Label(sortir, text=info_normal['txt'], font=info_normal['font'], foreground=info_normal['fg'], background=info_normal['bg'], relief='groove', state=info_normal['status'])
     info_string.pack(side='bottom', padx=2, pady=(6, 1), fill='both')
 
     # ↓ Info string binding
-    info_string.bind('<Enter>', lambda event=None: info_string.config(text='Prefs save: Ctrl+Click, reload: Alt+Click, delete: Ctrl+Alt+Click', font=('courier', 10)))
+    info_string.bind('<Enter>', lambda event=None: info_string.config(text='Options save: Ctrl+Click, reload: Alt+Click, delete: Ctrl+Alt+Click', font=('courier', 10)))
     info_string.bind('<Leave>', lambda event=None: UINormal())
     info_string.bind('<Alt-Button-1>', IniFileLoad)
     info_string.bind('<Control-Button-1>', IniFileSave)  # Path.home() / 'scalenx.ini'
@@ -527,55 +534,72 @@ if __name__ == '__main__':
     frame_right.pack(side='right', anchor='ne', padx=(6, 2), pady=0)
 
     # ↓ Left frame
-    label00 = Label(frame_left, text='Single file rescaling', wraplength=200, font=('helvetica', 24), justify='right', borderwidth=2, relief='groove', foreground='brown', background='light grey')
+    label00 = Label(frame_left, text='Single image rescaling', font=('helvetica', 18), justify='right', borderwidth=2, relief='groove', foreground='brown', background='light grey')
     label00.pack(side='top', anchor='e', padx=0, pady=(0, 6), fill='both')
 
     label01 = Label(frame_left, text='ScaleNx'.center(blue['center'], ' '), font=blue['font'], borderwidth=2, relief='flat', foreground=blue['foreground'], background=blue['background'])
     label01.pack(side='top', pady=blue['pady'], fill='both')
 
-    butt01 = Button(frame_left, text='Open file ➔ 2x', font=butt['font'], cursor=butt['cursor'], state='normal', command=lambda: FileNx(2, False))
+    butt01 = Button(frame_left, text='Open file ➔ 2x', font=butt['font'], cursor=butt['cursor'], state='normal', border=butt['border'], relief=butt['relief'], overrelief=butt['overrelief'], command=lambda: FileNx(2, False))
     butt01.pack(side='top', padx=4, pady=2, fill='both')
+    butt01.bind('<Enter>', lambda event=None: butt01.config(foreground=butt['activeforeground'], background=butt['activebackground']))
+    butt01.bind('<Leave>', lambda event=None: butt01.config(foreground=butt['foreground'], background=butt['background']))
 
-    butt02 = Button(frame_left, text='Open file ➔ 3x', font=butt['font'], cursor=butt['cursor'], state='normal', command=lambda: FileNx(3, False))
+    butt02 = Button(frame_left, text='Open file ➔ 3x', font=butt['font'], cursor=butt['cursor'], state='normal', border=butt['border'], relief=butt['relief'], overrelief=butt['overrelief'], command=lambda: FileNx(3, False))
     butt02.pack(side='top', padx=4, pady=2, fill='both')
+    butt02.bind('<Enter>', lambda event=None: butt02.config(foreground=butt['activeforeground'], background=butt['activebackground']))
+    butt02.bind('<Leave>', lambda event=None: butt02.config(foreground=butt['foreground'], background=butt['background']))
 
     label11 = Label(frame_left, text='ScaleNxSFX', font=blue['font'], borderwidth=2, relief='flat', foreground=blue['foreground'], background=blue['background'])
     label11.pack(side='top', pady=blue['pady'], fill='both')
 
-    butt11 = Button(frame_left, text='Open file ➔ 2xSFX', font=butt['font'], cursor=butt['cursor'], command=lambda: FileNx(2, True))
+    butt11 = Button(frame_left, text='Open file ➔ 2xSFX', font=butt['font'], cursor=butt['cursor'], state='normal', border=butt['border'], relief=butt['relief'], overrelief=butt['overrelief'], command=lambda: FileNx(2, True))
     butt11.pack(side='top', padx=4, pady=2, fill='both')
+    butt11.bind('<Enter>', lambda event=None: butt11.config(foreground=butt['activeforeground'], background=butt['activebackground']))
+    butt11.bind('<Leave>', lambda event=None: butt11.config(foreground=butt['foreground'], background=butt['background']))
 
-    butt12 = Button(frame_left, text='Open file ➔ 3xSFX', font=butt['font'], cursor=butt['cursor'], state='normal', command=lambda: FileNx(3, True))
+    butt12 = Button(frame_left, text='Open file ➔ 3xSFX', font=butt['font'], cursor=butt['cursor'], state='normal', border=butt['border'], relief=butt['relief'], overrelief=butt['overrelief'], command=lambda: FileNx(3, True))
     butt12.pack(side='top', padx=4, pady=2, fill='both')
+    butt12.bind('<Enter>', lambda event=None: butt12.config(foreground=butt['activeforeground'], background=butt['activebackground']))
+    butt12.bind('<Leave>', lambda event=None: butt12.config(foreground=butt['foreground'], background=butt['background']))
 
     # ↓ Right frame
-    label10 = Label(frame_right, text='Batch folder processing', wraplength=200, font=('helvetica', 24), justify='left', borderwidth=2, relief='groove', foreground='brown', background='light grey')
+    label10 = Label(frame_right, text='Batch folder processing', font=('helvetica', 18), justify='left', borderwidth=2, relief='groove', foreground='brown', background='light grey')
     label10.pack(side='top', anchor='w', padx=0, pady=(0, 6), fill='both')
 
     label12 = Label(frame_right, text='ScaleNx'.center(blue['center'], ' '), font=blue['font'], borderwidth=2, relief='flat', foreground=blue['foreground'], background=blue['background'])
     label12.pack(side='top', pady=blue['pady'], fill='both')
 
-    butt03 = Button(frame_right, text='Select folder ➔ 2x', font=butt['font'], cursor=butt['cursor'], state='normal', command=lambda: FolderNx(2, False))
+    butt03 = Button(frame_right, text='Select folder ➔ 2x', font=butt['font'], cursor=butt['cursor'], state='normal', border=butt['border'], relief=butt['relief'], overrelief=butt['overrelief'], command=lambda: FolderNx(2, False))
     butt03.pack(side='top', padx=4, pady=2, fill='both')
+    butt03.bind('<Enter>', lambda event=None: butt03.config(foreground=butt['activeforeground'], background=butt['activebackground']))
+    butt03.bind('<Leave>', lambda event=None: butt03.config(foreground=butt['foreground'], background=butt['background']))
 
-    butt04 = Button(frame_right, text='Select folder ➔ 3x', font=butt['font'], cursor=butt['cursor'], state='normal', command=lambda: FolderNx(3, False))
+    butt04 = Button(frame_right, text='Select folder ➔ 3x', font=butt['font'], cursor=butt['cursor'], state='normal', border=butt['border'], relief=butt['relief'], overrelief=butt['overrelief'], command=lambda: FolderNx(3, False))
     butt04.pack(side='top', padx=4, pady=2, fill='both')
+    butt04.bind('<Enter>', lambda event=None: butt04.config(foreground=butt['activeforeground'], background=butt['activebackground']))
+    butt04.bind('<Leave>', lambda event=None: butt04.config(foreground=butt['foreground'], background=butt['background']))
 
     label02 = Label(frame_right, text='ScaleNxSFX', font=blue['font'], borderwidth=2, relief='flat', foreground=blue['foreground'], background=blue['background'])
     label02.pack(side='top', pady=blue['pady'], fill='both')
 
-    butt13 = Button(frame_right, text='Select folder ➔ 2xSFX', font=butt['font'], cursor=butt['cursor'], state='normal', command=lambda: FolderNx(2, True))
+    butt13 = Button(frame_right, text='Select folder ➔ 2xSFX', font=butt['font'], cursor=butt['cursor'], state='normal', border=butt['border'], relief=butt['relief'], overrelief=butt['overrelief'], command=lambda: FolderNx(2, True))
     butt13.pack(side='top', padx=4, pady=2, fill='both')
+    butt13.bind('<Enter>', lambda event=None: butt13.config(foreground=butt['activeforeground'], background=butt['activebackground']))
+    butt13.bind('<Leave>', lambda event=None: butt13.config(foreground=butt['foreground'], background=butt['background']))
 
-    butt14 = Button(frame_right, text='Select folder ➔ 3xSFX', font=butt['font'], cursor=butt['cursor'], state='normal', command=lambda: FolderNx(3, True))
+    butt14 = Button(frame_right, text='Select folder ➔ 3xSFX', font=butt['font'], cursor=butt['cursor'], state='normal', border=butt['border'], relief=butt['relief'], overrelief=butt['overrelief'], command=lambda: FolderNx(3, True))
     butt14.pack(side='top', padx=4, pady=2, fill='both')
+    butt14.bind('<Enter>', lambda event=None: butt14.config(foreground=butt['activeforeground'], background=butt['activebackground']))
+    butt14.bind('<Leave>', lambda event=None: butt14.config(foreground=butt['foreground'], background=butt['background']))
 
     # ↓ Left frame file output options
-    options_left = LabelFrame(frame_left, text='Single file saving options', font=('helvetica', 8))
+    options_left = LabelFrame(frame_left, text='Single file saving options', font=('helvetica', 8), foreground=blue['foreground'])
     options_left.pack(side='top', anchor='ne', fill='x')
 
     options_left_png_label = Label(options_left, text='PNG Compression:', font=('helvetica', 8))
     options_left_png_label.pack(side='left', anchor='w')
+
     png_single = StringVar(value=9)
     options_left_png = OptionMenu(
         options_left,
@@ -583,10 +607,12 @@ if __name__ == '__main__':
         *['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
     )
     options_left_png.pack(side='left', anchor='w')
-    options_left_png.configure(font=('courier', 8), width=1)
+    options_left_png.configure(font=('courier', 8), width=1, relief=butt['relief'], activebackground=butt['activebackground'])
+    options_left_png['menu'].configure(font=options_left_png['font'])
 
     options_left_pnm_label = Label(options_left, text='PNM Type:', font=('helvetica', 8))
     options_left_pnm_label.pack(side='left', anchor='e')
+
     pnm_single = StringVar(value='bin')
     options_left_pnm = OptionMenu(
         options_left,
@@ -594,14 +620,16 @@ if __name__ == '__main__':
         *['bin', 'ascii'],
     )
     options_left_pnm.pack(side='right', anchor='e')
-    options_left_pnm.configure(font=('courier', 8), width=5)
+    options_left_pnm.configure(font=('courier', 8), width=5, relief=butt['relief'], activebackground=butt['activebackground'])
+    options_left_pnm['menu'].configure(font=options_left_pnm['font'])
 
     # ↓ Right frame file output options
-    options_right = LabelFrame(frame_right, text='Batch file saving options', font=('helvetica', 8))
+    options_right = LabelFrame(frame_right, text='Batch file saving options', font=('helvetica', 8), foreground=blue['foreground'])
     options_right.pack(side='top', anchor='ne', fill='x')
 
     options_right_png_label = Label(options_right, text='PNG Compression:', font=('helvetica', 8))
     options_right_png_label.pack(side='left', anchor='w')
+
     png_batch = StringVar(value=3)
     options_right_png = OptionMenu(
         options_right,
@@ -609,10 +637,12 @@ if __name__ == '__main__':
         *['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
     )
     options_right_png.pack(side='left', anchor='w')
-    options_right_png.configure(font=('courier', 8), width=1)
+    options_right_png.configure(font=('courier', 8), width=1, relief=butt['relief'], activebackground=butt['activebackground'])
+    options_right_png['menu'].configure(font=options_right_png['font'])
 
     options_right_pnm_label = Label(options_right, text='PNM Type:', font=('helvetica', 8))
     options_right_pnm_label.pack(side='left', anchor='e')
+
     pnm_batch = StringVar(value='bin')
     options_right_pnm = OptionMenu(
         options_right,
@@ -620,7 +650,8 @@ if __name__ == '__main__':
         *['bin', 'ascii'],
     )
     options_right_pnm.pack(side='right', anchor='e')
-    options_right_pnm.configure(font=('courier', 8), width=5)
+    options_right_pnm.configure(font=('courier', 8), width=5, relief=butt['relief'], activebackground=butt['activebackground'])
+    options_right_pnm['menu'].configure(font=options_right_pnm['font'])
 
     # ↓ Loading file formats prefs from ini file to dict
     IniFileLoad()
@@ -633,6 +664,7 @@ if __name__ == '__main__':
 
     # ↓ Center window horizontally, one third vertically
     sortir.update()
+    # print(sortir.winfo_width(), sortir.winfo_height())
     sortir.geometry(f'+{(sortir.winfo_screenwidth() - sortir.winfo_width()) // 2}+{(sortir.winfo_screenheight() - sortir.winfo_height()) // 3}')
 
     sortir.mainloop()  # That's the end, little girl la-la-la
