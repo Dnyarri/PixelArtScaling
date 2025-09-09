@@ -192,9 +192,9 @@ def FileNx(size, sfx):
 
     UIBusy()
 
-    if os.path.splitext(sourcefilename)[1] == '.png':
+    if os.path.splitext(resultfilename)[1] == '.png':
         list2png(resultfilename, scaled_image, info)
-    elif os.path.splitext(sourcefilename)[1] in ('.ppm', '.pgm'):
+    elif os.path.splitext(resultfilename)[1] in ('.ppm', '.pgm'):
         list2pnm(resultfilename, scaled_image, maxcolors, bin=prefs['single_binarity'])
 
     UINormal()
