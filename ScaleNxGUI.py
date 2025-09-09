@@ -109,7 +109,8 @@ def FileNx(size, sfx):
     global prefs  # Remember MRU directory for old Tkinter
 
     UIWaiting()
-
+    # ↓ Getting prefs from UI
+    FormatPrefs()
     # ↓ Open source file
     sourcefilename = askopenfilename(title='Open image file to rescale', initialdir=prefs['mru'], filetypes=[('Supported formats', '.png .ppm .pgm .pbm'), ('Portable network graphics', '.png'), ('Portable network map', '.ppm .pgm .pbm')])
     if sourcefilename == '':
