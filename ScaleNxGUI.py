@@ -32,7 +32,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.09.09.34'
+__version__ = '25.09.16.34'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -41,7 +41,7 @@ import os
 from json import dump, load
 from multiprocessing import Pool, freeze_support
 from time import ctime, time
-from tkinter import Button, Frame, Label, LabelFrame, OptionMenu, PhotoImage, StringVar, Tk
+from tkinter import Button, Frame, Label, LabelFrame, OptionMenu, StringVar, Tk
 from tkinter.filedialog import askdirectory, askopenfilename, asksaveasfilename
 
 from pypng.pnglpng import list2png, png2list
@@ -488,12 +488,9 @@ if __name__ == '__main__':
     sortir.title('ScaleNx')
     sortir.minsize(602, 440)
 
-    # ↓ Building icon from PNGs since Tkinter sucks with Windows ICO
-    icon_path_48 = os.path.dirname(os.path.realpath(__file__)) + '/48.png'
-    icon_path_32 = os.path.dirname(os.path.realpath(__file__)) + '/32.png'
-    icon_path_16 = os.path.dirname(os.path.realpath(__file__)) + '/16.png'
-    if os.path.exists(icon_path_48) and os.path.exists(icon_path_32) and os.path.exists(icon_path_16):
-        sortir.iconphoto(False, PhotoImage(file=icon_path_48), PhotoImage(file=icon_path_32), PhotoImage(file=icon_path_16))
+    icon_path = os.path.dirname(os.path.realpath(__file__)) + '/32.ico'
+    if os.path.exists(icon_path):
+        sortir.iconbitmap(icon_path)
 
     # ↓ Info statuses dictionaries
     info_normal = {'txt': 'ScaleNx ver. {} at your command'.format(__version__), 'font': ('courier', 10), 'fg': 'grey', 'bg': 'light grey', 'status': 'normal'}
