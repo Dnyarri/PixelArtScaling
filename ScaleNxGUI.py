@@ -38,7 +38,7 @@ from json import dump, load
 from multiprocessing import Pool, freeze_support
 from pathlib import Path
 from time import ctime, time
-from tkinter import Button, Frame, Label, LabelFrame, OptionMenu, PhotoImage, StringVar, Tk
+from tkinter import Button, Frame, Label, LabelFrame, OptionMenu, StringVar, Tk
 from tkinter.filedialog import askdirectory, askopenfilename, asksaveasfilename
 
 from pypng.pnglpng import list2png, png2list
@@ -449,23 +449,12 @@ if __name__ == '__main__':
     sortir.title('ScaleNx')
     sortir.minsize(602, 440)
 
-    # ↓ PNG icon.
-    #   Requires PhotoImage which makes exe bigger
-    #   but result looks sharper than ICO below.
-    icon_path_48 = Path(__file__).resolve().parent / '48.png'
-    icon_path_32 = Path(__file__).resolve().parent / '32.png'
-    icon_path_16 = Path(__file__).resolve().parent / '16.png'
-
     # ↓ ICO icon.
-    #   Tkinter seem to read icon with index=0 and interpolate to unknown size.
+    #   Tkinter seem to read icon[0] and interpolate
+    #   rather than search for and read correct size one.
     icon_path = Path(__file__).resolve().parent / '32.ico'
-
-    if icon_path_48.exists() and icon_path_32.exists() and icon_path_16.exists():
-        sortir.iconphoto(True, PhotoImage(file=icon_path_48), PhotoImage(file=icon_path_32), PhotoImage(file=icon_path_16))
-    elif icon_path.exists():
+    if icon_path.exists():
         sortir.iconbitmap(icon_path)
-    else:
-        sortir.iconphoto(True, PhotoImage(data=b'P6\n2 2\n255\n\xff\x00\x00\xff\xff\x00\x00\x00\xff\x00\xff\x00'))
 
     # ↓ Info statuses dictionaries
     info_normal = {
