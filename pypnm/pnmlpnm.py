@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-"""PPM and PGM image files reading, displaying and writing for Python > 3.10.
-------------------------------------------------------------------------------
+"""PPM and PGM image files reading, displaying and writing for Python >= 3.11.
+-------------------------------------------------------------------------------
 
 Overview
 ---------
@@ -9,19 +9,16 @@ Overview
 PyPNM module is a pack of functions for dealing with PPM and PGM image files.
 Functions included are:
 
-- `pnm2list`: reading binary or ascii RGB PPM or L PGM file and returning image data
+- `pnm2list`: reading binary or ASCII RGB PPM or L PGM file and returning image data
 as nested list of int.
 - `list2bin`: getting image data as nested list of int and creating binary PPM (P6) or PGM (P5)
-data structure in memory. Suitable for generating data to display with
-Tkinter `PhotoImage(data=...)` class.
+data structure in memory. Suitable for generating data to display with Tkinter `PhotoImage (data=...)` class.
 - `list2pnmbin`: getting image data as nested list of int and writing binary PPM (P6) or PGM (P5) image file.
-Note that bytes generations procedure is optimized to save memory while working with large files and
-therefore is different from that used in `list2bin`.
-- `list2pnmascii`: alternative function to write ASCII PPM (P3) or PGM (P2) files.
+Note that bytes generations procedure is different from that used in `list2bin`.
+- `list2pnmascii`: getting image data as nested list of int and writing ASCII PPM (P3) or PGM (P2) files.
 - `list2pnm`: getting image data as nested list of int and writing either binary or ASCII PNM
 depending on `bin` argument value.
 - `create_image`: creating empty nested 3D list for image representation.
-Not used within this particular module but often needed by programs this module is supposed to be used with.
 
 Installation
 -------------
@@ -70,15 +67,17 @@ to facilitate working with PPM/PGM files and displaying arbitrary image-like dat
 with Tkinter `PhotoImage` class.
 
 May be freely used, redistributed and modified.
-In case of introducing useful modifications, report to the developer at once.
+
+In case of introducing useful modifications, report upstairs at once.
 
 References
 -----------
 
 1. Netpbm specifications: https://netpbm.sourceforge.net/doc/
-2. PyPNM at GitHub: https://github.com/Dnyarri/PyPNM/
-3. PyPNM at PyPI: https://pypi.org/project/PyPNM/
-4. PyPNM Documentation: https://dnyarri.github.io/pypnm/pypnm.pdf
+2. PyPNM for Python >= 3.11 at GitHub: https://github.com/Dnyarri/PyPNM/
+3. PyPNM for Python >= 3.4  at GitHub: https://github.com/Dnyarri/PyPNM/tree/py34
+4. PyPNM at PyPI: https://pypi.org/project/PyPNM/
+5. PyPNM Documentation: https://dnyarri.github.io/pypnm/pypnm.pdf
 
 """
 
@@ -86,7 +85,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024-2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '2.21.2.2'
+__version__ = '2.21.3.12'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -112,7 +111,8 @@ def pnm2list(in_filename: str) -> tuple[int, int, int, int, list[list[list[int]]
     for reading data from PPM/PGM, where:
 
         - `X`, `Y`, `Z`:    image dimensions (int);
-        - `maxcolors`:      maximum of color per channel for current image (int), 255 for 8 bit and 65535 for 16 bit input. Note that 1 bit images get promoted to 8 bit L upon import;
+        - `maxcolors`:      maximum of color per channel for current image (int),
+        255 for 8 bit and 65535 for 16 bit input. Note that 1 bit images get promoted to 8 bit L upon import.
         - `list_3d`:        image pixel data as list(list(list(int)));
         - `in_filename`:    PPM/PGM file name (str).
 
@@ -345,7 +345,7 @@ def pnm2list(in_filename: str) -> tuple[int, int, int, int, list[list[list[int]]
     ╚══════════╝ """
 
 def list2bin(list_3d: list[list[list[int]]], maxcolors: int, show_chessboard: bool = False) -> bytes:
-    """Convert nested image data list to PGM P5 or PPM P6 (binary) data structure in memory to be used with Tkinter PhotoImage(data=...).
+    """Convert nested image data list to PGM P5 or PPM P6 bytes in memory.
 
     Usage:
 
@@ -355,7 +355,9 @@ def list2bin(list_3d: list[list[list[int]]], maxcolors: int, show_chessboard: bo
 
         - `list_3d`:    Y * X * Z list (image) of lists (rows) of lists (pixels) of ints (channel values);
         - `maxcolors`:  maximum of color per channel for current image (int);
-        - `show_chessboard`:    optional bool, set `True` to show LA and RGBA images against chessboard pattern; `False` or missing show existing L or RGB data for transparent areas as opaque. Default is `False` for backward compatibility.
+        - `show_chessboard`:    optional bool, set `True` to show LA and RGBA images against chessboard pattern;
+        `False` or missing show existing L or RGB data for transparent areas as fully opaque.
+        Default is `False` for backward compatibility.
         - `image_bytes`:    PNM-structured binary data.
 
     """
@@ -523,7 +525,7 @@ def list2pnm(out_filename: str, list_3d: list[list[list[int]]], maxcolors: int, 
     ╚════════════════════╝ """
 
 def create_image(X: int, Y: int, Z: int) -> list[list[list[int]]]:
-    """Create empty 3D nested list of X * Y * Z size."""
+    """Create 3D nested list of X * Y * Z size filled with zeroes."""
 
     new_image = [[[0 for z in range(Z)] for x in range(X)] for y in range(Y)]
 
@@ -532,4 +534,8 @@ def create_image(X: int, Y: int, Z: int) -> list[list[list[int]]]:
 
 # ↓ Dummy stub for standalone execution attempt
 if __name__ == '__main__':
-    print(f'Module PyPNM {__version__} to be imported, not run as standalone!')
+    print('Module to be imported, not run as standalone.')
+    need_help = input('Would you like to read some help (y/n)?')
+    if need_help.startswith(('y', 'Y')):
+        import pnmlpnm
+        help(pnmlpnm)

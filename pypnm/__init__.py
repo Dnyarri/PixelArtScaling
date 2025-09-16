@@ -1,8 +1,8 @@
-"""PNM (PPM and PGM) image files reading, displaying and writing for Python > 3.10.
+"""PNM (PPM and PGM) image files reading, displaying and writing for Python 3.11 and above.
 ----
 
-2 Sep 2025 "Victory II" build. Fully interchangeable with previous
-9 May 2025 PyPNM 1.17.9.2 "Victory" build.
+3 Sep 2025 "Victory II" update. Fully interchangeable with previous PyPNM 1.17.9.2
+9 May 2025 "Victory" build.
 
 Use `from pypnm import pnmlpnm` to access functions.
 
