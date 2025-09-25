@@ -5,6 +5,9 @@
 Overview
 ---------
 
+ScaleNx module comprise functions for rescaling images using ScaleNx methods.
+Functions included in current file are:
+
 - `scalenx.scale2x`: Scale2x aka AdvMAME2x image scaling up two times
 without introducing intermediate colors (blur).
 
@@ -26,7 +29,12 @@ Syntaxis example:
     `scaled_image = scalenx.scale3x(source_image)`
 
 where both `image` are list[list[list[int]]].
-Note that `image` X and Y sized are determined automatically, Z not used and remains unchanged.
+
+Redistribution
+---------------
+
+Current implementation may be freely used, redistributed and improved at will by anyone.
+Sharing useful modifications with the Developer and lesser species is next to obligatory.
 
 References
 -----------
@@ -40,7 +48,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024-2025 Ilya Razmanov'
 __credits__ = ['Ilya Razmanov', 'Andrea Mazzoleni']
 __license__ = 'unlicense'
-__version__ = '2025.07.34'
+__version__ = '2025.09.25.34'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -51,8 +59,8 @@ __status__ = 'Production'
 
 
 def scale2x(image3d):
-    """Scale2x image rescale
-    -
+    """Scale2x image rescale.
+    ----
 
         `scaled_image = scalenx.scale2x(image3d)`
 
@@ -66,10 +74,10 @@ def scale2x(image3d):
     X = len(image3d[0])
 
     # starting new image list
-    scaled_image = list()
+    scaled_image = []
 
     def _dva(A, B, C, D, E):
-        """Scale2x conditional tree function"""
+        """Scale2x conditional tree function."""
 
         r1 = r2 = r3 = r4 = E
 
@@ -144,8 +152,8 @@ def scale2x(image3d):
 
 
 def scale3x(image3d):
-    """Scale3x image rescale
-    -
+    """Scale3x image rescale.
+    ----
 
         `scaled_image = scalenx.scale3x(image3d)`
 
@@ -159,10 +167,10 @@ def scale3x(image3d):
     X = len(image3d[0])
 
     # starting new image list
-    scaled_image = list()
+    scaled_image = []
 
     def _tri(A, B, C, D, E, F, G, H, I):
-        """Scale3x conditional tree function"""
+        """Scale3x conditional tree function."""
 
         r1 = r2 = r3 = r4 = r5 = r6 = r7 = r8 = r9 = E
 
@@ -252,9 +260,10 @@ def scale3x(image3d):
 
     return scaled_image  # rescaling three times finished
 
-
-# --------------------------------------------------------------
-
-
+# Dummy stub for standalone execution attempt
 if __name__ == '__main__':
-    print('Module to be imported, not run as standalone')
+    print('Module to be imported, not run as standalone.')
+    need_help = input('Would you like to read some help (y/n)?')
+    if need_help.startswith(('y', 'Y')):
+        import scalenx
+        help(scalenx)

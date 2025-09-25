@@ -32,7 +32,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.09.16.34'
+__version__ = '25.09.25.34'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -53,7 +53,6 @@ def DisMiss(event=None):
     """Kill dialog and continue"""
 
     sortir.destroy()
-    return None
 
 
 def UINormal():
@@ -67,7 +66,6 @@ def UINormal():
             widget.config(state='normal')
     info_string.config(text=info_normal['txt'], font=info_normal['font'], foreground=info_normal['fg'], background=info_normal['bg'], state=info_normal['status'])
     sortir.update()
-    return None
 
 
 def UIWaiting():
@@ -81,7 +79,6 @@ def UIWaiting():
             widget.config(state='disabled')
     info_string.config(text=info_waiting['txt'], font=info_waiting['font'], foreground=info_waiting['fg'], background=info_waiting['bg'], state=info_waiting['status'], disabledforeground=info_waiting['fg'])
     sortir.update()
-    return None
 
 
 def UIBusy():
@@ -95,7 +92,6 @@ def UIBusy():
             widget.config(state='disabled')
     info_string.config(text=info_busy['txt'], font=info_busy['font'], foreground=info_busy['fg'], background=info_busy['bg'], state=info_busy['status'], disabledforeground=info_busy['fg'])
     sortir.update()
-    return None
 
 
 def FileNx(size, sfx):
@@ -152,10 +148,7 @@ def FileNx(size, sfx):
     # ↓ Fixing resolution to match original print size.
     #   If no pHYs found in original, 96 ppi is assumed as original value.
     if 'physical' in info:
-        res = info['physical']  # Reading resolution as tuple
-        x_pixels_per_unit = res[0]
-        y_pixels_per_unit = res[1]
-        unit_is_meter = res[2]
+        x_pixels_per_unit, y_pixels_per_unit, unit_is_meter = info['physical']  # Reading resolution
     else:
         x_pixels_per_unit = y_pixels_per_unit = 3780
         # 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
@@ -170,13 +163,26 @@ def FileNx(size, sfx):
     # ↓ Explicitly setting compression for a single file processing
     info['compression'] = prefs['single_deflation']
 
-    # ↓ Adjusting "Save to" formats to be displayed according to bitdepth
+    # ↓ Adjusting "Save as" formats to be displayed
+    #   according to bitdepth and source extension
+    src_extension = os.path.splitext(sourcefilename)[1]
     if Z == 1:
-        format = [('Portable network graphics', '.png'), ('Portable grey map', '.pgm')]
+        if src_extension in ('.pgm', '.pbm', '.pnm'):
+            format = [('Portable grey map', '.pgm'), ('Portable network graphics', '.png')]
+            proposed_name = os.path.splitext(sourcefilename)[0] + '_{}x.pgm'.format(size)
+        else:
+            format = [('Portable network graphics', '.png'), ('Portable grey map', '.pgm')]
+            proposed_name = os.path.splitext(sourcefilename)[0] + '_{}x.png'.format(size)
     elif Z == 3:
-        format = [('Portable network graphics', '.png'), ('Portable pixel map', '.ppm')]
+        if src_extension in ('.ppm', '.pnm'):
+            format = [('Portable pixel map', '.ppm'), ('Portable network graphics', '.png')]
+            proposed_name = os.path.splitext(sourcefilename)[0] + '_{}x.ppm'.format(size)
+        else:
+            format = [('Portable network graphics', '.png'), ('Portable pixel map', '.ppm')]
+            proposed_name = os.path.splitext(sourcefilename)[0] + '_{}x.png'.format(size)
     else:
         format = [('Portable network graphics', '.png')]
+        proposed_name = os.path.splitext(sourcefilename)[0] + '_{}x.png'.format(size)
 
     UIWaiting()
 
@@ -185,21 +191,19 @@ def FileNx(size, sfx):
         title='Save image file',
         initialdir=prefs['mru'],
         filetypes=format,
+        initialfile=proposed_name,
         defaultextension='.png',  # No extension should never happen but just in case
     )
     if resultfilename == '':
         UINormal()
         return None
-
     UIBusy()
 
     if os.path.splitext(resultfilename)[1] == '.png':
         list2png(resultfilename, scaled_image, info)
     elif os.path.splitext(resultfilename)[1] in ('.ppm', '.pgm'):
         list2pnm(resultfilename, scaled_image, maxcolors, bin=prefs['single_binarity'])
-
     UINormal()
-    return None
 
 
 def scale_file_png(runningfilename, size, sfx, compression):
@@ -237,10 +241,7 @@ def scale_file_png(runningfilename, size, sfx, compression):
     # ↓ Fixing resolution to match original print size.
     #   If no pHYs found in original, 96 ppi is assumed as original value.
     if 'physical' in info:
-        res = info['physical']  # Reading resolution as tuple
-        x_pixels_per_unit = res[0]
-        y_pixels_per_unit = res[1]
-        unit_is_meter = res[2]
+        x_pixels_per_unit, y_pixels_per_unit, unit_is_meter = info['physical']  # Reading resolution
     else:
         x_pixels_per_unit = y_pixels_per_unit = 3780
         # 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
@@ -257,7 +258,6 @@ def scale_file_png(runningfilename, size, sfx, compression):
 
     # ↓ Writing PNG file
     list2png(newfile, scaled_image, info)
-    return None
 
 
 def scale_file_pnm(runningfilename, size, sfx, bin):
@@ -294,7 +294,6 @@ def scale_file_pnm(runningfilename, size, sfx, bin):
 
     # ↓ Writing PNM file
     list2pnm(newfile, scaled_image, maxcolors, bin)
-    return None
 
 
 def ListDir(directory):
@@ -362,9 +361,7 @@ def FolderNx(size, sfx):
     # ↓ Everything fed into the pool, waiting and closing
     scalepool.close()
     scalepool.join()
-
     UINormal()
-    return None
 
 
 def IniFileLoad(event=None):
@@ -429,7 +426,6 @@ def IniFileLoad(event=None):
     info_string.config(text='Batch comp:{} bin:{}; Single comp:{} bin:{} loaded'.format(prefs['batch_deflation'], prefs['batch_binarity'], prefs['single_deflation'], prefs['single_binarity']))
     info_string.focus_set()
     sortir.update()
-    return None
 
 
 def IniFileSave(event=None):
@@ -451,7 +447,6 @@ def IniFileSave(event=None):
     sortir.clipboard_clear()
     sortir.clipboard_append(os.path.dirname(pref_path))
     info_string.focus_set()
-    return None
 
 
 def IniFileDel(event=None):
@@ -464,7 +459,6 @@ def IniFileDel(event=None):
     else:
         info_string.config(text='File {} not found'.format(pref_path))
     info_string.focus_set()
-    return None
 
 
 def FormatPrefs():
@@ -474,7 +468,6 @@ def FormatPrefs():
     prefs['single_binarity'] = False if pnm_single.get() == 'ascii' else True
     prefs['batch_deflation'] = int(png_batch.get())
     prefs['batch_binarity'] = False if pnm_batch.get() == 'ascii' else True
-    return None
 
 
 """ ╔═══════════╗
@@ -486,7 +479,6 @@ if __name__ == '__main__':
 
     sortir = Tk()
     sortir.title('ScaleNx')
-    sortir.minsize(602, 440)
 
     icon_path = os.path.dirname(os.path.realpath(__file__)) + '/32.ico'
     if os.path.exists(icon_path):
@@ -527,7 +519,7 @@ if __name__ == '__main__':
     info_string.pack(side='bottom', padx=2, pady=(6, 1), fill='both')
 
     # ↓ Info string binding
-    info_string.bind('<Enter>', lambda event=None: info_string.config(text='Options save: Ctrl+Click, reload: Alt+Click, delete: Ctrl+Alt+Click', font=('courier', 10)))
+    info_string.bind('<Enter>', lambda event=None: info_string.config(text='Options save: Ctrl+Click, load: Alt+Click, delete: Ctrl+Alt+Click', font=('courier', 10)))
     info_string.bind('<Leave>', lambda event=None: UINormal())
     info_string.bind('<Alt-Button-1>', IniFileLoad)
     info_string.bind('<Control-Button-1>', IniFileSave)
@@ -541,7 +533,7 @@ if __name__ == '__main__':
     frame_right.pack(side='right', anchor='ne', padx=(6, 2), pady=0)
 
     # ↓ Left frame
-    label00 = Label(frame_left, text='Single image rescaling', font=('helvetica', 18), justify='right', borderwidth=2, relief='groove', foreground='brown', background='light grey')
+    label00 = Label(frame_left, text=' Single image rescaling ', font=('helvetica', 18), justify='right', borderwidth=2, relief='groove', foreground='brown', background='light grey')
     label00.pack(side='top', anchor='e', padx=0, pady=(0, 6), fill='both')
 
     label01 = Label(frame_left, text='ScaleNx'.center(blue['center'], ' '), font=blue['font'], borderwidth=2, relief='flat', foreground=blue['foreground'], background=blue['background'])
@@ -571,7 +563,7 @@ if __name__ == '__main__':
     butt12.bind('<Leave>', lambda event=None: butt12.config(foreground=butt['foreground'], background=butt['background']))
 
     # ↓ Right frame
-    label10 = Label(frame_right, text='Batch folder processing', font=('helvetica', 18), justify='left', borderwidth=2, relief='groove', foreground='brown', background='light grey')
+    label10 = Label(frame_right, text=' Batch folder processing ', font=('helvetica', 18), justify='left', borderwidth=2, relief='groove', foreground='brown', background='light grey')
     label10.pack(side='top', anchor='w', padx=0, pady=(0, 6), fill='both')
 
     label12 = Label(frame_right, text='ScaleNx'.center(blue['center'], ' '), font=blue['font'], borderwidth=2, relief='flat', foreground=blue['foreground'], background=blue['background'])
@@ -600,46 +592,58 @@ if __name__ == '__main__':
     butt14.bind('<Enter>', lambda event=None: butt14.config(foreground=butt['activeforeground'], background=butt['activebackground']))
     butt14.bind('<Leave>', lambda event=None: butt14.config(foreground=butt['foreground'], background=butt['background']))
 
+    """ ┌────────────────────────┐
+        │ Saving formats options │
+        └────────────────────────┘ """
+    option = {
+            'font_label': ('helvetica', 10),
+            'font_menu': ('courier', 10),
+            'relief': butt['relief'],
+            'activeforeground': butt['activeforeground'],
+            'activebackground': butt['activebackground'],
+        }
     # ↓ Left frame file output options
     options_left = LabelFrame(frame_left, text='Single file saving options', font=('helvetica', 8), foreground=blue['foreground'])
-    options_left.pack(side='top', anchor='ne', fill='x')
+    options_left.pack(side='top', anchor='ne', padx=4, fill='none')
 
-    options_left_png_label = Label(options_left, text='PNG Compression:', font=('helvetica', 8))
-    options_left_png_label.pack(side='left', anchor='w')
+    options_left_png_label = Label(options_left, text='PNG Compression:', font=option['font_label'])
+    options_left_png_label.grid(row=0, column=0, sticky='w')
 
     png_single = StringVar(value=9)
     options_left_png = OptionMenu(options_left, png_single, *['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
-    options_left_png.pack(side='left', anchor='w')
-    options_left_png.configure(font=('courier', 8), width=1, relief=butt['relief'], activebackground=butt['activebackground'])
+    options_left_png.grid(row=0, column=1, sticky='e')
+    options_left_png.configure(font=option['font_menu'], width=1, relief=option['relief'], activebackground=option['activebackground'])
     options_left_png['menu'].configure(font=options_left_png['font'])
 
-    options_left_pnm_label = Label(options_left, text='PNM Type:', font=('helvetica', 8))
-    options_left_pnm_label.pack(side='left', anchor='e')
+    options_left_pnm_label = Label(options_left, text='PNM Type:', font=('helvetica', 10))
+    options_left_pnm_label.grid(row=1, column=0, sticky='w')
+
     pnm_single = StringVar(value='bin')
     options_left_pnm = OptionMenu(options_left, pnm_single, *['bin', 'ascii'])
-    options_left_pnm.pack(side='right', anchor='e')
-    options_left_pnm.configure(font=('courier', 8), width=5, relief=butt['relief'], activebackground=butt['activebackground'])
+    options_left_pnm.grid(row=1, column=1, sticky='e')
+    options_left_pnm.configure(font=option['font_menu'], width=5, relief=option['relief'], activebackground=option['activebackground'])
     options_left_pnm['menu'].configure(font=options_left_pnm['font'])
 
     # ↓ Right frame file output options
     options_right = LabelFrame(frame_right, text='Batch file saving options', font=('helvetica', 8), foreground=blue['foreground'])
-    options_right.pack(side='top', anchor='ne', fill='x')
+    options_right.pack(side='top', anchor='ne', padx=4, fill='none')
 
-    options_right_png_label = Label(options_right, text='PNG Compression:', font=('helvetica', 8))
-    options_right_png_label.pack(side='left', anchor='w')
+    options_right_png_label = Label(options_right, text='PNG Compression:', font=option['font_label'])
+    options_right_png_label.grid(row=0, column=0, sticky='w')
 
     png_batch = StringVar(value=3)
     options_right_png = OptionMenu(options_right, png_batch, *['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
-    options_right_png.pack(side='left', anchor='w')
-    options_right_png.configure(font=('courier', 8), width=1, relief=butt['relief'], activebackground=butt['activebackground'])
+    options_right_png.grid(row=0, column=1, sticky='e')
+    options_right_png.configure(font=option['font_menu'], width=1, relief=option['relief'], activebackground=option['activebackground'])
     options_right_png['menu'].configure(font=options_right_png['font'])
 
-    options_right_pnm_label = Label(options_right, text='PNM Type:', font=('helvetica', 8))
-    options_right_pnm_label.pack(side='left', anchor='e')
+    options_right_pnm_label = Label(options_right, text='PNM Type:', font=option['font_label'])
+    options_right_pnm_label.grid(row=1, column=0, sticky='w')
+
     pnm_batch = StringVar(value='bin')
     options_right_pnm = OptionMenu(options_right, pnm_batch, *['bin', 'ascii'])
-    options_right_pnm.pack(side='right', anchor='e')
-    options_right_pnm.configure(font=('courier', 8), width=5, relief=butt['relief'], activebackground=butt['activebackground'])
+    options_right_pnm.grid(row=1, column=1, sticky='e')
+    options_right_pnm.configure(font=option['font_menu'], width=5, relief=option['relief'], activebackground=option['activebackground'])
     options_right_pnm['menu'].configure(font=options_right_pnm['font'])
 
     # ↓ Loading file formats prefs from ini file to dict
@@ -654,6 +658,7 @@ if __name__ == '__main__':
     # ↓ Center window horizontally, one third vertically
     sortir.update()
     # print(sortir.winfo_width(), sortir.winfo_height())
+    sortir.minsize(sortir.winfo_width(), sortir.winfo_height())
     sortir.geometry('+{x_position:d}+{y_position:d}'.format(x_position=(sortir.winfo_screenwidth() - sortir.winfo_width()) // 2, y_position=(sortir.winfo_screenheight() - sortir.winfo_height()) // 3))
 
     sortir.mainloop()
