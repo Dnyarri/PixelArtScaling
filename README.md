@@ -6,9 +6,11 @@
 
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/scalenx)](https://pypi.org/project/ScaleNx/)
 
-Programs for scaling up small low-color images like icons and game sprites without blurring.
+**ScaleNx**, encompassing Scale2x, Scale3x, Scale2xSFX, and Scale3xSFX, is a group of [pixel-art scaling algorithms](https://en.wikipedia.org/wiki/Pixel-art_scaling_algorithms), intended to rescale images without blurring sharp edges.
 
-Apparently useful for scaling up grey text scans with low resolution before OCR, to improve OCR quality.
+Algorithms were originally developed for scaling up small low-color images like icons and game sprites without blurring.
+
+Apparently algorithms appear to be useful for scaling up grey text scans with low resolution before OCR, to improve OCR quality.
 
 Currently **Scale2x** (aka AdvMAME2x), **Scale3x** (aka AdvMAME3x), **Scale2xSFX** and **Scale3xSFX** methods are implemented.  
 
@@ -19,7 +21,7 @@ Currently **Scale2x** (aka AdvMAME2x), **Scale3x** (aka AdvMAME3x), **Scale2xSFX
 | [![Main ScaleNx program GUI](https://dnyarri.github.io/imgscalenx/guismall.png "Main ScaleNx program GUI")](https://dnyarri.github.io/scalenx.html) |
 
 > [!NOTE]
-> In version 25.08.22.22 PNG compression options and PPM/PGM format preferences may be saved to disk as JSON file `scalenx.ini`, edited with any text editor, and loaded back to ScaleNx. Currently file is saved to your user directory (for easy access location is copied to clipboard when saving). Simply point you mouse to status field right above "Exit" button to display the reminder.
+> Main version of ScaleNx is compatible with Python 3.10 and above. For older Python users, there is [extended compatibility version](https://github.com/Dnyarri/PixelArtScaling/tree/py34), successfully validated with Python 3.4 under Windows XP 32-bit.
 
 > [!CAUTION]
 > Batch processing programs replace original files with scaled copies. Batch processing programs in this version use async multiprocessing, thus drastically reducing processing time but loading all CPUs at 100% and rendering GUI almost unresponsive.  
@@ -32,8 +34,7 @@ Currently **Scale2x** (aka AdvMAME2x), **Scale3x** (aka AdvMAME3x), **Scale2xSFX
 
 1. [PyPNG](https://gitlab.com/drj11/pypng). Copy included into current ScaleNx distribution.
 2. [PyPNM](https://pypi.org/project/PyPNM/). Copy included into current ScaleNx distribution.
-3. Multiprocessing. Included into standard CPython distribution.
-4. Tkinter. Normally included into standard CPython distribution for "big" OS-es, although Linux users may need installing it separately.
+3. Tkinter. Normally included into standard CPython distribution for "big" OS-es, although Linux users may need installing it separately.
 
 > [!NOTE]
 > Programs are written entirely on Python, using image representation as list of lists of lists.

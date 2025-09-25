@@ -5,6 +5,9 @@
 Overview
 ---------
 
+ScaleNx module comprise functions for rescaling images using ScaleNx methods.
+Functions included in current file are:
+
 - `scalenx.scale2x`: Scale2x aka AdvMAME2x image scaling up two times
 without introducing intermediate colors (blur).
 
@@ -26,35 +29,18 @@ Syntaxis example:
     `scaled_image = scalenx.scale3x(source_image)`
 
 where both `image` are list[list[list[int]]].
-Note that `image` X and Y sized are determined automatically, Z not used and remains unchanged.
-
 
 Copyright and redistribution
 -----------------------------
 
-Current Python implementation of ScaleNx developed by `Ilya Razmanov <https://dnyarri.github.io/>`_
-(hereinafter referred to as "the Developer"), based on `brief algorithm description <https://www.scale2x.it/algorithm>`_
+Current Python implementation of ScaleNx developed by
+`Ilya Razmanov <https://dnyarri.github.io/>`_
+(hereinafter referred to as "the Developer"), based on
+`brief algorithm description <https://www.scale2x.it/algorithm>`_
 by `Andrea Mazzoleni <https://www.scale2x.it/>`_ (hereinafter referred to as "the Inventor").
 
-Current implementation may be freely used, included and modified anywhere by anyone.
-In case of useful modifications sharing it with the Developer is almost obligatory.
-
-History
---------
-
-2024.02.24  Release as shared module, versioning changed to YYYY.MM.DD.
-
-2024.05.14  Arguments and return format changed. Incompatible with previous versions!
-
-2024.07.03  Small improvements, one more retest with new test corpse, as you were, corpus.
-
-2024.10.01  Internal restructure, imports change, maintenance release.
-
-2024.11.24  Improved documentation.
-
-2025.01.15  Conditional optimization. Some appends replaced with extends.
-
-2025.02.01  FIR optimization. Speed gain, % of original: ca.15% 2x, ca. 50% 3x.
+Current implementation may be freely used, redistributed and improved at will by anyone.
+Sharing useful modifications with the Developer and lesser species is next to obligatory.
 
 """
 
@@ -62,7 +48,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024-2025 Ilya Razmanov'
 __credits__ = ['Ilya Razmanov', 'Andrea Mazzoleni']
 __license__ = 'unlicense'
-__version__ = '2025.07.12'
+__version__ = '2025.09.25.09'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -73,8 +59,8 @@ __status__ = 'Production'
 
 
 def scale2x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
-    """Scale2x image rescale
-    -
+    """Scale2x image rescale.
+    ----
 
         `scaled_image = scalenx.scale2x(image3d)`
 
@@ -88,10 +74,10 @@ def scale2x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
     X = len(image3d[0])
 
     # starting new image list
-    scaled_image: list[list[list[int]]] = list()
+    scaled_image: list[list[list[int]]] = []
 
     def _dva(A: list[int], B: list[int], C: list[int], D: list[int], E: list[int]):
-        """Scale2x conditional tree function"""
+        """Scale2x conditional tree function."""
 
         r1 = r2 = r3 = r4 = E
 
@@ -166,8 +152,8 @@ def scale2x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
 
 
 def scale3x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
-    """Scale3x image rescale
-    -
+    """Scale3x image rescale.
+    ----
 
         `scaled_image = scalenx.scale3x(image3d)`
 
@@ -181,10 +167,10 @@ def scale3x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
     X = len(image3d[0])
 
     # starting new image list
-    scaled_image: list[list[list[int]]] = list()
+    scaled_image: list[list[list[int]]] = []
 
     def _tri(A: list[int], B: list[int], C: list[int], D: list[int], E: list[int], F: list[int], G: list[int], H: list[int], I: list[int]):
-        """Scale3x conditional tree function"""
+        """Scale3x conditional tree function."""
 
         r1 = r2 = r3 = r4 = r5 = r6 = r7 = r8 = r9 = E
 
@@ -274,9 +260,10 @@ def scale3x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
 
     return scaled_image  # rescaling three times finished
 
-
-# --------------------------------------------------------------
-
-
+# ↓ Dummy stub for standalone execution attempt
 if __name__ == '__main__':
-    print('Module to be imported, not run as standalone')
+    print('Module to be imported, not run as standalone.')
+    need_help = input('Would you like to read some help (y/n)?')
+    if need_help.startswith(('y', 'Y')):
+        import scalenx
+        help(scalenx)

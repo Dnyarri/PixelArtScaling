@@ -5,6 +5,9 @@
 Overview
 ---------
 
+ScaleNx module comprise functions for rescaling images using ScaleNx methods.
+Functions included in current file are:
+
 - `scalenxsfx.scale2x`: Scale2xSFX image scaling two times
 without introducing intermediate colors (blur).
 
@@ -25,19 +28,19 @@ Syntaxis example:
 
     `scaled_image = scalenxsfx.scale3x(source_image)`
 
-Current Python implementation of ScaleNxSFX developed by `Ilya Razmanov <https://dnyarri.github.io/>`_
-(hereinafter referred to as "the Developer"), based on `brief algorithm description<https://web.archive.org/web/20160527015550/https://libretro.com/forums/archive/index.php?t-1655.html>`_.
-Real name of the author unknown, therefore due credits not given.
+where both `image` are list[list[list[int]]].
 
-Current implementation may be freely used, included and modified anywhere by anyone.
-In case of useful modifications sharing it with the Developer is almost obligatory.
+Copyright and redistribution
+-----------------------------
 
-History
---------
+Current Python implementation of ScaleNxSFX is developed by
+`Ilya Razmanov <https://dnyarri.github.io/>`_
+(hereinafter referred to as "the Developer"), based on
+`brief algorithm description<https://web.archive.org/web/20160527015550/https://libretro.com/forums/archive/index.php?t-1655.html>`_.
+Real name of algorithm description author unknown, therefore due credits not given.
 
-2025.01.16  Initial implementation of ScaleNxSFX.
-
-2025.02.01  FIR and conditional optimization. Speed gain, % of original: ca.50% 2x, ca. 40% 3x.
+Current implementation may be freely used, redistributed and improved at will by anyone.
+Sharing useful modifications with the Developer and lesser species is next to obligatory.
 
 """
 
@@ -45,7 +48,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '2025.07.12'
+__version__ = '2025.09.25.09'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -56,8 +59,8 @@ __status__ = 'Production'
 
 
 def scale2x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
-    """Scale2xSFX image rescale
-    -
+    """Scale2xSFX image rescale.
+    ----
 
         `scaled_image = scalenxsfx.scale2x(image3d)`
 
@@ -71,10 +74,10 @@ def scale2x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
     X = len(image3d[0])
 
     # starting new image list
-    scaled_image: list[list[list[int]]] = list()
+    scaled_image: list[list[list[int]]] = []
 
     def _dva(A: list[int], B: list[int], C: list[int], D: list[int], E: list[int], F: list[int], G: list[int], H: list[int], I: list[int], J: list[int], K: list[int], L: list[int], M: list[int]):
-        """Scale2xSFX conditional tree function"""
+        """Scale2xSFX conditional tree function."""
 
         r1 = r2 = r3 = r4 = E
 
@@ -168,8 +171,8 @@ def scale2x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
 
 
 def scale3x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
-    """Scale3xSFX image rescale
-    -
+    """Scale3xSFX image rescale.
+    ---
 
         `scaled_image = scalenxsfx.scale3x(image3d)`
 
@@ -183,10 +186,10 @@ def scale3x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
     X = len(image3d[0])
 
     # starting new image list
-    scaled_image: list[list[list[int]]] = list()
+    scaled_image: list[list[list[int]]] = []
 
     def _tri(A: list[int], B: list[int], C: list[int], D: list[int], E: list[int], F: list[int], G: list[int], H: list[int], I: list[int], J: list[int], K: list[int], L: list[int], M: list[int]):
-        """Scale3xSFX conditional tree function"""
+        """Scale3xSFX conditional tree function."""
 
         r1 = r2 = r3 = r4 = r5 = r6 = r7 = r8 = r9 = E
 
@@ -319,9 +322,10 @@ def scale3x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
 
     return scaled_image  # rescaling three times finished
 
-
-# --------------------------------------------------------------
-
-
+# ↓ Dummy stub for standalone execution attempt
 if __name__ == '__main__':
-    print('Module to be imported, not run as standalone')
+    print('Module to be imported, not run as standalone.')
+    need_help = input('Would you like to read some help (y/n)?')
+    if need_help.startswith(('y', 'Y')):
+        import scalenxsfx
+        help(scalenxsfx)
