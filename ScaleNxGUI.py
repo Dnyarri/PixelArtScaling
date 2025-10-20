@@ -31,7 +31,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.09.25.09'
+__version__ = '25.10.20.20'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -478,7 +478,7 @@ if __name__ == '__main__':
     # ↓ Frequently used formatting
     blue = {
         'pady': (12, 0),
-        'center': 48,
+        'width': 34,
         'font': ('helvetica', 10),
         'foreground': 'dark blue',
         'background': 'light blue',
@@ -519,10 +519,10 @@ if __name__ == '__main__':
     frame_right.pack(side='right', anchor='ne', padx=(6, 2), pady=0)
 
     # ↓ Left frame
-    label00 = Label(frame_left, text=' Single image rescaling ', font=('helvetica', 18), justify='right', borderwidth=2, relief='groove', foreground='brown', background='light grey')
+    label00 = Label(frame_left, text='Single image rescaling', font=('helvetica', 18), justify='right', borderwidth=2, relief='groove', foreground='brown', background='light grey')
     label00.pack(side='top', anchor='e', padx=0, pady=(0, 6), fill='both')
 
-    label01 = Label(frame_left, text='ScaleNx'.center(blue['center'], ' '), font=blue['font'], borderwidth=2, relief='flat', foreground=blue['foreground'], background=blue['background'])
+    label01 = Label(frame_left, text='ScaleNx', width=blue['width'], font=blue['font'], borderwidth=2, relief='flat', foreground=blue['foreground'], background=blue['background'])
     label01.pack(side='top', pady=blue['pady'], fill='both')
 
     butt01 = Button(frame_left, text='Open file ➔ 2x', font=butt['font'], cursor=butt['cursor'], state='normal', border=butt['border'], relief=butt['relief'], overrelief=butt['overrelief'], command=lambda: FileNx(2, False))
@@ -549,10 +549,10 @@ if __name__ == '__main__':
     butt12.bind('<Leave>', lambda event=None: butt12.config(foreground=butt['foreground'], background=butt['background']))
 
     # ↓ Right frame
-    label10 = Label(frame_right, text=' Batch folder processing ', font=('helvetica', 18), justify='left', borderwidth=2, relief='groove', foreground='brown', background='light grey')
+    label10 = Label(frame_right, text='Batch folder processing', font=('helvetica', 18), justify='left', borderwidth=2, relief='groove', foreground='brown', background='light grey')
     label10.pack(side='top', anchor='w', padx=0, pady=(0, 6), fill='both')
 
-    label12 = Label(frame_right, text='ScaleNx'.center(blue['center'], ' '), font=blue['font'], borderwidth=2, relief='flat', foreground=blue['foreground'], background=blue['background'])
+    label12 = Label(frame_right, text='ScaleNx', width=blue['width'], font=blue['font'], borderwidth=2, relief='flat', foreground=blue['foreground'], background=blue['background'])
     label12.pack(side='top', pady=blue['pady'], fill='both')
 
     butt03 = Button(frame_right, text='Select folder ➔ 2x', font=butt['font'], cursor=butt['cursor'], state='normal', border=butt['border'], relief=butt['relief'], overrelief=butt['overrelief'], command=lambda: FolderNx(2, False))
