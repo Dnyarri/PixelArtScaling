@@ -32,7 +32,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.10.20.34'
+__version__ = '25.11.7.34'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -115,11 +115,11 @@ def FileNx(size, sfx):
     prefs['mru'] = os.path.dirname(sourcefilename)
     UIBusy()
 
-    if os.path.splitext(sourcefilename)[1] == '.png':
+    if (os.path.splitext(sourcefilename)[1]).lower() == '.png':
         # ↓ Reading image as list
         X, Y, Z, maxcolors, image3d, info = png2list(sourcefilename)
 
-    elif os.path.splitext(sourcefilename)[1] in ('.ppm', '.pgm', '.pbm'):
+    elif (os.path.splitext(sourcefilename)[1]).lower() in ('.ppm', '.pgm', '.pbm'):
         # ↓ Reading image as list
         X, Y, Z, maxcolors, image3d = pnm2list(sourcefilename)
         # ↓ Creating dummy info for PyPNG
@@ -165,7 +165,7 @@ def FileNx(size, sfx):
 
     # ↓ Adjusting "Save as" formats to be displayed
     #   according to bitdepth and source extension
-    src_extension = os.path.splitext(sourcefilename)[1]
+    src_extension = (os.path.splitext(sourcefilename)[1]).lower()
     if Z == 1:
         if src_extension in ('.pgm', '.pbm', '.pnm'):
             format = [('Portable grey map', '.pgm'), ('Portable network graphics', '.png')]
@@ -199,9 +199,9 @@ def FileNx(size, sfx):
         return None
     UIBusy()
 
-    if os.path.splitext(resultfilename)[1] == '.png':
+    if (os.path.splitext(resultfilename)[1]).lower() == '.png':
         list2png(resultfilename, scaled_image, info)
-    elif os.path.splitext(resultfilename)[1] in ('.ppm', '.pgm'):
+    elif (os.path.splitext(resultfilename)[1]).lower() in ('.ppm', '.pgm'):
         list2pnm(resultfilename, scaled_image, maxcolors, bin=prefs['single_binarity'])
     UINormal()
 
@@ -337,7 +337,7 @@ def FolderNx(size, sfx):
 
     # ↓ Feeding the pool (no pun!)
     for runningfilename in ListDir(sourcedir):
-        if os.path.splitext(runningfilename)[1] == '.png':
+        if (os.path.splitext(runningfilename)[1]).lower() == '.png':
             scalepool.apply_async(
                 scale_file_png,
                 args=(
@@ -347,7 +347,7 @@ def FolderNx(size, sfx):
                     compression,
                 ),
             )
-        if os.path.splitext(runningfilename)[1] in ('.ppm', '.pgm'):
+        if (os.path.splitext(runningfilename)[1]).lower() in ('.ppm', '.pgm'):
             scalepool.apply_async(
                 scale_file_pnm,
                 args=(
