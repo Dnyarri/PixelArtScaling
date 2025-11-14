@@ -1569,7 +1569,7 @@ class Reader:
         if len(self.signature) == 0:
             raise EOFError("End of PNG stream.")
         if self.signature != signature:
-            raise FormatError("PNG file has invalid signature.")
+            raise FormatError("PNG file has invalid signature %r." % self.signature)
 
     def preamble(self):
         """
