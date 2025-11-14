@@ -1,29 +1,52 @@
 #!/usr/bin/env python3
 
-"""ScaleNx image rescaling GUI shell.
---------------------------------------
+"""
+=======
+ScaleNx
+=======
 
-GUI shell for ScaleNx. GUI derived from
-`Averager<https://dnyarri.github.io/povthread.html#averager`_
-image filter shell.
+----------------
+Visual GUI shell
+----------------
+
+**VisualNxGUI.py** is a visual GUI shell for `ScaleNx`_ module.
+Unlike main GUI shell, ScaleNxGUI.py, it is equipped with preview widget
+and allows fast switching scaling algorithms and previewing scaling result
+before saving (or not saving) it.
+
+Beware that "fast switching" may be quite slow for a big image. Also
+remember that generating preview takes additional CPU time and, most important,
+memory; therefore it is **not recommended** to use VisualNxGUI.py **for big images**.
+Use ScaleNxGUI.py for big images instead.
+
+File formats
+------------
 
 Input: PNG, PPM, PGM, PBM.
 
 Output: PNG, PPM, PGM.
 
-Created by: `Ilya Razmanov<mailto:ilyarazmanov@gmail.com>`_ aka `Ilyich the Toad<mailto:amphisoft@gmail.com>`_.
-
 History:
-----
+--------
 
 25.10.20.14 Initial version of ScaleNx host with preview - 20 Oct 2025.
 
 25.11.7.1   Release 7 Nov 2025.
 
 ----
-Main site: `The Toad's Slimy Mudhole<https://dnyarri.github.io>`_
+Main site: `The Toad's Slimy Mudhole`_
 
-Git: `Dnyarri at Github<https://github.com/Dnyarri>`_; `Gitflic mirror<https://gitflic.ru/user/dnyarri>`_
+.. _The Toad's Slimy Mudhole: https://dnyarri.github.io
+
+`ScaleNx`_ explanations and illustrations page.
+
+.. _ScaleNx: https://dnyarri.github.io/scalenx.html
+
+ScaleNx Git repositories: `ScaleNx@Github`_, `ScaleNx@Gitflic`_.
+
+.. _ScaleNx@Github: https://github.com/Dnyarri/PixelArtScaling
+
+.. _ScaleNx@Gitflic: https://gitflic.ru/project/dnyarri/pixelartscaling
 
 """
 
@@ -31,7 +54,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.11.7.7'
+__version__ = '25.11.15.1'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Development'
@@ -219,7 +242,8 @@ def GetSource(event=None) -> None:
     sortir.title(f'{product_name}: {Path(sourcefilename).name}{color_mode_str}{"*" if is_filtered else ""}')
     info_normal = {'txt': f'{Path(sourcefilename).name}{"*" if is_filtered else ""} X={X} Y={Y} Z={Z} maxcolors={maxcolors}', 'fg': 'grey', 'bg': 'grey90'}
     UINormal()
-    sortir.geometry(f'+{(sortir.winfo_screenwidth() - sortir.winfo_width()) // 2}+{(sortir.winfo_screenheight() - sortir.winfo_height()) // 2 - 32}')
+    # ↓ Center window horizontally, +32 vertically
+    sortir.geometry(f'+{(sortir.winfo_screenwidth() - sortir.winfo_width()) // 2}+32')
 
 
 def RunFilter(event=None) -> None:

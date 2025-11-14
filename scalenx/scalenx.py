@@ -1,46 +1,59 @@
 #!/usr/bin/env python3
 
-"""Module contain Scale2x and Scale3x image rescaling functions.
+"""
+=======
+ScaleNx
+=======
 
-Overview
----------
+-----------------------------------
+Scale2x and Scale3x image rescaling
+-----------------------------------
 
-ScaleNx module comprise functions for rescaling images using ScaleNx methods.
-Functions included in current file are:
-
-- `scalenx.scale2x`: Scale2x aka AdvMAME2x image scaling up two times
-without introducing intermediate colors (blur).
-
-- `scalenx.scale3x`: Scale3x aka AdvMAME3x image scaling up three times
-without introducing intermediate colors (blur).
-
-Installation
--------------
-
-Either use `pip scalenx` or simply put `scalenx` module folder into your main program folder, then:
-
-    `from scalenx import scalenx`
+:Abstract: Current module comprise **Scale2x** and **Scale3x** `[1]`_ image rescaling functions, implemented in pure Python.
 
 Usage
-------
+-----
 
-Syntaxis example:
+Scale2x::
 
-    `scaled_image = scalenx.scale3x(source_image)`
+    scaled_image = scalenx.scale2x(source_image)
 
-where both `image` are list[list[list[int]]].
+Scale3x::
 
-Copyright and redistribution
------------------------------
+    scaled_image = scalenx.scale3x(source_image)
 
-Current Python implementation of ScaleNx developed by
-`Ilya Razmanov <https://dnyarri.github.io/>`_
-(hereinafter referred to as "the Developer"), based on
-`brief algorithm description <https://www.scale2x.it/algorithm>`_
-by `Andrea Mazzoleni <https://www.scale2x.it/>`_ (hereinafter referred to as "the Inventor").
+where:
 
-Current implementation may be freely used, redistributed and improved at will by anyone.
-Sharing useful modifications with the Developer and lesser species is next to obligatory.
+- ``source_image``: input image as list of lists (rows) of lists (pixels) of int (channel values);
+- ``scaled_image``: output image as list of lists (rows) of lists (pixels) of int (channel values).
+
+References
+----------
+
+`[1]`_. Original description of Scale2x and Scale3x algorithms by `Andrea Mazzoleni`_.
+
+.. _[1]: https://www.scale2x.it/algorithm
+
+.. _Andrea Mazzoleni: https://www.scale2x.it/authors
+
+----
+The Developer site: `The Toad's Slimy Mudhole`_
+
+.. _The Toad's Slimy Mudhole: https://dnyarri.github.io
+
+`ScaleNx`_ explanations and illustrations page for current ScaleNx Python implementation.
+
+.. _ScaleNx: https://dnyarri.github.io/scalenx.html
+
+ScaleNx source repositories: `ScaleNx@Github`_, `ScaleNx@Gitflic`_.
+
+.. _ScaleNx@Github: https://github.com/Dnyarri/PixelArtScaling
+
+.. _ScaleNx@Gitflic: https://gitflic.ru/project/dnyarri/pixelartscaling
+
+`Changelog`_ for current implementation:
+
+.. _Changelog: https://github.com/Dnyarri/PixelArtScaling/blob/main/CHANGELOG.md
 
 """
 
@@ -48,7 +61,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024-2025 Ilya Razmanov'
 __credits__ = ['Ilya Razmanov', 'Andrea Mazzoleni']
 __license__ = 'unlicense'
-__version__ = '2025.09.25.09'
+__version__ = '2025.11.15.1'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -62,18 +75,19 @@ def scale2x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
     """Scale2x image rescale.
     ----
 
-        `scaled_image = scalenx.scale2x(image3d)`
-
-    Takes `image3d` as 3D nested list (image) of lists (rows) of lists (pixels) of int (channel values),
-    and performs Scale2x rescaling, returning scaled `scaled_image` of similar structure.
+    .. function:: scale2x(image3d)
+    :param image3d: 3D nested list (image) of lists (rows) of lists (pixels) of int (channel values);
+    :type image3d: list[list[list[int]]]
+    :return: 3D nested list of the same structure as input, rescaled in X and Y directions twice using Scale2x.
+    :rtype: list[list[list[int]]]
 
     """
 
-    # determining source image size from list
+    # ↓ determining source image size from list
     Y = len(image3d)
     X = len(image3d[0])
 
-    # starting new image list
+    # ↓ starting new image list
     scaled_image: list[list[list[int]]] = []
 
     def _dva(A: list[int], B: list[int], C: list[int], D: list[int], E: list[int]):
@@ -143,7 +157,8 @@ def scale2x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
         scaled_image.append(row_rez)
         scaled_image.append(row_dvo)
 
-    return scaled_image  # rescaling two times finished
+    return scaled_image
+# ↑ rescaling two times finished
 
 
 """ ╔════════════════════════════════════════════╗
@@ -155,18 +170,19 @@ def scale3x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
     """Scale3x image rescale.
     ----
 
-        `scaled_image = scalenx.scale3x(image3d)`
-
-    Takes `image3d` as 3D nested list (image) of lists (rows) of lists (pixels) of int (channel values),
-    and performs Scale3x rescaling, returning scaled `scaled_image` of similar structure.
+    .. function:: scale3x(image3d)
+    :param image3d: 3D nested list (image) of lists (rows) of lists (pixels) of int (channel values);
+    :type image3d: list[list[list[int]]]
+    :return: 3D nested list of the same structure as input, rescaled in X and Y directions thrice using Scale3x.
+    :rtype: list[list[list[int]]]
 
     """
 
-    # determining source image size from list
+    # ↓ determining source image size from list
     Y = len(image3d)
     X = len(image3d[0])
 
-    # starting new image list
+    # ↓ starting new image list
     scaled_image: list[list[list[int]]] = []
 
     def _tri(A: list[int], B: list[int], C: list[int], D: list[int], E: list[int], F: list[int], G: list[int], H: list[int], I: list[int]):
@@ -258,7 +274,9 @@ def scale3x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
         scaled_image.append(row_dvo)
         scaled_image.append(row_tre)
 
-    return scaled_image  # rescaling three times finished
+    return scaled_image
+# ↑ rescaling three times finished
+
 
 # ↓ Dummy stub for standalone execution attempt
 if __name__ == '__main__':

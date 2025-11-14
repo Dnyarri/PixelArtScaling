@@ -1,13 +1,31 @@
 #!/usr/bin/env python3
 
 """
-ScaleNx GUI - Common shell for ScaleNx single file and batch PNG, PPM and PGM rescaling.
----
+=======
+ScaleNx
+=======
 
-Created by: Ilya Razmanov <ilyarazmanov@gmail.com> aka Ilyich the Toad <amphisoft@gmail.com>
+--------------
+Main GUI shell
+--------------
+
+**ScaleNxGUI.py** is a main GUI shell for `ScaleNx`_ module.
+Unlike visual GUI shell, VisualNxGUI.py, it does not have a preview
+so does not waste time and memory for it.
+
+Unlike VisualNxGUI.py, **ScaleNxGUI.py** **is recommended for big images**.
+
+Unlike VisualNxGUI.py, **ScaleNxGUI.py** have a batch processing capabilities.
+
+File formats
+------------
+
+Input: PNG, PPM, PGM, PBM.
+
+Output: PNG, PPM, PGM.
 
 History:
----
+--------
 
 25.01.17.00 Initial GUI version for ScaleNx.
 
@@ -20,10 +38,20 @@ preferences may be saved/loaded to/from file.
 
 25.09.17.07 GUI partially reworked to .grid, improving legibility.
 
----
-Main site: <https://dnyarri.github.io>
+----
+Main site: `The Toad's Slimy Mudhole`_
 
-Source at Github: <https://github.com/Dnyarri/PixelArtScaling>
+.. _The Toad's Slimy Mudhole: https://dnyarri.github.io
+
+`ScaleNx`_ explanations and illustrations page.
+
+.. _ScaleNx: https://dnyarri.github.io/scalenx.html
+
+ScaleNx Git repositories: `ScaleNx@Github`_, `ScaleNx@Gitflic`_.
+
+.. _ScaleNx@Github: https://github.com/Dnyarri/PixelArtScaling
+
+.. _ScaleNx@Gitflic: https://gitflic.ru/project/dnyarri/pixelartscaling
 
 """
 
@@ -31,7 +59,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.11.7.7'
+__version__ = '25.11.15.1'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -582,12 +610,12 @@ if __name__ == '__main__':
         │ Saving formats options │
         └────────────────────────┘ """
     option = {
-            'font_label': ('helvetica', 10),
-            'font_menu': ('courier', 10),
-            'relief': butt['relief'],
-            'activeforeground': butt['activeforeground'],
-            'activebackground': butt['activebackground'],
-        }
+        'font_label': ('helvetica', 10),
+        'font_menu': ('courier', 10),
+        'relief': butt['relief'],
+        'activeforeground': butt['activeforeground'],
+        'activebackground': butt['activebackground'],
+    }
     # ↓ Left frame file output options
     options_left = LabelFrame(frame_left, text='Single file saving options', font=('helvetica', 8), foreground=blue['foreground'])
     options_left.pack(side='top', anchor='ne', padx=4, fill='none')
