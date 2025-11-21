@@ -26,6 +26,12 @@ Currently **Scale2x** (aka AdvMAME2x), **Scale3x** (aka AdvMAME3x), **Scale2xSFX
 > [!CAUTION]
 > Batch processing programs replace original files with scaled copies. Batch processing programs in this version use async multiprocessing, thus drastically reducing processing time but loading all CPUs at 100% and rendering GUI almost unresponsive.  
 
+[**VisualNxGUI.py**](https://github.com/Dnyarri/PixelArtScaling/blob/main/VisualNxGUI.py) is a visual common shell, providing single image rescaling with preview. After saving rescaled image with, say, Ctrl+S, you may repeat rescaling. Note, however, that during such a sequential upscaling image size grows geometrically - every run of, say, Scale3x makes image 3×3=9 times bigger, so you quickly end up with image of gigabyte size.
+
+| VisualNxGUI |
+| :---: |
+| [![Visual ScaleNx program GUI](https://dnyarri.github.io/imgscalenx/vissmall.png "Visual ScaleNx program GUI")](https://dnyarri.github.io/scalenx.html) |
+
 ## Sample of Scale3x (twice)
 
 [![Example of Scale3x run twice](https://dnyarri.github.io/imgscalenx/x3x3.png "Example of Scale3x run twice")](https://dnyarri.github.io/scalenx.html)
