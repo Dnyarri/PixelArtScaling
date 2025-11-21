@@ -54,7 +54,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.11.15.1'
+__version__ = '25.11.21.9'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Development'
@@ -605,7 +605,7 @@ method_menu = OptionMenu(
     ],
 )
 method_menu.pack(side='left')
-method_menu.configure(font=('helvetica', 12), relief='groove', activebackground='#E5F1FB', state='disabled')
+method_menu.configure(font=('courier', 12), width=10, relief='groove', activebackground='#E5F1FB', state='disabled')
 method_menu['menu'].configure(font=method_menu['font'])
 method_str.trace_add('write', lambda *args: RunFilter())
 
