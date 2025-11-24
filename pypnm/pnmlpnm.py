@@ -8,105 +8,96 @@ PyPNM
 PPM and PGM image files reading, displaying and writing for Python >=3.4.
 -------------------------------------------------------------------------
 
-NOTE: This is special extended compatibility `PyPNM at PyPI`_ build,
-tested with **Python 3.4** and above.
-
 Overview
 --------
 
-PyPNM module is a pack of functions for dealing with PPM and PGM image files.
-Functions included are listed below
+PyPNM module comprise a set of functions for dealing with
+`PPM`_ and `PGM`_ image files, and images, represented as
+Python nested lists, namely:
 
-:pnm2list: reading binary or ASCII RGB PPM or L PGM file and returning image data
-    as nested list of int.
-:list2bin: getting image data as nested list of int and creating binary PPM (P6) or PGM (P5)
-    data structure in memory. Suitable for generating data to display with Tkinter
-    ``PhotoImage (data=...)`` class.
-:list2pnmbin: getting image data as nested list of int and writing binary PPM (P6) or PGM (P5)
-    image file.
-    Note that bytes generations procedure is different from that used in ``list2bin``.
-:list2pnmascii: getting image data as nested list of int and writing ASCII PPM (P3) or PGM (P2) files.
-:list2pnm: getting image data as nested list of int and writing either binary or ASCII PNM file depending on ``bin`` argument value.
-:create_image: creating empty nested 3D list for image representation.
+- **``pnm2list``**: reading binary or ASCII
+RGB `PPM`_, or L `PGM`_, or ink on/off `PBM`_ file
+and returning image data as nested list of int.
 
-Installation
-------------
+- **``list2bin``**: getting image data as nested list of int and
+creating binary PPM (P6) or PGM (P5) data structure in memory.
 
-Via PyPI
+    Suitable for generating data to display with Tkinter
+    ``PhotoImage(data=...)`` class.
 
-::
+- **``list2pnmbin``**: getting image data as nested list of int
+and writing binary PPM (P6) or PGM (P5) image file.
 
-    pip install PyPNM
+    .. note:: Bytes generations procedure is different from that
+        used in ``list2bin``.
 
-then in your program import section
+- **``list2pnmascii``**: getting image data as nested list of int
+and writing ASCII PPM (P3) or PGM (P2) image file.
 
-::
+- **``list2pnm``**: getting image data as nested list of int
+and writing either binary or ASCII PNM file depending on ``bin`` value.
 
-    from pypnm import pnmlpnm
-
-If you acquired module in some other, non-PyPI way, you may simply put module into your main program folder.
+- ``create_image``: creating empty nested 3D list for image representation.
 
 Usage
 -----
 
-After ``from pypnm import pnmlpnm``, use something like
-
-::
+After ``from pypnm import pnmlpnm``, use something like::
 
     X, Y, Z, maxcolors, list_3d = pnmlpnm.pnm2list(in_filename)
 
 for reading data from PPM/PGM, where:
 
-:X, Y, Z: image dimensions (int);
-:maxcolors: maximum value of color per channel for current image (int);
-:list_3d: image pixel data as list(list(list(int)));
+- ``X``, ``Y``, ``Z``: image dimensions (int);
+- ``maxcolors``: maximum value of color per channel for current image (int);
+- ``list_3d``: image pixel data as list(list(list(int)));
 
-and
-
-::
+and::
 
     pnm_bytes = pnmlpnm.list2bin(list_3d, maxcolors)
 
-for writing data from ``list_3d`` nested list to ``pnm_bytes`` bytes object in memory,
+for writing data from ``list_3d`` nested list to in-memory ``pnm_bytes``
+bytes object to be displayed with Tkinter ``PhotoImage(data=...)``,
 
-or
-
-::
+or::
 
     pnmlpnm.list2pnm(out_filename, list_3d, maxcolors, bin)
 
 for writing data from ``list_3d`` nested list to PPM/PGM file ``out_filename``,
-where ``bin`` is a bool switch defining where resulting file will be binary or ASCII.
+where ``bin`` is a bool switch defining whether
+resulting file will be binary or ASCII.
 
-Copyright and redistribution
-----------------------------
-
-Written by Ilya Razmanov (https://dnyarri.github.io) to facilitate developing
-image editing programs in Python by simplifying work with PPM/PGM files
-and displaying arbitrary image-like data with Tkinter ``PhotoImage`` class.
-
-May be freely used, redistributed and modified.
-
-In case of introducing useful modifications, please report to the developer.
+.. note:: ``maxcolors`` is either 255 for 8 bit or 65535 for 16 bit images.
+    1 bit ink on/off images get promoted and inverted to 8 bit L upon import,
+    i.e. PBM converted to PGM when reading (writing PBM is not planned).
 
 References
 ----------
 
 1. `Netpbm specifications`_
-2. `PyPNM for Python >= 3.11 at GitHub`_
-3. `PyPNM for Python >= 3.4 at GitHub`_
+2. `PyPNM for Python >= 3.11`_ at GitHub
+3. `PyPNM for Python >= 3.4`_ at GitHub
 4. `PyPNM at PyPI`_
-5. `PyPNM Documentation`_
+5. `PyPNM Documentation`_ (PDF)
+6. `Changelog`_ for this version
 
 .. _Netpbm specifications: https://netpbm.sourceforge.net/doc/
 
-.. _PyPNM for Python >= 3.11 at GitHub: https://github.com/Dnyarri/PyPNM/
+.. _PPM: https://netpbm.sourceforge.net/doc/ppm.html
 
-.. _PyPNM for Python >= 3.4 at GitHub: https://github.com/Dnyarri/PyPNM/tree/py34
+.. _PGM: https://netpbm.sourceforge.net/doc/pgm.html
+
+.. _PBM: https://netpbm.sourceforge.net/doc/pbm.html
+
+.. _PyPNM for Python >= 3.11: https://github.com/Dnyarri/PyPNM/
+
+.. _PyPNM for Python >= 3.4: https://github.com/Dnyarri/PyPNM/tree/py34
 
 .. _PyPNM at PyPI: https://pypi.org/project/PyPNM/
 
 .. _PyPNM Documentation: https://dnyarri.github.io/pypnm/pypnm.pdf
+
+.. _Changelog: https://github.com/Dnyarri/PyPNM/blob/py34/CHANGELOG.md
 
 """
 
@@ -132,22 +123,16 @@ from re import search, sub
     ╚══════════════════════════════╝ """
 
 def pnm2list(in_filename):
-    """Read PGM or PPM file to nested image data list.
+    """Read PBM, PGM or PPM file to nested image data list.
 
-    Usage
+    :param str in_filename: input file name;
+    :return X, Y, Z, maxcolors, list_3d: tuple, consisting of:
 
-    ::
-
-        X, Y, Z, maxcolors, list_3d = pnmlpnm.pnm2list(in_filename)
-
-    for reading data from PPM/PGM, where:
-
-    :X, Y, Z: image dimensions (int);
-    :maxcolors: maximum of color per channel for current image (int),
-        255 for 8 bit and 65535 for 16 bit input.
-        Note that 1 bit images get promoted to 8 bit L upon import.
-    :list_3d: image pixel data as list(list(list(int)));
-    :in_filename: PPM/PGM file name (str).
+    - ``X``, ``Y``, ``Z``: PNM image dimensions (int);
+    - ``maxcolors``: number of colors per channel for current image (int),
+    either 255, or 65535;
+    - ``list_3d``: list (image) of lists (rows) of lists (pixels)
+    of ints (channel values).
 
     """
 
@@ -383,22 +368,17 @@ def pnm2list(in_filename):
 def list2bin(list_3d, maxcolors, show_chessboard=False):
     """Convert nested image data list to PGM P5 or PPM P6 bytes in memory.
 
-    Usage
+    :param list_3d: image as list (image) of lists (rows) of lists (pixels)
+    of ints (channels);
+    :type list_3d: list[list[list[int]]]
+    :param int maxcolors: number of colors per channel for current image,
+    either 255, or 65535;
+    :param bool show_chessboard: if set ``True`` and alpha channel exist,
+    render preview against chessboard, otherwise skip alpha;
+    :return: PNM-like object in memory.
+    :rtype: bytes
 
-    ::
-
-        image_bytes = pnmlpnm.list2bin(list_3d, maxcolors, show_chessboard)
-
-    where:
-
-    :list_3d: Y * X * Z list (image) of lists (rows) of lists (pixels) of ints (channel values);
-    :maxcolors:  maximum of color per channel for current image (int);
-    :show_chessboard: optional bool, set ``True`` to show LA and RGBA images against chessboard pattern;
-        ``False`` or missing show existing L or RGB data for transparent areas as fully opaque.
-        Default is ``False`` for backward compatibility.
-    :image_bytes:    PNM-structured binary data.
-
-    **Warning**: Forces 8 bpc output for compatibility with old Tkinter versions.
+    .. note:: Forces 8 bpc output for compatibility with old Tkinter versions.
 
     """
 
@@ -406,8 +386,8 @@ def list2bin(list_3d, maxcolors, show_chessboard=False):
         """Chessboard pattern, size and color match Photoshop 7.0 Light Medium.
 
         Photoshop chess pattern preset parameters:
-        - Small: 4 px; Medium: 8 px, Large: 16 px
-        - Light: (0.8, 1.0); Medium: (0.4, 0.6); Dark: (0.2, 0.4) of ``maxcolors``
+        - Small: 4 px; Medium: 8 px, Large: 16 px;
+        - Light: (0.8, 1.0); Medium: (0.4, 0.6); Dark: (0.2, 0.4) of ``maxcolors``.
 
         """
         return int(maxcolors * 0.8) if ((y // 8) % 2) == ((x // 8) % 2) else maxcolors
@@ -464,17 +444,13 @@ def list2bin(list_3d, maxcolors, show_chessboard=False):
 def list2pnmbin(out_filename, list_3d, maxcolors):
     """Write binary PNM ``out_filename`` file; writing performed per row to reduce RAM usage.
 
-    Usage
-
-    ::
-
-        pnmlpnm.list2pnmbin(out_filename, list_3d, maxcolors)
-
-    where:
-
-    :list_3d: X * Y * Z list (image) of lists (rows) of lists (pixels) of ints (channels);
-    :maxcolors: maximum of color per channel for current image (int);
-    :out_filename:   PNM file name.
+    :param str out_filename: name of the PNM file to be written;
+    :param list_3d: image as list (image) of lists (rows) of lists (pixels)
+    of ints (channels);
+    :type list_3d: list[list[list[int]]]
+    :param int maxcolors: number of colors per channel for current image,
+    either 255, or 65535.
+    :return: None
 
     """
 
@@ -513,17 +489,13 @@ def list2pnmbin(out_filename, list_3d, maxcolors):
 def list2pnmascii(out_filename, list_3d, maxcolors):
     """Write ASCII PNM ``out_filename`` file; writing performed per sample to reduce RAM usage.
 
-    Usage
-
-    ::
-
-        pnmlpnm.list2pnmascii(out_filename, list_3d, maxcolors)
-
-    where:
-
-    :list_3d: Y * X * Z list (image) of lists (rows) of lists (pixels) of ints (channels);
-    :maxcolors: maximum of color per channel for current image (int);
-    :out_filename: PNM file name.
+    :param str out_filename: name of the PNM file to be written;
+    :param list_3d: image as list (image) of lists (rows) of lists (pixels)
+    of ints (channels);
+    :type list_3d: list[list[list[int]]]
+    :param int maxcolors: number of colors per channel for current image,
+    either 255, or 65535.
+    :return: None
 
     """
 
@@ -564,18 +536,14 @@ def list2pnmascii(out_filename, list_3d, maxcolors):
 def list2pnm(out_filename, list_3d, maxcolors, bin=True):
     """Write PNM ``out_filename`` file using either ``list2pnmbin`` or ``list2pnmascii`` depending on ``bin`` switch.
 
-    Usage
-
-    ::
-
-        pnmlpnm.list2pnm(out_filename, list_3d, maxcolors, bin)
-
-    where:
-
-    :list_3d: X * Y * Z list (image) of lists (rows) of lists (pixels) of ints (channels);
-    :maxcolors: maximum of color per channel for current image (int);
-    :bin: whether output file is binary (bool);
-    :out_filename: PNM file name.
+    :param str out_filename: name of the PNM file to be written;
+    :param list_3d: image as list (image) of lists (rows) of lists (pixels)
+    of ints (channels);
+    :type list_3d: list[list[list[int]]]
+    :param int maxcolors: number of colors per channel for current image,
+    either 255, or 65535;
+    :param bool bin: whether written file will be binary or ASCII.
+    :return: None
 
     """
 

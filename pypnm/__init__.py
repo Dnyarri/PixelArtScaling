@@ -1,11 +1,66 @@
-"""PNM (PPM and PGM) image files reading, displaying and writing for Python 3.4 and above.
-----
+"""
+=====
+PyPNM
+=====
+-------------------------------------------------------------------------
+PPM and PGM image files reading, displaying and writing for Python >=3.4.
+-------------------------------------------------------------------------
 
-3 Sep 2025 "Victory II" update. Fully interchangeable with previous PyPNM 1.17.9.34
+3 Sep 2025 "Victory II" update, drop-in replacement for PyPNM 1.17.9.34
 9 May 2025 "Victory" build.
 
-Use ``from pypnm import pnmlpnm`` to access functions.
+Usage
+-----
 
-PyPNM Documentation: https://dnyarri.github.io/pypnm/pypnm.pdf
+::
+
+    from pypnm import pnmlpnm
+
+to access functions.
+
+Formats compatibility
+---------------------
+
+Module provides full read and write support for 8 and 16 bpc binary and ASCII
+`PPM`_ and `PGM`_ image files, and read-only support for `PBM`_ files.
+
+Python compatibility
+--------------------
+
+This is **py34** `PyPNM for Python >= 3.4`_ aka `PyPNM at PyPI`_ branch,
+containing some workarounds for old Python and old Tkinter versions.
+These workarounds make program work a bit slower under some circumstances.
+
+If you are sure you will never use Python versions below 3.11, you may
+consider downloading and using `PyPNM for Python >= 3.11`_ branch.
+
+Copyright and redistribution
+----------------------------
+
+Written by Ilya Razmanov (https://dnyarri.github.io) to facilitate developing
+image editing programs in Python by simplifying work with PPM/PGM files
+and displaying arbitrary image-like data with Tkinter ``PhotoImage`` class.
+
+Module is supposed to be used and redistributed freely, and modified at will.
+
+In case of introducing useful modifications it's your duty to all human race
+(and probably some other ones) to share it.
+
+----
+`PyPNM Documentation`_ (PDF)
+
+.. _PyPNM Documentation: https://dnyarri.github.io/pypnm/pypnm.pdf
+
+.. _PyPNM for Python >= 3.11: https://github.com/Dnyarri/PyPNM/
+
+.. _PyPNM for Python >= 3.4: https://github.com/Dnyarri/PyPNM/tree/py34
+
+.. _PyPNM at PyPI: https://pypi.org/project/PyPNM/
+
+.. _PPM: https://netpbm.sourceforge.net/doc/ppm.html
+
+.. _PGM: https://netpbm.sourceforge.net/doc/pgm.html
+
+.. _PBM: https://netpbm.sourceforge.net/doc/pbm.html
 
 """
