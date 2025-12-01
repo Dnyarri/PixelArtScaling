@@ -75,7 +75,6 @@ def scale2x(image3d):
     """Scale2x image rescale.
     ----
 
-    .. function:: scale2x(image3d)
     :param image3d: 3D nested list (image) of lists (rows) of lists (pixels) of int (channel values);
     :type image3d: list[list[list[int]]]
     :return: 3D nested list of the same structure as input, rescaled in X and Y directions twice using Scale2x.
@@ -169,7 +168,6 @@ def scale3x(image3d):
     """Scale3x image rescale.
     ----
 
-    .. function:: scale3x(image3d)
     :param image3d: 3D nested list (image) of lists (rows) of lists (pixels) of int (channel values);
     :type image3d: list[list[list[int]]]
     :return: 3D nested list of the same structure as input, rescaled in X and Y directions thrice using Scale3x.
