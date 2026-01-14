@@ -11,8 +11,8 @@ Visual GUI shell
 
 **VisualNxGUI.py** is a visual GUI shell for `ScaleNx`_ module.
 Unlike main GUI shell, ScaleNxGUI.py, it is equipped with preview widget
-and allows fast switching scaling algorithms and previewing scaling result
-before saving (or not saving) it.
+and allows fast switching between scaling algorithms to compare result,
+and previewing scaling result before saving (or not saving) it.
 
 Beware that "fast switching" may be quite slow for a big image. Also
 remember that generating preview takes additional CPU time and, most important,
@@ -32,6 +32,9 @@ History:
 25.10.20.14 Initial version of ScaleNx host with preview - 20 Oct 2025.
 
 25.11.7.1   Release 7 Nov 2025.
+
+26.1.14.6   Suitable filter execution time display added to info string.
+Result may be copied to clipboard on info string Ctrl+Click.
 
 ----
 Main site: `The Toad's Slimy Mudhole`_
@@ -54,7 +57,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.11.21.9'
+__version__ = '26.1.14.14'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Development'
@@ -62,7 +65,7 @@ __status__ = 'Development'
 from copy import deepcopy
 from pathlib import Path
 from random import randbytes  # Used for random icon only
-from time import ctime  # Used to show file info only
+from time import ctime, time
 from tkinter import Button, Frame, Label, Menu, Menubutton, OptionMenu, PhotoImage, StringVar, Tk
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 from tkinter.messagebox import showinfo
@@ -249,7 +252,7 @@ def GetSource(event=None) -> None:
 def RunFilter(event=None) -> None:
     """Filter image, then preview result."""
 
-    global zoom_factor, view_src, is_filtered, is_saved, info_normal, color_mode_str
+    global zoom_factor, view_src, is_filtered, is_saved, info_normal, color_mode_str, timing
     global preview, preview_filtered
     global X, Y, Z, maxcolors, image3D, source_image3D, info
 
@@ -264,28 +267,36 @@ def RunFilter(event=None) -> None:
     if method == 'None':
         image3D = source_image3D
     elif method == 'Scale2x':
+        start = time()
         image3D = scalenx.scale2x(source_image3D)
+        timing = time() - start
         if 'physical' in info:
             x_pixels_per_unit, y_pixels_per_unit, unit_is_meter = info['physical']
             x_pixels_per_unit = 2 * x_pixels_per_unit
             y_pixels_per_unit = 2 * y_pixels_per_unit
             info['physical'] = [x_pixels_per_unit, y_pixels_per_unit, unit_is_meter]
     elif method == 'Scale3x':
+        start = time()
         image3D = scalenx.scale3x(source_image3D)
+        timing = time() - start
         if 'physical' in info:
             x_pixels_per_unit, y_pixels_per_unit, unit_is_meter = info['physical']
             x_pixels_per_unit = 3 * x_pixels_per_unit
             y_pixels_per_unit = 3 * y_pixels_per_unit
             info['physical'] = [x_pixels_per_unit, y_pixels_per_unit, unit_is_meter]
     elif method == 'Scale2xSFX':
+        start = time()
         image3D = scalenxsfx.scale2x(source_image3D)
+        timing = time() - start
         if 'physical' in info:
             x_pixels_per_unit, y_pixels_per_unit, unit_is_meter = info['physical']
             x_pixels_per_unit = 2 * x_pixels_per_unit
             y_pixels_per_unit = 2 * y_pixels_per_unit
             info['physical'] = [x_pixels_per_unit, y_pixels_per_unit, unit_is_meter]
     elif method == 'Scale3xSFX':
+        start = time()
         image3D = scalenxsfx.scale3x(source_image3D)
+        timing = time() - start
         if 'physical' in info:
             x_pixels_per_unit, y_pixels_per_unit, unit_is_meter = info['physical']
             x_pixels_per_unit = 3 * x_pixels_per_unit
@@ -530,6 +541,7 @@ zoom_factor = 0
 view_src = True
 is_filtered = False
 product_name = 'Visual ScaleNx'
+timing = None
 
 sortir = Tk()
 
@@ -537,12 +549,16 @@ sortir.iconphoto(True, PhotoImage(data='P6\n8 8\n255\n'.encode(encoding='ascii')
 sortir.title(product_name)
 
 # ↓ Info statuses dictionaries
-info_normal = {'txt': f'ScaleNx {__version__}', 'fg': 'grey', 'bg': 'grey90'}
+info_normal = {'txt': f'{product_name} {__version__}', 'fg': 'grey', 'bg': 'grey90'}
 info_busy = {'txt': 'BUSY, PLEASE WAIT', 'fg': 'red', 'bg': 'yellow'}
 color_mode_str = ' '
-
+# ↓ Info string
 info_string = Label(sortir, text=info_normal['txt'], font=('courier', 7), foreground=info_normal['fg'], background=info_normal['bg'], relief='groove')
 info_string.pack(side='bottom', padx=0, pady=(2, 0), fill='both')
+# ↓ Info string binding for displaying scaler execution time
+info_string.bind('<Enter>', lambda event=None: info_string.config(text=f'Run time: {timing}'))
+info_string.bind('<Leave>', lambda event=None: UINormal())
+info_string.bind('<Control-Button-1>', lambda event=None: [sortir.clipboard_clear(), sortir.clipboard_append(f'{timing}\n')])
 
 # ↓ initial sortir binding, before image load
 sortir.bind_all('<Button-3>', ShowMenu)  # Popup menu
