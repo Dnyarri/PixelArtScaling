@@ -36,6 +36,8 @@ History:
 26.1.14.6   Suitable filter execution time display added to info string.
 Result may be copied to clipboard on info string Ctrl+Click.
 
+26.1.20.22  Extended zoom out range for big images.
+
 ----
 Main site: `The Toad's Slimy Mudhole`_
 
@@ -57,7 +59,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '26.1.14.14'
+__version__ = '26.1.20.22'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Development'
@@ -373,7 +375,7 @@ def zoomOut(event=None) -> None:
     """Zoom preview out."""
 
     global zoom_factor, view_src, preview
-    zoom_factor = max(zoom_factor - 1, -4)  # min zoom 1/5
+    zoom_factor = max(zoom_factor - 1, -9)  # min zoom 1/5
 
     if view_src:
         ShowPreview(preview_src, 'Source')
@@ -382,7 +384,7 @@ def zoomOut(event=None) -> None:
 
     # ↓ reenabling +/- buttons
     butt_plus.config(state='normal', cursor='hand2')
-    if zoom_factor == -4:  # min zoom 1/5
+    if zoom_factor == -9:  # min zoom 1/5
         butt_minus.config(state='disabled', cursor='arrow')
     else:
         butt_minus.config(state='normal', cursor='hand2')
@@ -545,7 +547,12 @@ timing = None
 
 sortir = Tk()
 
-sortir.iconphoto(True, PhotoImage(data='P6\n8 8\n255\n'.encode(encoding='ascii') + randbytes(8 * 8 * 3)))
+icon_path = Path(__file__).resolve().parent / '32.ico'
+if icon_path.exists():
+    sortir.iconbitmap(icon_path)
+else:
+    sortir.iconphoto(True, PhotoImage(data='P6\n8 8\n255\n'.encode(encoding='ascii') + randbytes(8 * 8 * 3)))
+
 sortir.title(product_name)
 
 # ↓ Info statuses dictionaries
