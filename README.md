@@ -58,11 +58,11 @@ Currently **Scale2x** (aka AdvMAME2x), **Scale3x** (aka AdvMAME3x), **Scale2xSFX
 
 ### Related
 
-[Dnyarri website - more Python freeware](https://dnyarri.github.io "The Toad's Slimy Mudhole - Python freeware for POV-Ray and other 3D, Scale2x, Scale3x, Scale2xSFX, Scale2xSFX, PPM and PGM image support, bilinear and barycentric image interpolation, and batch processing") by the same author.
+[Dnyarri website - more Python freeware for image processing, 3D, and batch automation](https://dnyarri.github.io "The Toad's Slimy Mudhole - Python freeware for POV-Ray and other 3D, Scale2x, Scale3x, Scale2xSFX, Scale3xSFX, PPM and PGM image support, bilinear and barycentric image interpolation, and batch processing") by the same author.
 
 [ScaleNx page with illustrations](https://dnyarri.github.io/scalenx.html "ScaleNx main page, illustrated"), explanations etc.
 
-[ScaleNx source at Github](https://github.com/Dnyarri/PixelArtScaling "ScaleNx source at Github")
+[ScaleNx source and compiled executables at Github](https://github.com/Dnyarri/PixelArtScaling "ScaleNx source at Github")
 
 [ScaleNx source at Gitflic mirror](https://gitflic.ru/project/dnyarri/pixelartscaling "ScaleNx source at Gitflic mirror")
 
