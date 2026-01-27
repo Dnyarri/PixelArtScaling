@@ -5,9 +5,9 @@
 ScaleNx
 =======
 
-----------------
-Visual GUI shell
-----------------
+------------------------
+Visual GUI ScaleNx shell
+------------------------
 
 **VisualNxGUI.py** is a visual GUI shell for `ScaleNx`_ module.
 Unlike main GUI shell, ScaleNxGUI.py, it is equipped with preview widget
@@ -16,7 +16,8 @@ and previewing scaling result before saving (or not saving) it.
 
 Beware that "fast switching" may be quite slow for a big image. Also
 remember that generating preview takes additional CPU time and, most important,
-memory; therefore it is **not recommended** to use VisualNxGUI.py **for big images**.
+memory; therefore it is **not recommended** to use VisualNxGUI.py
+**for big images**.
 Use ScaleNxGUI.py for big images instead.
 
 File formats
@@ -38,6 +39,8 @@ Result may be copied to clipboard on info string Ctrl+Click.
 
 26.1.20.22  Extended zoom out range for big images.
 
+26.1.26.1   Cleansing and harmonization.
+
 ----
 Main site: `The Toad's Slimy Mudhole`_
 
@@ -56,10 +59,10 @@ ScaleNx Git repositories: `ScaleNx@Github`_, `ScaleNx@Gitflic`_.
 """
 
 __author__ = 'Ilya Razmanov'
-__copyright__ = '(c) 2025 Ilya Razmanov'
+__copyright__ = '(c) 2025-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '26.1.20.22'
+__version__ = '26.1.26.1'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Development'
@@ -150,8 +153,8 @@ def GetSource(event=None) -> None:
 
     global zoom_factor, view_src, is_filtered, is_saved, info_normal, color_mode_str
     global preview, preview_src, preview_filtered  # preview and copies of preview
-    global X, Y, Z, maxcolors, image3D, info, sourcefilename
-    global source_image3D  # deep copy of source data, to be used as a source for filtering
+    global X, Y, Z, maxcolors, result_image, info, sourcefilename
+    global source_image  # deep copy of source data, to be used as a source for filtering
 
     zoom_factor = 0
     view_src = True
@@ -163,19 +166,13 @@ def GetSource(event=None) -> None:
 
     UIBusy()
 
-    """ ┌────────────────────────────────────────┐
-        │ Loading file, converting data to list. │
-        │ NOTE: maxcolors, image3D, info MUST be │
-        │ GLOBALS! They are used during saving!  │
-        └────────────────────────────────────────┘ """
-
     if Path(sourcefilename).suffix.lower() == '.png':
         # ↓ Reading PNG image as list
-        X, Y, Z, maxcolors, source_image3D, info = png2list(sourcefilename)
+        X, Y, Z, maxcolors, source_image, info = png2list(sourcefilename)
 
     elif Path(sourcefilename).suffix.lower() in ('.ppm', '.pgm', '.pbm', '.pnm'):
         # ↓ Reading PNM image as list
-        X, Y, Z, maxcolors, source_image3D = pnm2list(sourcefilename)
+        X, Y, Z, maxcolors, source_image = pnm2list(sourcefilename)
         # ↓ Creating dummy info required to correctly Save As PNG later.
         #   Fixing color mode, the rest is fixed with pnglpng v. 25.01.07.
         info = {'bitdepth': 16} if maxcolors > 255 else {'bitdepth': 8}
@@ -187,13 +184,13 @@ def GetSource(event=None) -> None:
         │ Creating deep copy of source 3D list       │
         │ to avoid accumulating repetitive filtering │
         └────────────────────────────────────────────┘ """
-    image3D = deepcopy(source_image3D)
+    result_image = deepcopy(source_image)
 
     """ ┌───────────────┐
         │ Viewing image │
         └───────────────┘ """
     # ↓ Converting list to bytes of PNM-like structure "preview_data" in memory
-    preview_data = list2bin(image3D, maxcolors, show_chessboard=True)
+    preview_data = list2bin(result_image, maxcolors, show_chessboard=True)
     # ↓ Now generating preview from "preview_data" bytes using Tkinter
     preview = PhotoImage(data=preview_data)
     # ↓ Finally the show part
@@ -256,7 +253,7 @@ def RunFilter(event=None) -> None:
 
     global zoom_factor, view_src, is_filtered, is_saved, info_normal, color_mode_str, timing
     global preview, preview_filtered
-    global X, Y, Z, maxcolors, image3D, source_image3D, info
+    global X, Y, Z, maxcolors, result_image, source_image, info
 
     method = method_str.get()
 
@@ -267,10 +264,10 @@ def RunFilter(event=None) -> None:
         └─────────────────┘ """
 
     if method == 'None':
-        image3D = source_image3D
+        result_image = source_image
     elif method == 'Scale2x':
         start = time()
-        image3D = scalenx.scale2x(source_image3D)
+        result_image = scalenx.scale2x(source_image)
         timing = time() - start
         if 'physical' in info:
             x_pixels_per_unit, y_pixels_per_unit, unit_is_meter = info['physical']
@@ -279,7 +276,7 @@ def RunFilter(event=None) -> None:
             info['physical'] = [x_pixels_per_unit, y_pixels_per_unit, unit_is_meter]
     elif method == 'Scale3x':
         start = time()
-        image3D = scalenx.scale3x(source_image3D)
+        result_image = scalenx.scale3x(source_image)
         timing = time() - start
         if 'physical' in info:
             x_pixels_per_unit, y_pixels_per_unit, unit_is_meter = info['physical']
@@ -288,7 +285,7 @@ def RunFilter(event=None) -> None:
             info['physical'] = [x_pixels_per_unit, y_pixels_per_unit, unit_is_meter]
     elif method == 'Scale2xSFX':
         start = time()
-        image3D = scalenxsfx.scale2x(source_image3D)
+        result_image = scalenxsfx.scale2x(source_image)
         timing = time() - start
         if 'physical' in info:
             x_pixels_per_unit, y_pixels_per_unit, unit_is_meter = info['physical']
@@ -297,7 +294,7 @@ def RunFilter(event=None) -> None:
             info['physical'] = [x_pixels_per_unit, y_pixels_per_unit, unit_is_meter]
     elif method == 'Scale3xSFX':
         start = time()
-        image3D = scalenxsfx.scale3x(source_image3D)
+        result_image = scalenxsfx.scale3x(source_image)
         timing = time() - start
         if 'physical' in info:
             x_pixels_per_unit, y_pixels_per_unit, unit_is_meter = info['physical']
@@ -305,11 +302,11 @@ def RunFilter(event=None) -> None:
             y_pixels_per_unit = 3 * y_pixels_per_unit
             info['physical'] = [x_pixels_per_unit, y_pixels_per_unit, unit_is_meter]
 
-    Y = len(source_image3D)
-    X = len(source_image3D[0])
-    Z = len(source_image3D[0][0])
-    new_Y = len(image3D)
-    new_X = len(image3D[0])
+    Y = len(source_image)
+    X = len(source_image[0])
+    Z = len(source_image[0][0])
+    YNEW = len(result_image)
+    XNEW = len(result_image[0])
 
     # ↓ Flagging as filtered, not saved
     if method != 'None':
@@ -321,7 +318,7 @@ def RunFilter(event=None) -> None:
         sortir.bind_all('<Control-s>', Save)
 
         # ↓ preview result
-        preview_data = list2bin(image3D, maxcolors, show_chessboard=True)
+        preview_data = list2bin(result_image, maxcolors, show_chessboard=True)
         preview_filtered = PhotoImage(data=preview_data)
 
         ShowPreview(preview_filtered, 'Result')
@@ -345,7 +342,7 @@ def RunFilter(event=None) -> None:
 
     # ↓ Adding filename, mode and status to window title a-la Photoshop
     sortir.title(f'{product_name}: {Path(sourcefilename).name}{color_mode_str}{"*" if is_filtered else ""}')
-    info_normal = {'txt': f'{Path(sourcefilename).name}{"*" if is_filtered else ""} X={new_X if is_filtered else X} Y={new_Y if is_filtered else Y} Z={Z} maxcolors={maxcolors}', 'fg': 'grey', 'bg': 'grey90'}
+    info_normal = {'txt': f'{Path(sourcefilename).name}{"*" if is_filtered else ""} X={XNEW if is_filtered else X} Y={YNEW if is_filtered else Y} Z={Z} maxcolors={maxcolors}', 'fg': 'grey', 'bg': 'grey90'}
     UINormal()
     zanyato.focus_set()  # moving focus to preview
     # ↓ Center window horizontally, +32 vertically
@@ -375,7 +372,7 @@ def zoomOut(event=None) -> None:
     """Zoom preview out."""
 
     global zoom_factor, view_src, preview
-    zoom_factor = max(zoom_factor - 1, -9)  # min zoom 1/5
+    zoom_factor = max(zoom_factor - 1, -19)  # min zoom 1/20
 
     if view_src:
         ShowPreview(preview_src, 'Source')
@@ -384,7 +381,7 @@ def zoomOut(event=None) -> None:
 
     # ↓ reenabling +/- buttons
     butt_plus.config(state='normal', cursor='hand2')
-    if zoom_factor == -9:  # min zoom 1/5
+    if zoom_factor == -19:  # min zoom 1/20
         butt_minus.config(state='disabled', cursor='arrow')
     else:
         butt_minus.config(state='normal', cursor='hand2')
@@ -427,16 +424,18 @@ def SwitchView(event=None) -> None:
 
 
 def onSave() -> None:
+    """Reassign images and other objects from new to old upon saving."""
+
     global sourcefilename, resultfilename, is_saved
-    global source_image3D, image3D, X, Y, Z, maxcolors
+    global source_image, result_image, X, Y, Z, maxcolors
     global preview_data, preview_filtered, preview_src, info_normal
 
     sourcefilename = resultfilename  # Now saved file becomes new source file
-    source_image3D = deepcopy(image3D)
-    Y = len(image3D)
-    X = len(image3D[0])
-    Z = len(image3D[0][0])
-    preview_data = list2bin(image3D, maxcolors, show_chessboard=True)
+    source_image = deepcopy(result_image)
+    Y = len(result_image)
+    X = len(result_image[0])
+    Z = len(result_image[0][0])
+    preview_data = list2bin(result_image, maxcolors, show_chessboard=True)
     preview_filtered = PhotoImage(data=preview_data)
     preview_src = preview_filtered
 
@@ -458,7 +457,7 @@ def Save(event=None) -> None:
     """Once pressed on Save."""
 
     global is_filtered, is_saved, info_normal, color_mode_str
-    global source_image3D, preview_src, preview_filtered
+    global source_image, preview_src, preview_filtered
 
     if is_saved:  # block repetitive saving
         return
@@ -469,9 +468,9 @@ def Save(event=None) -> None:
     # ↓ Save format choice
     if Path(resultfilename).suffix.lower() == '.png':
         info['compression'] = 9  # Explicitly setting compression
-        list2png(resultfilename, image3D, info)  # Writing file
+        list2png(resultfilename, result_image, info)  # Writing file
     elif Path(resultfilename).suffix.lower() in ('.ppm', '.pgm', '.pnm'):
-        list2pnm(resultfilename, image3D, maxcolors)  # Writing file
+        list2pnm(resultfilename, result_image, maxcolors)  # Writing file
     # ↓ Flagging image as saved, not filtered
     is_saved = True  # to block future repetitive saving
     is_filtered = False
@@ -483,7 +482,7 @@ def SaveAs(event=None) -> None:
     """Once pressed on Save as..."""
 
     global sourcefilename, resultfilename, is_saved, is_filtered, info_normal, color_mode_str
-    global source_image3D, preview_src, preview_filtered
+    global source_image, preview_src, preview_filtered
 
     # ↓ Adjusting "Save as" formats to be displayed
     #   according to bitdepth and source extension
@@ -523,9 +522,9 @@ def SaveAs(event=None) -> None:
     # ↓ Save format choice
     if Path(resultfilename).suffix.lower() == '.png':
         info['compression'] = 9  # Explicitly setting compression
-        list2png(resultfilename, image3D, info)  # Writing file
+        list2png(resultfilename, result_image, info)  # Writing file
     elif Path(resultfilename).suffix.lower() in ('.ppm', '.pgm'):
-        list2pnm(resultfilename, image3D, maxcolors)  # Writing file
+        list2pnm(resultfilename, result_image, maxcolors)  # Writing file
     else:
         raise ValueError('Extension not recognized')
     # ↓ Flagging image as saved, not filtered, and disabling "Save"
