@@ -62,7 +62,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '26.1.26.1'
+__version__ = '26.2.7.21'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Development'
@@ -550,7 +550,7 @@ icon_path = Path(__file__).resolve().parent / '32.ico'
 if icon_path.exists():
     sortir.iconbitmap(icon_path)
 else:
-    sortir.iconphoto(True, PhotoImage(data='P6\n8 8\n255\n'.encode(encoding='ascii') + randbytes(8 * 8 * 3)))
+    sortir.iconphoto(True, PhotoImage(data='P6\n3 3\n255\n'.encode(encoding='ascii') + randbytes(3 * 3 * 3)))
 
 sortir.title(product_name)
 
@@ -561,16 +561,6 @@ color_mode_str = ' '
 # ↓ Info string
 info_string = Label(sortir, text=info_normal['txt'], font=('courier', 7), foreground=info_normal['fg'], background=info_normal['bg'], relief='groove')
 info_string.pack(side='bottom', padx=0, pady=(2, 0), fill='both')
-# ↓ Info string binding for displaying scaler execution time
-info_string.bind('<Enter>', lambda event=None: info_string.config(text=f'Run time: {timing}'))
-info_string.bind('<Leave>', lambda event=None: UINormal())
-info_string.bind('<Control-Button-1>', lambda event=None: [sortir.clipboard_clear(), sortir.clipboard_append(f'{timing}\n')])
-
-# ↓ initial sortir binding, before image load
-sortir.bind_all('<Button-3>', ShowMenu)  # Popup menu
-sortir.bind_all('<Alt-f>', ShowMenu)
-sortir.bind_all('<Control-o>', GetSource)
-sortir.bind_all('<Control-q>', DisMiss)
 
 frame_top = Frame(sortir, borderwidth=2, relief='groove')
 frame_top.pack(side='top', anchor='nw', pady=2)
@@ -645,8 +635,6 @@ zanyato = Label(
     background='grey90',
     relief='groove',
 )
-zanyato.bind('<Double-Button-1>', GetSource)  # Double-click to "Open"
-frame_preview.bind('<Double-Button-1>', GetSource)
 zanyato.pack(side='top')
 
 frame_zoom = Frame(frame_preview, borderwidth=2, relief='groove')
@@ -660,6 +648,22 @@ butt_minus.pack(side='right', padx=0, pady=0, fill='both')
 
 label_zoom = Label(frame_zoom, text='Zoom 1:1', font=('courier', 8), state='disabled')
 label_zoom.pack(side='left', anchor='n', padx=2, pady=0, fill='both')
+
+""" ┌─────────────────────────────────────────────┐
+    │ Binding everything that does not need image │
+    └────────────────────────────────────────────-┘ """
+# ↓ Info string binding for displaying scaler execution time
+info_string.bind('<Enter>', lambda event=None: info_string.config(text=f'Run time: {timing}'))
+info_string.bind('<Leave>', lambda event=None: info_string.config(text=info_normal['txt']))
+info_string.bind('<Control-Button-1>', lambda event=None: [sortir.clipboard_clear(), sortir.clipboard_append(f'{timing}\n')])
+# ↓ Double-click image area to "Open..."
+zanyato.bind('<Double-Button-1>', GetSource)
+frame_preview.bind('<Double-Button-1>', GetSource)
+# ↓ Whole sortir binding menu, "Open..." and "Exit"
+sortir.bind_all('<Button-3>', ShowMenu)
+sortir.bind_all('<Alt-f>', ShowMenu)
+sortir.bind_all('<Control-o>', GetSource)
+sortir.bind_all('<Control-q>', DisMiss)
 
 # ↓ Center window horizontally, +32 vertically
 sortir.update()
