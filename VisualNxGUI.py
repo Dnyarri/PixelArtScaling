@@ -62,7 +62,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '26.2.7.21'
+__version__ = '26.2.11.7'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Development'
@@ -153,16 +153,20 @@ def GetSource(event=None) -> None:
 
     global zoom_factor, view_src, is_filtered, is_saved, info_normal, color_mode_str
     global preview, preview_src, preview_filtered  # preview and copies of preview
-    global X, Y, Z, maxcolors, result_image, info, sourcefilename
-    global source_image  # deep copy of source data, to be used as a source for filtering
+    global sourcefilename, X, Y, Z, maxcolors, source_image, info
+    global result_image
 
+    # ↓ Temporary saving info in case of "Open.." cancel
+    old_sourcefilename = sourcefilename
+    # ↓ Opening "Open.." dialog
+    sourcefilename = askopenfilename(title='Open image file', filetypes=[('Supported formats', '.png .ppm .pgm .pbm .pnm'), ('Portable network graphics', '.png'), ('Portable any map', '.ppm .pgm .pbm .pnm')])
+    if sourcefilename == '':
+        sourcefilename = old_sourcefilename
+        return
+    # ↓ Next must be set AFTER "sourcefilename", in case of "Open.." cancel
     zoom_factor = 0
     view_src = True
     is_filtered = is_saved = False
-
-    sourcefilename = askopenfilename(title='Open image file', filetypes=[('Supported formats', '.png .ppm .pgm .pbm .pnm'), ('Portable network graphics', '.png'), ('Portable any map', '.ppm .pgm .pbm .pnm')])
-    if sourcefilename == '':
-        return
 
     UIBusy()
 
@@ -253,7 +257,8 @@ def RunFilter(event=None) -> None:
 
     global zoom_factor, view_src, is_filtered, is_saved, info_normal, color_mode_str, timing
     global preview, preview_filtered
-    global X, Y, Z, maxcolors, result_image, source_image, info
+    global X, Y, Z, maxcolors, source_image, info
+    global result_image
 
     method = method_str.get()
 
@@ -302,11 +307,8 @@ def RunFilter(event=None) -> None:
             y_pixels_per_unit = 3 * y_pixels_per_unit
             info['physical'] = [x_pixels_per_unit, y_pixels_per_unit, unit_is_meter]
 
-    Y = len(source_image)
-    X = len(source_image[0])
-    Z = len(source_image[0][0])
-    YNEW = len(result_image)
-    XNEW = len(result_image[0])
+    Y, X, Z = (len(source_image), len(source_image[0]), len(source_image[0][0]))
+    YNEW, XNEW = (len(result_image), len(result_image[0]))
 
     # ↓ Flagging as filtered, not saved
     if method != 'None':
@@ -426,19 +428,17 @@ def SwitchView(event=None) -> None:
 def onSave() -> None:
     """Reassign images and other objects from new to old upon saving."""
 
-    global sourcefilename, resultfilename, is_saved
-    global source_image, result_image, X, Y, Z, maxcolors
-    global preview_data, preview_filtered, preview_src, info_normal
+    global preview_filtered, preview_src, info_normal
+    global sourcefilename, X, Y, Z, maxcolors, source_image
+    global resultfilename, result_image
 
     sourcefilename = resultfilename  # Now saved file becomes new source file
-    source_image = deepcopy(result_image)
-    Y = len(result_image)
-    X = len(result_image[0])
-    Z = len(result_image[0][0])
-    preview_data = list2bin(result_image, maxcolors, show_chessboard=True)
-    preview_filtered = PhotoImage(data=preview_data)
+    source_image = result_image
+    Y, X, Z = (len(result_image), len(result_image[0]), len(result_image[0][0]))
     preview_src = preview_filtered
 
+    # ↓ Returning method OptionMenu to 'None'
+    method_str.set('None')
     # ↓ disabling save
     menu02.entryconfig('Save', state='disabled')
     sortir.unbind_all('<Control-s>')
@@ -481,8 +481,8 @@ def Save(event=None) -> None:
 def SaveAs(event=None) -> None:
     """Once pressed on Save as..."""
 
-    global sourcefilename, resultfilename, is_saved, is_filtered, info_normal, color_mode_str
-    global source_image, preview_src, preview_filtered
+    global is_saved, is_filtered, info_normal, color_mode_str
+    global sourcefilename, resultfilename, source_image, preview_src, preview_filtered
 
     # ↓ Adjusting "Save as" formats to be displayed
     #   according to bitdepth and source extension
@@ -537,7 +537,8 @@ def SaveAs(event=None) -> None:
 """ ╔═══════════╗
     ║ Main body ║
     ╚═══════════╝ """
-
+# ↓ Initializing
+sourcefilename = ''
 zoom_factor = 0
 view_src = True
 is_filtered = False
