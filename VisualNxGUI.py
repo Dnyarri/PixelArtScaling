@@ -41,6 +41,8 @@ Result may be copied to clipboard on info string Ctrl+Click.
 
 26.1.26.1   Cleansing and harmonization.
 
+26.2.11.19  Changes to new ScaleNx import structure reduced code length.
+
 ----
 Main site: `The Toad's Slimy Mudhole`_
 
@@ -62,7 +64,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '26.2.11.7'
+__version__ = '26.2.16.16'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Development'
@@ -78,7 +80,7 @@ from tkinter.messagebox import showinfo
 from pypng.pnglpng import list2png, png2list
 from pypnm.pnmlpnm import list2bin, list2pnm, pnm2list
 
-from scalenx import scalenx, scalenxsfx
+from scalenx import scaleNx  # Configurable ScaleNx as of 2026.2.11.19
 
 """ ╔══════════════════════════════════╗
     ║ GUI events and functions thereof ║
@@ -151,10 +153,12 @@ def ShowPreview(preview_name: PhotoImage, caption: str) -> None:
 def GetSource(event=None) -> None:
     """Open source image and redefine other controls state."""
 
-    global zoom_factor, view_src, is_filtered, is_saved, info_normal, color_mode_str
+    global zoom_factor, view_src, is_filtered, is_saved, info_normal, color_mode_str, operation, timing
     global preview, preview_src, preview_filtered  # preview and copies of preview
     global sourcefilename, X, Y, Z, maxcolors, source_image, info
     global result_image
+
+    operation = 'Opening'
 
     # ↓ Temporary saving info in case of "Open.." cancel
     old_sourcefilename = sourcefilename
@@ -169,7 +173,7 @@ def GetSource(event=None) -> None:
     is_filtered = is_saved = False
 
     UIBusy()
-
+    start = time()
     if Path(sourcefilename).suffix.lower() == '.png':
         # ↓ Reading PNG image as list
         X, Y, Z, maxcolors, source_image, info = png2list(sourcefilename)
@@ -183,6 +187,7 @@ def GetSource(event=None) -> None:
 
     else:
         raise ValueError('Extension not recognized')
+    timing = time() - start
 
     """ ┌────────────────────────────────────────────┐
         │ Creating deep copy of source 3D list       │
@@ -255,7 +260,7 @@ def GetSource(event=None) -> None:
 def RunFilter(event=None) -> None:
     """Filter image, then preview result."""
 
-    global zoom_factor, view_src, is_filtered, is_saved, info_normal, color_mode_str, timing
+    global zoom_factor, view_src, is_filtered, is_saved, info_normal, color_mode_str, operation, timing
     global preview, preview_filtered
     global X, Y, Z, maxcolors, source_image, info
     global result_image
@@ -268,44 +273,29 @@ def RunFilter(event=None) -> None:
         │ Filtering image │
         └─────────────────┘ """
 
+    if method == 'Scale2x':
+        n = 2
+        sfx = False
+    elif method == 'Scale3x':
+        n = 3
+        sfx = False
+    elif method == 'Scale2xSFX':
+        n = 2
+        sfx = True
+    elif method == 'Scale3xSFX':
+        n = 3
+        sfx = True
+
     if method == 'None':
         result_image = source_image
-    elif method == 'Scale2x':
+    else:
+        operation = 'Scaling'
         start = time()
-        result_image = scalenx.scale2x(source_image)
+        result_image = scaleNx(source_image, n=n, sfx=sfx)
         timing = time() - start
         if 'physical' in info:
             x_pixels_per_unit, y_pixels_per_unit, unit_is_meter = info['physical']
-            x_pixels_per_unit = 2 * x_pixels_per_unit
-            y_pixels_per_unit = 2 * y_pixels_per_unit
-            info['physical'] = [x_pixels_per_unit, y_pixels_per_unit, unit_is_meter]
-    elif method == 'Scale3x':
-        start = time()
-        result_image = scalenx.scale3x(source_image)
-        timing = time() - start
-        if 'physical' in info:
-            x_pixels_per_unit, y_pixels_per_unit, unit_is_meter = info['physical']
-            x_pixels_per_unit = 3 * x_pixels_per_unit
-            y_pixels_per_unit = 3 * y_pixels_per_unit
-            info['physical'] = [x_pixels_per_unit, y_pixels_per_unit, unit_is_meter]
-    elif method == 'Scale2xSFX':
-        start = time()
-        result_image = scalenxsfx.scale2x(source_image)
-        timing = time() - start
-        if 'physical' in info:
-            x_pixels_per_unit, y_pixels_per_unit, unit_is_meter = info['physical']
-            x_pixels_per_unit = 2 * x_pixels_per_unit
-            y_pixels_per_unit = 2 * y_pixels_per_unit
-            info['physical'] = [x_pixels_per_unit, y_pixels_per_unit, unit_is_meter]
-    elif method == 'Scale3xSFX':
-        start = time()
-        result_image = scalenxsfx.scale3x(source_image)
-        timing = time() - start
-        if 'physical' in info:
-            x_pixels_per_unit, y_pixels_per_unit, unit_is_meter = info['physical']
-            x_pixels_per_unit = 3 * x_pixels_per_unit
-            y_pixels_per_unit = 3 * y_pixels_per_unit
-            info['physical'] = [x_pixels_per_unit, y_pixels_per_unit, unit_is_meter]
+            info['physical'] = [n * x_pixels_per_unit, n * y_pixels_per_unit, unit_is_meter]
 
     Y, X, Z = (len(source_image), len(source_image[0]), len(source_image[0][0]))
     YNEW, XNEW = (len(result_image), len(result_image[0]))
@@ -329,6 +319,9 @@ def RunFilter(event=None) -> None:
         zanyato.bind('<Button-1>', SwitchView)  # left click
         zanyato.bind('<space>', SwitchView)  # # "Space" key. May be worth binding whole sortir?
 
+        # ↓ Center window horizontally, +32 vertically
+        sortir.geometry(f'+{(sortir.winfo_screenwidth() - sortir.winfo_width()) // 2}+32')
+
     else:
         is_filtered = False
         is_saved = True
@@ -347,8 +340,6 @@ def RunFilter(event=None) -> None:
     info_normal = {'txt': f'{Path(sourcefilename).name}{"*" if is_filtered else ""} X={XNEW if is_filtered else X} Y={YNEW if is_filtered else Y} Z={Z} maxcolors={maxcolors}', 'fg': 'grey', 'bg': 'grey90'}
     UINormal()
     zanyato.focus_set()  # moving focus to preview
-    # ↓ Center window horizontally, +32 vertically
-    sortir.geometry(f'+{(sortir.winfo_screenwidth() - sortir.winfo_width()) // 2}+32')
 
 
 def zoomIn(event=None) -> None:
@@ -456,8 +447,10 @@ def onSave() -> None:
 def Save(event=None) -> None:
     """Once pressed on Save."""
 
-    global is_filtered, is_saved, info_normal, color_mode_str
+    global is_filtered, is_saved, info_normal, color_mode_str, operation, timing
     global source_image, preview_src, preview_filtered
+
+    operation = 'Saving'
 
     if is_saved:  # block repetitive saving
         return
@@ -465,12 +458,14 @@ def Save(event=None) -> None:
         return
     resultfilename = sourcefilename
     UIBusy()
+    start = time()
     # ↓ Save format choice
     if Path(resultfilename).suffix.lower() == '.png':
         info['compression'] = 9  # Explicitly setting compression
         list2png(resultfilename, result_image, info)  # Writing file
     elif Path(resultfilename).suffix.lower() in ('.ppm', '.pgm', '.pnm'):
         list2pnm(resultfilename, result_image, maxcolors)  # Writing file
+    timing = time() - start
     # ↓ Flagging image as saved, not filtered
     is_saved = True  # to block future repetitive saving
     is_filtered = False
@@ -481,8 +476,10 @@ def Save(event=None) -> None:
 def SaveAs(event=None) -> None:
     """Once pressed on Save as..."""
 
-    global is_saved, is_filtered, info_normal, color_mode_str
+    global is_saved, is_filtered, info_normal, color_mode_str, operation, timing
     global sourcefilename, resultfilename, source_image, preview_src, preview_filtered
+
+    operation = 'Saving'
 
     # ↓ Adjusting "Save as" formats to be displayed
     #   according to bitdepth and source extension
@@ -519,6 +516,7 @@ def SaveAs(event=None) -> None:
     if resultfilename == '':
         return None
     UIBusy()
+    start = time()
     # ↓ Save format choice
     if Path(resultfilename).suffix.lower() == '.png':
         info['compression'] = 9  # Explicitly setting compression
@@ -527,6 +525,7 @@ def SaveAs(event=None) -> None:
         list2pnm(resultfilename, result_image, maxcolors)  # Writing file
     else:
         raise ValueError('Extension not recognized')
+    timing = time() - start
     # ↓ Flagging image as saved, not filtered, and disabling "Save"
     is_saved = True  # to block future repetitive saving
     is_filtered = False
@@ -543,6 +542,7 @@ zoom_factor = 0
 view_src = True
 is_filtered = False
 product_name = 'Visual ScaleNx'
+operation = None
 timing = None
 
 sortir = Tk()
@@ -654,7 +654,7 @@ label_zoom.pack(side='left', anchor='n', padx=2, pady=0, fill='both')
     │ Binding everything that does not need image │
     └────────────────────────────────────────────-┘ """
 # ↓ Info string binding for displaying scaler execution time
-info_string.bind('<Enter>', lambda event=None: info_string.config(text=f'Run time: {timing}'))
+info_string.bind('<Enter>', lambda event=None: info_string.config(text=f'{operation} time: {round(timing, 3)} sec'))
 info_string.bind('<Leave>', lambda event=None: info_string.config(text=info_normal['txt']))
 info_string.bind('<Control-Button-1>', lambda event=None: [sortir.clipboard_clear(), sortir.clipboard_append(f'{timing}\n')])
 # ↓ Double-click image area to "Open..."

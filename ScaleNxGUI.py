@@ -56,10 +56,10 @@ ScaleNx Git repositories: `ScaleNx@Github`_, `ScaleNx@Gitflic`_.
 """
 
 __author__ = 'Ilya Razmanov'
-__copyright__ = '(c) 2025 Ilya Razmanov'
+__copyright__ = '(c) 2025-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.11.15.1'
+__version__ = '26.2.16.16'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -73,7 +73,8 @@ from tkinter.filedialog import askdirectory, askopenfilename, asksaveasfilename
 
 from pypng.pnglpng import list2png, png2list
 from pypnm.pnmlpnm import list2pnm, pnm2list
-from scalenx import scalenx, scalenxsfx
+
+from scalenx import scaleNx  # Configurable ScaleNx as of 2026.2.12.14
 
 
 def DisMiss(event=None) -> None:
@@ -156,34 +157,18 @@ def FileNx(size: int, sfx: bool) -> None:
     else:
         raise ValueError('Extension not recognized')
 
-    # ↓ Choosing working chosen_scaler from the list of imported scalers
-    if sfx:
-        if size == 2:
-            chosen_scaler = scalenxsfx.scale2x
-        if size == 3:
-            chosen_scaler = scalenxsfx.scale3x
-    else:
-        if size == 2:
-            chosen_scaler = scalenx.scale2x
-        if size == 3:
-            chosen_scaler = scalenx.scale3x
-
-    # ↓ Scaling image using chosen_scaler chosen above
-    scaled_image = chosen_scaler(image3d)
+    # ↓ Scaling image
+    scaled_image = scaleNx(image3d, size, sfx)
 
     # ↓ Fixing resolution to match original print size.
     #   If no pHYs found in original, 96 ppi is assumed as original value.
     if 'physical' in info:
-        x_pixels_per_unit, y_pixels_per_unit, unit_is_meter = info['physical']  # Reading resolution
+        x_pixels_per_unit, y_pixels_per_unit, unit_is_meter = info['physical']
     else:
         x_pixels_per_unit = y_pixels_per_unit = 3780
-        # 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
+        # ↑ 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
         unit_is_meter = True
-
-    x_pixels_per_unit = size * x_pixels_per_unit  # Change resolution to keep print size
-    y_pixels_per_unit = size * y_pixels_per_unit  # Change resolution to keep print size
-
-    info['physical'] = [x_pixels_per_unit, y_pixels_per_unit, unit_is_meter]
+    info['physical'] = [size * x_pixels_per_unit, size * y_pixels_per_unit, unit_is_meter]
     # ↑ Resolution changed
 
     # ↓ Explicitly setting compression for a single file processing
@@ -249,34 +234,18 @@ def scale_file_png(runningfilename: Path, size: int, sfx: bool, compression: int
     # ↓ Reading image as list
     X, Y, Z, maxcolors, image3d, info = png2list(oldfile)
 
-    # ↓ Choosing working scaler from the list of imported scalers
-    if sfx:
-        if size == 2:
-            chosen_scaler = scalenxsfx.scale2x
-        if size == 3:
-            chosen_scaler = scalenxsfx.scale3x
-    else:
-        if size == 2:
-            chosen_scaler = scalenx.scale2x
-        if size == 3:
-            chosen_scaler = scalenx.scale3x
-
-    # ↓ Scaling using scaler chosen above
-    scaled_image = chosen_scaler(image3d)
+    # ↓ Scaling image
+    scaled_image = scaleNx(image3d, size, sfx)
 
     # ↓ Fixing resolution to match original print size.
     #   If no pHYs found in original, 96 ppi is assumed as original value.
     if 'physical' in info:
-        x_pixels_per_unit, y_pixels_per_unit, unit_is_meter = info['physical']  # Reading resolution
+        x_pixels_per_unit, y_pixels_per_unit, unit_is_meter = info['physical']
     else:
         x_pixels_per_unit = y_pixels_per_unit = 3780
-        # 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
+        # ↑ 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
         unit_is_meter = True
-
-    x_pixels_per_unit = size * x_pixels_per_unit  # Change resolution to keep print size
-    y_pixels_per_unit = size * y_pixels_per_unit  # Change resolution to keep print size
-
-    info['physical'] = [x_pixels_per_unit, y_pixels_per_unit, unit_is_meter]
+    info['physical'] = [size * x_pixels_per_unit, size * y_pixels_per_unit, unit_is_meter]
     # ↑ Resolution changed
 
     # ↓ Explicitly setting compression for batch processing
@@ -303,20 +272,8 @@ def scale_file_pnm(runningfilename: Path, size: int, sfx: bool, bin: bool = True
     # ↓ Reading image as list
     X, Y, Z, maxcolors, image3d = pnm2list(oldfile)
 
-    # ↓ Choosing working scaler from the list of imported scalers
-    if sfx:
-        if size == 2:
-            chosen_scaler = scalenxsfx.scale2x
-        if size == 3:
-            chosen_scaler = scalenxsfx.scale3x
-    else:
-        if size == 2:
-            chosen_scaler = scalenx.scale2x
-        if size == 3:
-            chosen_scaler = scalenx.scale3x
-
-    # ↓ Scaling using scaler chosen above
-    scaled_image = chosen_scaler(image3d)
+    # ↓ Scaling image
+    scaled_image = scaleNx(image3d, size, sfx)
 
     # ↓ Writing PNM file
     list2pnm(newfile, scaled_image, maxcolors, bin)

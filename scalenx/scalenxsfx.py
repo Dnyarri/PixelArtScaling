@@ -9,7 +9,8 @@ ScaleNx
 Scale2xSFX and Scale3xSFX image rescaling
 -----------------------------------------
 
-:Abstract: Current module comprise **Scale2xSFX** and **Scale3xSFX** `[1]`_ image rescaling functions, implemented in pure Python.
+:Abstract: Current module comprise **Scale2xSFX** and **Scale3xSFX** `[1]`_
+    image rescaling functions, implemented in pure Python.
 
 Usage
 -----
@@ -24,8 +25,10 @@ Scale3xSFX::
 
 where:
 
-- `source_image`: input image as list of lists (rows) of lists (pixels) of int (channel values);
-- `scaled_image`: output image as list of lists (rows) of lists (pixels) of int (channel values).
+- ``source_image``: input image as list of lists (rows) of lists (pixels)
+        of int (channel values);
+- ``scaled_image``: output image as list of lists (rows) of lists (pixels)
+        of int (channel values).
 
 References
 ----------
@@ -39,7 +42,8 @@ The Developer site: `The Toad's Slimy Mudhole`_
 
 .. _The Toad's Slimy Mudhole: https://dnyarri.github.io
 
-`ScaleNx`_ explanations and illustrations page for current ScaleNx Python implementation.
+`ScaleNx`_ explanations and illustrations page for current
+ScaleNx Python implementation.
 
 .. _ScaleNx: https://dnyarri.github.io/scalenx.html
 
@@ -56,10 +60,10 @@ ScaleNx source repositories: `ScaleNx@Github`_, `ScaleNx@Gitflic`_.
 """
 
 __author__ = 'Ilya Razmanov'
-__copyright__ = '(c) 2025 Ilya Razmanov'
+__copyright__ = '(c) 2025-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '2025.11.15.1'
+__version__ = '2026.2.16.16'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -73,16 +77,18 @@ def scale2x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
     """Scale2xSFX image rescale.
     ----
 
-    :param image3d: 3D nested list (image) of lists (rows) of lists (pixels) of int (channel values);
+    :param image3d: 3D nested list (image) of lists (rows) of lists (pixels)
+        of int (channel values); coordinate system match Photoshop, *i.e.*
+        origin is top left corner, channels order is LA or RGBA from 0 to top;
     :type image3d: list[list[list[int]]]
-    :return: 3D nested list of the same structure as input, rescaled in X and Y directions twice using Scale2xSFX.
+    :return: 3D nested list of the same structure as input,
+        rescaled in X and Y directions twice using Scale2xSFX.
     :rtype: list[list[list[int]]]
 
     """
 
     # ↓ determining source image size from list
-    Y = len(image3d)
-    X = len(image3d[0])
+    Y, X = (len(image3d), len(image3d[0]))
 
     # ↓ starting new image list
     scaled_image: list[list[list[int]]] = []
@@ -186,16 +192,18 @@ def scale3x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
     """Scale3xSFX image rescale.
     ----
 
-    :param image3d: 3D nested list (image) of lists (rows) of lists (pixels) of int (channel values);
+    :param image3d: 3D nested list (image) of lists (rows) of lists (pixels)
+        of int (channel values); coordinate system match Photoshop, *i.e.*
+        origin is top left corner, channels order is LA or RGBA from 0 to top;
     :type image3d: list[list[list[int]]]
-    :return: 3D nested list of the same structure as input, rescaled in X and Y directions thrice using Scale3xSFX.
+    :return: 3D nested list of the same structure as input,
+        rescaled in X and Y directions thrice using Scale3xSFX.
     :rtype: list[list[list[int]]]
 
     """
 
     # ↓ determining source image size from list
-    Y = len(image3d)
-    X = len(image3d[0])
+    Y, X = (len(image3d), len(image3d[0]))
 
     # ↓ starting new image list
     scaled_image: list[list[list[int]]] = []

@@ -18,6 +18,7 @@ Current changelog is related to [ScaleNx main branch for Python >= 3.10](https:/
 
 | Version | Changes |
 | :--- | :--- |
+| 2026.02.16.16 | Some module restructure, more helpful docstrings. |
 | 2025.11.15.01 | Some module restructure, more helpful docstrings. |
 | 2025.09.25.09 | Code improvements, mostly academic. Expected speed increase below limit of detection. |
 | 2025.03.34 | Since 26 Mar 2025 only py34 branch, compatible with Python 3.4, will be used for publishing at PyPI; last digits "34" in version number indicate Python 3.4 compatibility. |

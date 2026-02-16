@@ -5,6 +5,7 @@ dev*
 temp/
 test*/
 __pycache__/
+/256.ico
 *.json
 *.txt
 *.7z
