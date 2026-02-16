@@ -18,6 +18,7 @@ Current changelog is related to extended compatibility version [ScaleNx py34 bra
 
 | Version | Changes |
 | :--- | :--- |
+| 2026.2.12.34 | Added generalized export scheme, allowing to simplify main programs. |
 | 2025.09.25.34 | Code improvements, mostly academic. Expected speed increase below limit of detection. |
 | 2025.03.34 | Since 26 Mar 2025 only py34 branch, compatible with Python 3.4, will be used for publishing at PyPI; last digits "34" in version number indicate Python 3.4 compatibility. |
 | 2025.02.01 | FIR optimization. Speed gain, % of original (median): ca.15% Scale2x, ca. 50% Scale3x, ca.50% Scale2xSFX, ca. 40% Scale2xSFX. |

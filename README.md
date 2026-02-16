@@ -41,6 +41,29 @@ Version 25.08.22.34 of main program was intentionally downgraded from `pathlib` 
 > Moreover, programs contain lists reshaping for PNG and PNM I/O purposes, also performed using Python native means only.
 > As a result, programs under discussion are slow as compared to C or C++, but quite compatible with anything capable of running Python, and don't require large external packages causing version conflicts.
 
+## Developers info: Module usage
+
+As of version 2026.2.12.34, recommended ScaleNx module usage is:
+
+```python
+from scalenx import scaleNx
+scaled_image = scaleNx(source_image, n, sfx)
+```
+
+where:
+
+- **`source_image`** is source image data as `list[list[list[int]]]`;
+- `int` **`n`** value should be either `2` or `3`, meaning the choice between Scale**2**\* and Scale**3**\* methods;
+- `bool` **`sfx`** means whether you choose ScaleNx**SFX** methods rather than classic ScaleNx;
+- **`scaled_image`** is resulting image data as `list[list[list[int]]]`.
+
+However, legacy module access (as of version 2024.02.24) still works, and for, say, Scale3xSFX it looks like:
+
+```python
+from scalenx import scalenxsfx
+scaled_image = scalenxsfx.scale3x(source_image)
+```
+
 ## References
 
 1. [Scale2x and Scale3x](https://www.scale2x.it/algorithm) algorithms description by the inventor, Andrea Mazzoleni.

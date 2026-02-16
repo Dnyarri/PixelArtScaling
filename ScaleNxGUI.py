@@ -9,13 +9,9 @@ ScaleNx
 Main GUI shell
 --------------
 
-**ScaleNxGUI.py** is a main GUI shell for `ScaleNx`_ module.
-Unlike visual GUI shell, VisualNxGUI.py, it does not have a preview
-so does not waste time and memory for it.
-
-Unlike VisualNxGUI.py, **ScaleNxGUI.py** **is recommended for big images**.
-
-Unlike VisualNxGUI.py, **ScaleNxGUI.py** have a batch processing capabilities.
+**ScaleNxGUI.py** is a main GUI shell for `ScaleNx`_ module, providing both
+single file and batch folder processing of image files, rescaling images using
+Scale2x, Scale3x, Scale2xSFX and Scale3xSFX algorithms.
 
 File formats
 ------------
@@ -39,6 +35,8 @@ History:
 PNG compression and PNM format prefs may be saved/loaded to/from file.
 Prefs OptionMenu added to GUI.
 
+26.2.12.34  Code simplification following ScaleNx 2026.2.12.34 update.
+
 ----
 Main site: `The Toad's Slimy Mudhole`_
 
@@ -57,10 +55,10 @@ ScaleNx Git repositories: `ScaleNx@Github`_, `ScaleNx@Gitflic`_.
 """
 
 __author__ = 'Ilya Razmanov'
-__copyright__ = '(c) 2025 Ilya Razmanov'
+__copyright__ = '(c) 2025-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '25.11.15.34'
+__version__ = '26.2.12.34'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -74,7 +72,8 @@ from tkinter.filedialog import askdirectory, askopenfilename, asksaveasfilename
 
 from pypng.pnglpng import list2png, png2list
 from pypnm.pnmlpnm import list2pnm, pnm2list
-from scalenx import scalenx, scalenxsfx
+
+from scalenx import scaleNx  # Configurable ScaleNx as of 2026.2.12.34
 
 
 def DisMiss(event=None):
@@ -158,34 +157,18 @@ def FileNx(size, sfx):
     else:
         raise ValueError('Extension not recognized')
 
-    # ↓ Choosing working chosen_scaler from the list of imported scalers
-    if sfx:
-        if size == 2:
-            chosen_scaler = scalenxsfx.scale2x
-        if size == 3:
-            chosen_scaler = scalenxsfx.scale3x
-    else:
-        if size == 2:
-            chosen_scaler = scalenx.scale2x
-        if size == 3:
-            chosen_scaler = scalenx.scale3x
-
-    # ↓ Scaling image using chosen_scaler chosen above
-    scaled_image = chosen_scaler(image3d)
+    # ↓ Scaling image
+    scaled_image = scaleNx(image3d, size, sfx)
 
     # ↓ Fixing resolution to match original print size.
     #   If no pHYs found in original, 96 ppi is assumed as original value.
     if 'physical' in info:
-        x_pixels_per_unit, y_pixels_per_unit, unit_is_meter = info['physical']  # Reading resolution
+        x_pixels_per_unit, y_pixels_per_unit, unit_is_meter = info['physical']
     else:
         x_pixels_per_unit = y_pixels_per_unit = 3780
-        # 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
+        # ↑ 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
         unit_is_meter = True
-
-    x_pixels_per_unit = size * x_pixels_per_unit  # Change resolution to keep print size
-    y_pixels_per_unit = size * y_pixels_per_unit  # Change resolution to keep print size
-
-    info['physical'] = [x_pixels_per_unit, y_pixels_per_unit, unit_is_meter]
+    info['physical'] = [size * x_pixels_per_unit, size * y_pixels_per_unit, unit_is_meter]
     # ↑ Resolution changed
 
     # ↓ Explicitly setting compression for a single file processing
@@ -251,34 +234,18 @@ def scale_file_png(runningfilename, size, sfx, compression):
     # ↓ Reading image as list
     X, Y, Z, maxcolors, image3d, info = png2list(oldfile)
 
-    # ↓ Choosing working scaler from the list of imported scalers
-    if sfx:
-        if size == 2:
-            chosen_scaler = scalenxsfx.scale2x
-        if size == 3:
-            chosen_scaler = scalenxsfx.scale3x
-    else:
-        if size == 2:
-            chosen_scaler = scalenx.scale2x
-        if size == 3:
-            chosen_scaler = scalenx.scale3x
-
-    # ↓ Scaling using scaler chosen above
-    scaled_image = chosen_scaler(image3d)
+    # ↓ Scaling image
+    scaled_image = scaleNx(image3d, size, sfx)
 
     # ↓ Fixing resolution to match original print size.
     #   If no pHYs found in original, 96 ppi is assumed as original value.
     if 'physical' in info:
-        x_pixels_per_unit, y_pixels_per_unit, unit_is_meter = info['physical']  # Reading resolution
+        x_pixels_per_unit, y_pixels_per_unit, unit_is_meter = info['physical']
     else:
         x_pixels_per_unit = y_pixels_per_unit = 3780
-        # 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
+        # ↑ 3780 px/meter = 96 px/inch, 2834 px/meter = 72 px/inch
         unit_is_meter = True
-
-    x_pixels_per_unit = size * x_pixels_per_unit  # Change resolution to keep print size
-    y_pixels_per_unit = size * y_pixels_per_unit  # Change resolution to keep print size
-
-    info['physical'] = [x_pixels_per_unit, y_pixels_per_unit, unit_is_meter]
+    info['physical'] = [size * x_pixels_per_unit, size * y_pixels_per_unit, unit_is_meter]
     # ↑ Resolution changed
 
     # ↓ Explicitly setting compression for batch processing
@@ -305,21 +272,8 @@ def scale_file_pnm(runningfilename, size, sfx, bin):
     # ↓ Reading image as list
     X, Y, Z, maxcolors, image3d = pnm2list(oldfile)
 
-    # ↓ Choosing working scaler from the list of imported scalers
-    if sfx:
-        if size == 2:
-            chosen_scaler = scalenxsfx.scale2x
-        if size == 3:
-            chosen_scaler = scalenxsfx.scale3x
-    else:
-        if size == 2:
-            chosen_scaler = scalenx.scale2x
-        if size == 3:
-            chosen_scaler = scalenx.scale3x
-
-    # ↓ Scaling using scaler chosen above
-    scaled_image = chosen_scaler(image3d)
-
+    # ↓ Scaling image
+    scaled_image = scaleNx(image3d, size, sfx)
     # ↓ Writing PNM file
     list2pnm(newfile, scaled_image, maxcolors, bin)
 
@@ -624,12 +578,12 @@ if __name__ == '__main__':
         │ Saving formats options │
         └────────────────────────┘ """
     option = {
-            'font_label': ('helvetica', 10),
-            'font_menu': ('courier', 10),
-            'relief': butt['relief'],
-            'activeforeground': butt['activeforeground'],
-            'activebackground': butt['activebackground'],
-        }
+        'font_label': ('helvetica', 10),
+        'font_menu': ('courier', 10),
+        'relief': butt['relief'],
+        'activeforeground': butt['activeforeground'],
+        'activebackground': butt['activebackground'],
+    }
     # ↓ Left frame file output options
     options_left = LabelFrame(frame_left, text='Single file saving options', font=('helvetica', 8), foreground=blue['foreground'])
     options_left.pack(side='top', anchor='ne', padx=4, fill='none')

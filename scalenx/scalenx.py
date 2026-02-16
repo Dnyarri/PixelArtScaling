@@ -9,7 +9,8 @@ ScaleNx for Python >= 3.4
 Scale2x and Scale3x image rescaling
 -----------------------------------
 
-:Abstract: Current module comprise **Scale2x** and **Scale3x** `[1]`_ image rescaling functions, implemented in pure Python.
+:Abstract: Current module comprise **Scale2x** and **Scale3x** `[1]`_
+    image rescaling functions, implemented in pure Python.
 
 Usage
 -----
@@ -24,8 +25,10 @@ Scale3x::
 
 where:
 
-- ``source_image``: input image as list of lists (rows) of lists (pixels) of int (channel values);
-- ``scaled_image``: output image as list of lists (rows) of lists (pixels) of int (channel values).
+- ``source_image``: input image as list of lists (rows) of lists (pixels)
+        of int (channel values);
+- ``scaled_image``: output image as list of lists (rows) of lists (pixels)
+        of int (channel values).
 
 References
 ----------
@@ -58,10 +61,10 @@ ScaleNx source repositories: `ScaleNx@Github`_, `ScaleNx@Gitflic`_.
 """
 
 __author__ = 'Ilya Razmanov'
-__copyright__ = '(c) 2024-2025 Ilya Razmanov'
-__credits__ = ['Ilya Razmanov', 'Andrea Mazzoleni']
+__copyright__ = '(c) 2024-2026 Ilya Razmanov'
+__credits__ = ['Andrea Mazzoleni', 'Ilya Razmanov']
 __license__ = 'unlicense'
-__version__ = '2025.11.15.34'
+__version__ = '2026.2.12.34'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -75,16 +78,18 @@ def scale2x(image3d):
     """Scale2x image rescale.
     ----
 
-    :param image3d: 3D nested list (image) of lists (rows) of lists (pixels) of int (channel values);
+    :param image3d: 3D nested list (image) of lists (rows) of lists (pixels)
+        of int (channel values); coordinate system match Photoshop, *i.e.*
+        origin is top left corner, channels order is LA or RGBA from 0 to top;
     :type image3d: list[list[list[int]]]
-    :return: 3D nested list of the same structure as input, rescaled in X and Y directions twice using Scale2x.
+    :return: 3D nested list of the same structure as input,
+        rescaled in X and Y directions twice using Scale2x.
     :rtype: list[list[list[int]]]
 
     """
 
-    # determining source image size from list
-    Y = len(image3d)
-    X = len(image3d[0])
+    # ↓ determining source image size from list
+    Y, X = (len(image3d), len(image3d[0]))
 
     # starting new image list
     scaled_image = []
@@ -168,16 +173,18 @@ def scale3x(image3d):
     """Scale3x image rescale.
     ----
 
-    :param image3d: 3D nested list (image) of lists (rows) of lists (pixels) of int (channel values);
+    :param image3d: 3D nested list (image) of lists (rows) of lists (pixels)
+        of int (channel values); coordinate system match Photoshop, *i.e.*
+        origin is top left corner, channels order is LA or RGBA from 0 to top;
     :type image3d: list[list[list[int]]]
-    :return: 3D nested list of the same structure as input, rescaled in X and Y directions thrice using Scale3x.
+    :return: 3D nested list of the same structure as input,
+        rescaled in X and Y directions thrice using Scale3x.
     :rtype: list[list[list[int]]]
 
     """
 
-    # determining source image size from list
-    Y = len(image3d)
-    X = len(image3d[0])
+    # ↓ determining source image size from list
+    Y, X = (len(image3d), len(image3d[0]))
 
     # starting new image list
     scaled_image = []

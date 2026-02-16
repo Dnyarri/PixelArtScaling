@@ -30,18 +30,29 @@ Scale2x, Scale3x, Scale2xSFX and Scale3xSFX image rescaling
 Usage
 -----
 
-for ScaleNx::
+::
 
-    from scalenx import scalenx
+    from scalenx import scaleNx
+    result_image = scaleNx(source_image, n, sfx)
 
-for ScaleNxSFX::
+where:
 
-    from scalenx import scalenxsfx
+- **``source_image``**: source image 3D nested list;
+        coordinate system match Photoshop, *i.e.* origin is top left corner,
+        channels order is LA or RGBA from 0 to top;
+- **``n``**: choice between Scale2* and Scale3* methods:
+    - ``n=2``: Scale2x or Scale2xSFX;
+    - ``n=3``: Scale3x or Scale3xSFX;
 
-then refer to function descriptions in ``scalenx`` and ``scalenxsfx`` correspondingly.
+- **``sfx``**: choice between original ScaleNx and improved ScaleNxSFX methods:
+    - ``sfx=False``: Scale2x or Scale3x;
+    - ``sfx=True``: Scale2xSFX or Scale3xSFX.
+
+.. note:: Function name **``scaleNx``** must contain capital **N**
+    to avoid confusion with legacy file/module names.
 
 Compatibility info
-------------------------------
+------------------
 
 Current version is extended compatibility one,
 proven to work with CPython 3.4 and above.
@@ -56,8 +67,10 @@ based on algorithm descriptions `[1]`_, `[3]`_.
 Changes introduced by the Developer for the purpose of
 speed-up are on his conscience.
 
-Current implementation may be freely used, redistributed and improved at will by anyone.
-Sharing useful modifications with the Developer and lesser species is next to obligatory.
+Current implementation may be freely used, redistributed
+and improved at will by anyone.
+Sharing useful modifications with the Developer and lesser species
+is next to obligatory.
 
 References
 ----------
@@ -85,7 +98,11 @@ The Developer's site: `The Toad's Slimy Mudhole`_
 
 .. _ScaleNx: https://dnyarri.github.io/scalenx.html
 
-ScaleNx source repositories: `ScaleNx@Github`_, `ScaleNx@Gitflic`_.
+`ScaleNx at PyPI`_ - current ScaleNx module for ``pip``-driven installation.
+
+.. _ScaleNx at PyPI: https://pypi.org/project/ScaleNx
+
+ScaleNx source repositories, both module and main application: `ScaleNx@Github`_, `ScaleNx@Gitflic`_.
 
 .. _ScaleNx@Github: https://github.com/Dnyarri/PixelArtScaling/tree/py34
 
@@ -96,3 +113,48 @@ ScaleNx source repositories: `ScaleNx@Github`_, `ScaleNx@Gitflic`_.
 .. _Changelog: https://github.com/Dnyarri/PixelArtScaling/blob/py34/CHANGELOG.md
 
 """
+
+__author__ = 'Ilya Razmanov'
+__copyright__ = '(c) 2024-2026 Ilya Razmanov'
+__credits__ = 'Ilya Razmanov'
+__license__ = 'unlicense'
+__version__ = '2026.2.12.34'
+__maintainer__ = 'Ilya Razmanov'
+__email__ = 'ilyarazmanov@gmail.com'
+__status__ = 'Production'
+
+from .scalenx import scale2x
+from .scalenx import scale3x
+from .scalenxsfx import scale2x as scale2xsfx
+from .scalenxsfx import scale3x as scale3xsfx
+
+
+def scaleNx(source_image, n, sfx):
+    """ScaleNx image rescaling, configurable via ``n`` and ``sfx`` options.
+    ----
+
+    :param source_image: source image 3D nested list;
+        coordinate system match Photoshop, *i.e.* origin is top left corner,
+        channels order is LA or RGBA from 0 to top;
+    :type source_image: list[list[list[int]]]
+    :param int n: ``2`` or ``3``, choice between Scale2* and Scale3* methods;
+    :param bool sfx: choice between ScaleNx and ScaleNxSFX methods.
+    :raises ValueError: Attempt to use nonexistent method ``n``.
+    :return: rescaled image os the same type as ``source_image``.
+    :rtype: list[list[list[int]]]
+
+    """
+    if sfx:
+        if n == 2:
+            return scale2xsfx(source_image)
+        elif n == 3:
+            return scale3xsfx(source_image)
+        else:
+            raise ValueError('Allowed ScaleNxSFX methods are 2 and 3')
+    else:
+        if n == 2:
+            return scale2x(source_image)
+        elif n == 3:
+            return scale3x(source_image)
+        else:
+            raise ValueError('Allowed ScaleNx methods are 2 and 3')
