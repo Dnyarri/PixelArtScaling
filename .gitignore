@@ -1,12 +1,16 @@
-.vscode
+# Folders, produced by Python here, there, and everywhere
+__pycache__/
+
+# Folders, produced by "python -m build"
+*.egg-info/
+dist/
+
+# Folder, produced by VSCode
+.vscode/
+
+# All sorts of junk produced by me, forgotten but not gone
 backup/
 build*/
-dev*
+dev*/
 temp/
 test*/
-__pycache__/
-*.json
-*.txt
-*.7z
-*.zip
-*.bz2
