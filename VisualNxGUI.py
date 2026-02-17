@@ -64,7 +64,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '26.2.16.16'
+__version__ = '26.2.18.0'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Development'
@@ -542,8 +542,8 @@ zoom_factor = 0
 view_src = True
 is_filtered = False
 product_name = 'Visual ScaleNx'
-operation = None
-timing = None
+operation = 'Awaiting orders'
+timing = 0
 
 sortir = Tk()
 
