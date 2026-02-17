@@ -1,0 +1,70 @@
+# Build instructions for ScaleNx module distribution generation.
+# Temporarily uses repository README.md instead of
+# something made specifically for distribution. 
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ScaleNx"
+dynamic = ["version"]
+description = "Image resizing using Scale2x, Scale3x, Scale2xSFX and Scale3xSFX algorithms, in pure Python."
+readme = "README.md"
+license = "Unlicense"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+keywords = [
+    "Scale2x",
+    "Scale2xSFX",
+    "Scale3x",
+    "Scale3xSFX",
+    "bitmap",
+    "image",
+    "pixel",
+    "rescale",
+    "resize",
+    "AdvMAME2",
+    "AdvMAME3",
+    "Python",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
+    "Topic :: Multimedia :: Graphics",
+    "Topic :: Scientific/Engineering :: Image Processing",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[[project.authors]]
+name = "Ilya Razmanov"
+email = "ilyarazmanov@gmail.com"
+
+[[project.maintainers]]
+name = "Ilya Razmanov"
+email = "ilyarazmanov@gmail.com"
+
+[project.urls]
+Changelog = "https://github.com/Dnyarri/PixelArtScaling/blob/py34/CHANGELOG.md"
+Homepage = "https://dnyarri.github.io/"
+Issues = "https://github.com/Dnyarri/PixelArtScaling/issues"
+Source = "https://github.com/Dnyarri/PixelArtScaling"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["scalenx"]
+exclude = ["*.*"]
+namespaces = false
+
+[tool.setuptools.dynamic.version]
+attr = "scalenx.__version__"
