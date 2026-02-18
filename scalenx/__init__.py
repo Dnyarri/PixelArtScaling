@@ -3,9 +3,9 @@
 ScaleNx
 =======
 
------------------------------------------------------------
-Scale2x, Scale3x, Scale2xSFX and Scale3xSFX image rescaling
------------------------------------------------------------
+-----------------------------------------------------------------------------
+Scale2x, Scale3x, Scale2xSFX and Scale3xSFX image rescaling for Python >=3.4.
+-----------------------------------------------------------------------------
 
 :Abstract: Current module comprise **Scale2x**, **Scale3x**, **Scale2xSFX**
     and **Scale3xSFX** image rescaling functions, implemented in pure Python.
@@ -61,11 +61,11 @@ Copyright and redistribution
 ----------------------------
 
 Current Python `ScaleNx`_ implementation is developed by
-Ilya Razmanov (hereinafter referred to as "the Developer"),
-based on algorithm descriptions `[1]`_, `[3]`_.
+Ilya Razmanov (hereinafter referred to as "the Developer"), based on
+algorithm descriptions `[1]`_, `[3]`_ by corresponding originators.
 
 Changes introduced by the Developer for the purpose of
-speed-up are on his conscience.
+speed-up are entirely on his conscience.
 
 Current implementation may be freely used, redistributed
 and improved at will by anyone.
@@ -118,7 +118,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '2026.2.12.34'
+__version__ = '2026.2.12.34.post1'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
