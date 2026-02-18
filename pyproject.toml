@@ -1,6 +1,4 @@
 # Build instructions for ScaleNx module distribution generation.
-# Temporarily uses repository README.md instead of
-# something made specifically for distribution. 
 
 [build-system]
 requires = ["setuptools"]
@@ -10,7 +8,7 @@ build-backend = "setuptools.build_meta"
 name = "ScaleNx"
 dynamic = ["version"]
 description = "Image resizing using Scale2x, Scale3x, Scale2xSFX and Scale3xSFX algorithms, in pure Python."
-readme = "README.md"
+readme = "scalenx/README.md"
 license = "Unlicense"
 license-files = ["LICENSE"]
 requires-python = ">=3.10"
