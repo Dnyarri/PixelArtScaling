@@ -1,4 +1,4 @@
-# Build instructions for ScaleNx module distribution generation.
+# Build instructions for ScaleNx module distribution generation, main branch.
 
 [build-system]
 requires = ["setuptools"]
@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 name = "ScaleNx"
 dynamic = ["version"]
 description = "Image resizing using Scale2x, Scale3x, Scale2xSFX and Scale3xSFX algorithms, in pure Python."
-readme = "scalenx/README.md"
+readme = "README.md"
 license = "Unlicense"
 license-files = ["LICENSE"]
 requires-python = ">=3.10"
@@ -53,16 +53,13 @@ name = "Ilya Razmanov"
 email = "ilyarazmanov@gmail.com"
 
 [project.urls]
-Changelog = "https://github.com/Dnyarri/PixelArtScaling/blob/py34/CHANGELOG.md"
+Changelog = "https://github.com/Dnyarri/PixelArtScaling/blob/main/CHANGELOG.md"
 Homepage = "https://dnyarri.github.io/"
 Issues = "https://github.com/Dnyarri/PixelArtScaling/issues"
 Source = "https://github.com/Dnyarri/PixelArtScaling"
 
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["scalenx"]
-exclude = ["*.*"]
-namespaces = false
+[tool.setuptools.package-dir]
+scalenx = "."
 
 [tool.setuptools.dynamic.version]
 attr = "scalenx.__version__"
