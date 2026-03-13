@@ -64,7 +64,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '26.2.18.0'
+__version__ = '26.3.10.19'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Development'
@@ -77,8 +77,8 @@ from tkinter import Button, Frame, Label, Menu, Menubutton, OptionMenu, PhotoIma
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 from tkinter.messagebox import showinfo
 
-from pypng.pnglpng import list2png, png2list
-from pypnm.pnmlpnm import list2bin, list2pnm, pnm2list
+from pypng import list2png, png2list
+from pypnm import list2bin, list2pnm, pnm2list
 
 from scalenx import scaleNx  # Configurable ScaleNx as of 2026.2.11.19
 

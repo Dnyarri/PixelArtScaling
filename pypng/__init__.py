@@ -1,12 +1,14 @@
-"""
-Type::
+"""Joint between PyPNG and other programs.
 
-    from pypng import pnglpng
+Usage::
 
-or::
-
-    from pypng.pnglpng import list2png, png2list
-
-to get access to functions.
+    from pypng import list2png, png2list
 
 """
+
+__version__ = '26.3.8.312'
+
+from .pnglpng import list2png, png2list
+
+png2list = png2list
+list2png = list2png

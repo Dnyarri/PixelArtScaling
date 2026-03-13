@@ -59,7 +59,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '26.2.16.16'
+__version__ = '26.3.13.7'   # Пятница 13-е марта Ж-)
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -71,20 +71,20 @@ from time import ctime, time
 from tkinter import Button, Frame, Label, LabelFrame, OptionMenu, StringVar, Tk
 from tkinter.filedialog import askdirectory, askopenfilename, asksaveasfilename
 
-from pypng.pnglpng import list2png, png2list
-from pypnm.pnmlpnm import list2pnm, pnm2list
+from pypng import list2png, png2list
+from pypnm import list2pnm, pnm2list
 
 from scalenx import scaleNx  # Configurable ScaleNx as of 2026.2.12.14
 
 
 def DisMiss(event=None) -> None:
-    """Kill dialog and continue"""
+    """Kill dialog and continue."""
 
     sortir.destroy()
 
 
 def UINormal() -> None:
-    """Normal UI state, buttons enabled"""
+    """Normal UI state, buttons enabled."""
 
     for widget in frame_left.winfo_children():
         if widget.winfo_class() in ('Label', 'Button'):
@@ -97,7 +97,7 @@ def UINormal() -> None:
 
 
 def UIWaiting() -> None:
-    """Waiting UI state, buttons disabled"""
+    """Waiting UI state, buttons disabled."""
 
     for widget in frame_left.winfo_children():
         if widget.winfo_class() in ('Label', 'Button'):
@@ -110,7 +110,7 @@ def UIWaiting() -> None:
 
 
 def UIBusy() -> None:
-    """Busy UI state, buttons disabled"""
+    """Busy UI state, buttons disabled."""
 
     for widget in frame_left.winfo_children():
         if widget.winfo_class() in ('Label', 'Button'):
@@ -412,7 +412,7 @@ def IniFileSave(event=None) -> None:
 
 
 def FormatPrefs() -> None:
-    """Reading file output settings from UI and pushing it into global prefs dict"""
+    """Reading file output settings from UI and pushing it into global prefs dict."""
 
     prefs['single_deflation'] = int(png_single.get())
     prefs['single_binarity'] = False if pnm_single.get() == 'ascii' else True
