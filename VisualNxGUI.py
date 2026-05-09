@@ -10,15 +10,15 @@ Visual GUI ScaleNx shell
 ------------------------
 
 **VisualNxGUI.py** is a visual GUI shell for `ScaleNx`_ module.
-Unlike main GUI shell, ScaleNxGUI.py, it is equipped with preview widget
+Unlike main GUI shell (ScaleNxGUI.py), it is equipped with preview widget
 and allows fast switching between scaling algorithms to compare result,
 and previewing scaling result before saving (or not saving) it.
 
 Beware that "fast switching" may be quite slow for a big image. Also
 remember that generating preview takes additional CPU time and, most important,
-memory; therefore it is **not recommended** to use VisualNxGUI.py
+memory; therefore it is **not recommended** to use *VisualNxGUI.py*
 **for big images**.
-Use ScaleNxGUI.py for big images instead.
+Use *ScaleNxGUI.py* for big images instead.
 
 File formats
 ------------
@@ -35,13 +35,15 @@ History:
 25.11.7.1   Release 7 Nov 2025.
 
 26.1.14.6   Suitable filter execution time display added to info string.
-Result may be copied to clipboard on info string Ctrl+Click.
+Result may be copied to clipboard on info string *Ctrl+Click*.
 
 26.1.20.22  Extended zoom out range for big images.
 
 26.1.26.1   Cleansing and harmonization.
 
 26.2.11.19  Changes to new ScaleNx import structure reduced code length.
+
+26.5.9.9    Internal GUI code changes to facilitate further development.
 
 ----
 Main site: `The Toad's Slimy Mudhole`_
@@ -64,10 +66,10 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '26.3.10.19'
+__version__ = '26.5.9.9'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
-__status__ = 'Development'
+__status__ = 'Production'
 
 from copy import deepcopy
 from pathlib import Path
@@ -129,25 +131,49 @@ def UIBusy() -> None:
     sortir.update()
 
 
-def ShowPreview(preview_name: PhotoImage, caption: str) -> None:
-    """Show preview_name PhotoImage with caption below."""
+def UIFit() -> None:
+    """Readopting 'sortir.minsize' to fit the screen."""
+
+    sortir.update()
+    fit_width = min(sortir.winfo_reqwidth(), 9 * sortir.winfo_screenwidth() // 10)
+    fit_height = min(sortir.winfo_reqheight(), 9 * sortir.winfo_screenheight() // 10)
+    sortir.minsize(fit_width, fit_height)
+
+
+def ShowPreview(preview_choice: PhotoImage, caption: str) -> None:
+    """Show 'preview_choice' PhotoImage, trying to fit 'zanyato' to screen."""
 
     global zoom_factor, preview
 
-    preview = preview_name
+    preview = preview_choice
 
     if zoom_factor > 0:
         preview = preview.zoom(zoom_factor + 1)
-        label_zoom['text'] = f'Zoom {zoom_factor + 1}:1'
+        label_zoom['text'] = f'{caption} {zoom_factor + 1}:1'
     elif zoom_factor < 0:
         preview = preview.subsample(1 - zoom_factor)
-        label_zoom['text'] = f'Zoom 1:{1 - zoom_factor}'
+        label_zoom['text'] = f'{caption} 1:{1 - zoom_factor}'
     else:
-        preview = preview_name
-        label_zoom['text'] = 'Zoom 1:1'
-
-    zanyato.config(text=caption, font=('helvetica', 8), image=preview, compound='top', padx=0, pady=0, justify='center', background=zanyato.master['background'], relief='flat', borderwidth=1, state='normal')
-    zanyato.pack_configure(pady=max(0, 16 - (preview.height() // 2)))
+        label_zoom['text'] = f'{caption} 1:1'
+    zanyato.config(
+        image=preview,
+        # ↓ In this version "caption" will not be shown in "zanyato"
+        #   but rather sent to "label_zoom".
+        text=caption,
+        font=('helvetica', 8),
+        compound='none',
+        padx=0,
+        pady=0,
+        justify='center',
+        background=zanyato.master['background'],
+        relief='flat',
+        borderwidth=1,
+        state='normal',
+        # ↓ Fitting "zanyato" into screen. With image added,
+        #   Label width and height start working in pixels.
+        width=min(preview.width(), 9 * sortir.winfo_screenwidth() // 10),
+        height=min(preview.height(), (8 * sortir.winfo_screenheight() // 10) - frame_top.winfo_height() - info_string.winfo_height() - frame_zoom.winfo_height()),
+    )
 
 
 def GetSource(event=None) -> None:
@@ -163,7 +189,14 @@ def GetSource(event=None) -> None:
     # ↓ Temporary saving info in case of "Open.." cancel
     old_sourcefilename = sourcefilename
     # ↓ Opening "Open.." dialog
-    sourcefilename = askopenfilename(title='Open image file', filetypes=[('Supported formats', '.png .ppm .pgm .pbm .pnm'), ('Portable network graphics', '.png'), ('Portable any map', '.ppm .pgm .pbm .pnm')])
+    sourcefilename = askopenfilename(
+        title='Open image file to rescale',
+        filetypes=[
+            ('Supported formats', '.png .ppm .pgm .pbm .pnm'),
+            ('Portable network graphics', '.png'),
+            ('Portable any map', '.ppm .pgm .pbm .pnm'),
+        ],
+    )
     if sourcefilename == '':
         sourcefilename = old_sourcefilename
         return
@@ -189,10 +222,8 @@ def GetSource(event=None) -> None:
         raise ValueError('Extension not recognized')
     timing = time() - start
 
-    """ ┌────────────────────────────────────────────┐
-        │ Creating deep copy of source 3D list       │
-        │ to avoid accumulating repetitive filtering │
-        └────────────────────────────────────────────┘ """
+    # ↓ Creating deep copy of source 3D list
+    #   to avoid accumulating repetitive filtering.
     result_image = deepcopy(source_image)
 
     """ ┌───────────────┐
@@ -205,10 +236,8 @@ def GetSource(event=None) -> None:
     # ↓ Finally the show part
     ShowPreview(preview, 'Source')
 
-    """ ┌─────────────────────────────────────────────┐
-        │ Creating copy of source preview for further │
-        │ switch between source and result            │
-        └─────────────────────────────────────────────┘ """
+    # ↓ Creating copy of source preview for further
+    #   fast switch between source and result.
     preview_src = preview_filtered = preview
 
     # ↓ Attempt to zoom to fit. Singe zoomOut() must fit for a reasonable image size.
@@ -253,8 +282,8 @@ def GetSource(event=None) -> None:
     sortir.title(f'{product_name}: {Path(sourcefilename).name}{color_mode_str}{"*" if is_filtered else ""}')
     info_normal = {'txt': f'{Path(sourcefilename).name}{"*" if is_filtered else ""} X={X} Y={Y} Z={Z} maxcolors={maxcolors}', 'fg': 'grey', 'bg': 'grey90'}
     UINormal()
-    # ↓ Center window horizontally, +32 vertically
-    sortir.geometry(f'+{(sortir.winfo_screenwidth() - sortir.winfo_width()) // 2}+32')
+    UIFit()
+    sortir.geometry(f'+{(sortir.winfo_screenwidth() - sortir.winfo_width()) // 2}+64')
 
 
 def RunFilter(event=None) -> None:
@@ -293,9 +322,12 @@ def RunFilter(event=None) -> None:
         start = time()
         result_image = scaleNx(source_image, n=n, sfx=sfx)
         timing = time() - start
-        if 'physical' in info:
+        if 'physical' in info:  # Fixing resolution to match original print size
             x_pixels_per_unit, y_pixels_per_unit, unit_is_meter = info['physical']
-            info['physical'] = [n * x_pixels_per_unit, n * y_pixels_per_unit, unit_is_meter]
+        else:  # Assume 3780 px/meter (96 px/inch) as original
+            x_pixels_per_unit = y_pixels_per_unit = 3780
+            unit_is_meter = True
+        info['physical'] = [n * x_pixels_per_unit, n * y_pixels_per_unit, unit_is_meter]
 
     Y, X, Z = (len(source_image), len(source_image[0]), len(source_image[0][0]))
     YNEW, XNEW = (len(result_image), len(result_image[0]))
@@ -316,11 +348,9 @@ def RunFilter(event=None) -> None:
         ShowPreview(preview_filtered, 'Result')
 
         # ↓ binding switch on preview click
-        zanyato.bind('<Button-1>', SwitchView)  # left click
+        zanyato.bind('<Button-1>', SwitchView)
+        zanyato.bind('<ButtonRelease-1>', SwitchView)
         zanyato.bind('<space>', SwitchView)  # # "Space" key. May be worth binding whole sortir?
-
-        # ↓ Center window horizontally, +32 vertically
-        sortir.geometry(f'+{(sortir.winfo_screenwidth() - sortir.winfo_width()) // 2}+32')
 
     else:
         is_filtered = False
@@ -359,6 +389,8 @@ def zoomIn(event=None) -> None:
         butt_plus.config(state='disabled', cursor='arrow')
     else:
         butt_plus.config(state='normal', cursor='hand2')
+    UIFit()
+    sortir.update()
 
 
 def zoomOut(event=None) -> None:
@@ -378,6 +410,8 @@ def zoomOut(event=None) -> None:
         butt_minus.config(state='disabled', cursor='arrow')
     else:
         butt_minus.config(state='normal', cursor='hand2')
+    UIFit()
+    sortir.update()
 
 
 def zoomOne(event=None) -> None:
@@ -394,6 +428,8 @@ def zoomOne(event=None) -> None:
     # ↓ reenabling +/- buttons
     butt_plus.config(state='normal', cursor='hand2')
     butt_minus.config(state='normal', cursor='hand2')
+    UIFit()
+    sortir.update()
 
 
 def zoomWheel(event) -> None:
@@ -486,24 +522,40 @@ def SaveAs(event=None) -> None:
     src_extension = Path(sourcefilename).suffix.lower()
     if Z == 1:
         if src_extension in ('.pgm', '.pnm'):
-            format_list = [('Portable grey map', '.pgm'), ('Portable network graphics', '.png')]
-            proposed_name = Path(sourcefilename).stem + '.pgm'
+            format_list = [
+                ('Portable grey map', '.pgm'),
+                ('Portable network graphics', '.png'),
+            ]
+            proposed_name = f'{Path(sourcefilename).stem}_{method_str.get().replace("Scale", "")}.pgm'
         else:
-            format_list = [('Portable network graphics', '.png'), ('Portable grey map', '.pgm')]
-            proposed_name = Path(sourcefilename).stem + '.png'
+            format_list = [
+                ('Portable network graphics', '.png'),
+                ('Portable grey map', '.pgm'),
+            ]
+            proposed_name = f'{Path(sourcefilename).stem}_{method_str.get().replace("Scale", "")}.png'
     elif Z == 2:
-        format_list = [('Portable network graphics', '.png')]
-        proposed_name = Path(sourcefilename).stem + '.png'
+        format_list = [
+            ('Portable network graphics', '.png'),
+        ]
+        proposed_name = f'{Path(sourcefilename).stem}_{method_str.get().replace("Scale", "")}.png'
     elif Z == 3:
         if src_extension in ('.ppm', '.pnm'):
-            format_list = [('Portable pixel map', '.ppm'), ('Portable network graphics', '.png')]
-            proposed_name = Path(sourcefilename).stem + '.ppm'
+            format_list = [
+                ('Portable pixel map', '.ppm'),
+                ('Portable network graphics', '.png'),
+            ]
+            f'{Path(sourcefilename).stem}_{method_str.get().replace("Scale", "")}.ppm'
         else:
-            format_list = [('Portable network graphics', '.png'), ('Portable pixel map', '.ppm')]
-            proposed_name = Path(sourcefilename).stem + '.png'
+            format_list = [
+                ('Portable network graphics', '.png'),
+                ('Portable pixel map', '.ppm'),
+            ]
+            proposed_name = f'{Path(sourcefilename).stem}_{method_str.get().replace("Scale", "")}.png'
     else:
-        format_list = [('Portable network graphics', '.png')]
-        proposed_name = Path(sourcefilename).stem + '.png'
+        format_list = [
+            ('Portable network graphics', '.png'),
+        ]
+        proposed_name = f'{Path(sourcefilename).stem}_{method_str.get().replace("Scale", "")}.png'
 
     # ↓ Open export file
     resultfilename = asksaveasfilename(
@@ -560,7 +612,14 @@ info_normal = {'txt': f'{product_name} {__version__}', 'fg': 'grey', 'bg': 'grey
 info_busy = {'txt': 'BUSY, PLEASE WAIT', 'fg': 'red', 'bg': 'yellow'}
 color_mode_str = ' '
 # ↓ Info string
-info_string = Label(sortir, text=info_normal['txt'], font=('courier', 7), foreground=info_normal['fg'], background=info_normal['bg'], relief='groove')
+info_string = Label(
+    sortir,
+    text=info_normal['txt'],
+    font=('courier', 7),
+    foreground=info_normal['fg'],
+    background=info_normal['bg'],
+    relief='groove',
+)
 info_string.pack(side='bottom', padx=0, pady=(2, 0), fill='both')
 
 frame_top = Frame(sortir, borderwidth=2, relief='groove')
@@ -666,11 +725,11 @@ sortir.bind_all('<Alt-f>', ShowMenu)
 sortir.bind_all('<Control-o>', GetSource)
 sortir.bind_all('<Control-q>', DisMiss)
 
-# ↓ Center window horizontally, +32 vertically
+# ↓ Center window horizontally, +64 vertically
 sortir.update()
 # print(sortir.winfo_width(), sortir.winfo_height())
 sortir.minsize(frame_top.winfo_width(), sortir.winfo_height())
 sortir.maxsize(9 * sortir.winfo_screenwidth() // 10, 9 * sortir.winfo_screenheight() // 10)
-sortir.geometry(f'+{(sortir.winfo_screenwidth() - sortir.winfo_width()) // 2}+32')
+sortir.geometry(f'+{(sortir.winfo_screenwidth() - sortir.winfo_width()) // 2}+64')
 
 sortir.mainloop()
