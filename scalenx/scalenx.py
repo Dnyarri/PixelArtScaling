@@ -64,10 +64,12 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024-2026 Ilya Razmanov'
 __credits__ = ['Andrea Mazzoleni', 'Ilya Razmanov']
 __license__ = 'unlicense'
-__version__ = '2026.2.12.34'
+__version__ = '2026.6.12.34'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
+
+from functools import lru_cache
 
 """ ╔════════════════════════════════════════════╗
     ║ Scaling image nested list to 2x image list ║
@@ -91,7 +93,7 @@ def scale2x(image3d):
     # ↓ determining source image size from list
     Y, X = (len(image3d), len(image3d[0]))
 
-    # starting new image list
+    # ↓ starting new image list
     scaled_image = []
 
     def _dva(A, B, C, D, E):
@@ -186,7 +188,7 @@ def scale3x(image3d):
     # ↓ determining source image size from list
     Y, X = (len(image3d), len(image3d[0]))
 
-    # starting new image list
+    # ↓ starting new image list
     scaled_image = []
 
     def _tri(A, B, C, D, E, F, G, H, I):
@@ -213,6 +215,9 @@ def scale3x(image3d):
             if H == F:
                 r9 = F
         return r1, r2, r3, r4, r5, r6, r7, r8, r9
+
+    if type(image3d[0][0]) is tuple:
+        _tri = lru_cache(maxsize=512)(_tri)
 
     """ Source around default pixel E
         ┌───┬───┬───┐
@@ -278,7 +283,11 @@ def scale3x(image3d):
         scaled_image.append(row_dvo)
         scaled_image.append(row_tre)
 
+    '''if type(image3d[0][0]) is tuple:
+        print(_tri.cache_info())'''
+
     return scaled_image  # rescaling three times finished
+
 
 # Dummy stub for standalone execution attempt
 if __name__ == '__main__':
@@ -286,4 +295,5 @@ if __name__ == '__main__':
     need_help = input('Would you like to read some help (y/n)?')
     if need_help.startswith(('y', 'Y')):
         import scalenx
+
         help(scalenx)

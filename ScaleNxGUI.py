@@ -58,7 +58,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '26.3.13.34'  # Пятница 13 марта Ж-)
+__version__ = '26.6.12.34'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -135,7 +135,11 @@ def FileNx(size, sfx):
     # ↓ Getting prefs from UI
     FormatPrefs()
     # ↓ Open source file
-    sourcefilename = askopenfilename(title='Open image file to rescale', initialdir=prefs['mru'], filetypes=[('Supported formats', '.png .ppm .pgm .pbm'), ('Portable network graphics', '.png'), ('Portable network map', '.ppm .pgm .pbm')])
+    sourcefilename = askopenfilename(
+        title='Open image file to Scale{}x{}'.format(size, 'SFX' if sfx else ''),
+        initialdir=prefs['mru'],
+        filetypes=[('Supported formats', '.png .ppm .pgm .pbm'), ('Portable network graphics', '.png'), ('Portable network map', '.ppm .pgm .pbm')],
+    )
     if sourcefilename == '':
         UINormal()
         return None
@@ -144,11 +148,11 @@ def FileNx(size, sfx):
 
     if (os.path.splitext(sourcefilename)[1]).lower() == '.png':
         # ↓ Reading image as list
-        X, Y, Z, maxcolors, image3d, info = png2list(sourcefilename)
+        X, Y, Z, maxcolors, image3d, info = png2list(sourcefilename, tuplevel='image')
 
     elif (os.path.splitext(sourcefilename)[1]).lower() in ('.ppm', '.pgm', '.pbm'):
         # ↓ Reading image as list
-        X, Y, Z, maxcolors, image3d = pnm2list(sourcefilename)
+        X, Y, Z, maxcolors, image3d = pnm2list(sourcefilename, tuplevel='image')
         # ↓ Creating dummy info for PyPNG
         info = {}
         # ↓ Fixing color mode. The rest is fixed with pnglpng since ver. 25.01.07.
@@ -180,20 +184,20 @@ def FileNx(size, sfx):
     if Z == 1:
         if src_extension in ('.pgm', '.pbm', '.pnm'):
             format = [('Portable grey map', '.pgm'), ('Portable network graphics', '.png')]
-            proposed_name = os.path.splitext(sourcefilename)[0] + '_{}x.pgm'.format(size)
+            proposed_name = os.path.splitext(sourcefilename)[0] + '_{}x{}.pgm'.format(size, 'SFX' if sfx else '')
         else:
             format = [('Portable network graphics', '.png'), ('Portable grey map', '.pgm')]
-            proposed_name = os.path.splitext(sourcefilename)[0] + '_{}x.png'.format(size)
+            proposed_name = os.path.splitext(sourcefilename)[0] + '_{}x{}.png'.format(size, 'SFX' if sfx else '')
     elif Z == 3:
         if src_extension in ('.ppm', '.pnm'):
             format = [('Portable pixel map', '.ppm'), ('Portable network graphics', '.png')]
-            proposed_name = os.path.splitext(sourcefilename)[0] + '_{}x.ppm'.format(size)
+            proposed_name = os.path.splitext(sourcefilename)[0] + '_{}x{}.ppm'.format(size, 'SFX' if sfx else '')
         else:
             format = [('Portable network graphics', '.png'), ('Portable pixel map', '.ppm')]
-            proposed_name = os.path.splitext(sourcefilename)[0] + '_{}x.png'.format(size)
+            proposed_name = os.path.splitext(sourcefilename)[0] + '_{}x{}.png'.format(size, 'SFX' if sfx else '')
     else:
         format = [('Portable network graphics', '.png')]
-        proposed_name = os.path.splitext(sourcefilename)[0] + '_{}x.png'.format(size)
+        proposed_name = os.path.splitext(sourcefilename)[0] + '_{}x{}.png'.format(size, 'SFX' if sfx else '')
 
     UIWaiting()
 
@@ -232,7 +236,7 @@ def scale_file_png(runningfilename, size, sfx, compression):
     newfile = oldfile  # Previous version used backup newfile = oldfile + '.2x.png'
 
     # ↓ Reading image as list
-    X, Y, Z, maxcolors, image3d, info = png2list(oldfile)
+    X, Y, Z, maxcolors, image3d, info = png2list(oldfile, tuplevel='image')
 
     # ↓ Scaling image
     scaled_image = scaleNx(image3d, size, sfx)
@@ -270,7 +274,7 @@ def scale_file_pnm(runningfilename, size, sfx, bin):
     newfile = oldfile  # Overwrite!
 
     # ↓ Reading image as list
-    X, Y, Z, maxcolors, image3d = pnm2list(oldfile)
+    X, Y, Z, maxcolors, image3d = pnm2list(oldfile, tuplevel='image')
 
     # ↓ Scaling image
     scaled_image = scaleNx(image3d, size, sfx)
@@ -301,7 +305,7 @@ def FolderNx(size, sfx):
     # ↓ Getting prefs from UI
     FormatPrefs()
     # ↓ Open source dir
-    sourcedir = askdirectory(title='Open folder to rescale images', initialdir=prefs['mru'])
+    sourcedir = askdirectory(title='Open folder to Scale{}x{} images'.format(size, 'SFX' if sfx else ''), initialdir=prefs['mru'])
     if sourcedir == '':
         UINormal()
         return None

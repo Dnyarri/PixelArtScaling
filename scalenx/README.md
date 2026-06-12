@@ -24,9 +24,11 @@ Being initially created for tiny game sprite images, these algorithms appeared t
 
 Unfortunately, while specialised Scale2x and Scale3x screen renderers (*e.g.* scalers for DOS emulators) are numerous, it appears to be next to impossible to find ready-made batch processing application working with arbitrary images in common graphics formats.
 
-Therefore, due to severe demand for general purpose ScaleNx library, and apparent lack thereof, current general purpose pure Python implementation of algorithms above was developed. Current implementation does not use any import, neither Python standard nor third party, and therefore is quite cross-platform and next to omnicompatible.
+Therefore, due to severe demand for general purpose ScaleNx library, and apparent lack thereof, current general purpose pure Python implementation of algorithms above was developed. Current implementation does not use any third party import, and therefore is quite cross-platform and next to omnicompatible.
 
-Note that current PyPI-distributed package is intended for developers, and therefore include ScaleNx core module only. For example of practical Python program utilizing this module, with Tkinter GUI, multiprocessing *etc.*, please visit [ScaleNx at Github](https://github.com/Dnyarri/PixelArtScaling) (PNG support in this program is based on [PyPNG](https://gitlab.com/drj11/pypng), and PPM and PGM support - on [PyPNM](https://pypi.org/project/PyPNM/), both of the above being pure Python modules with excellent backward compatibility as well).
+Note that current PyPI-distributed package is intended for developers, and therefore include ScaleNx core module only.
+
+For example of practical complete Python program for single and batch image rescaling, based on ScaleNx module, with Tkinter GUI, multiprocessing *etc.*, please visit [ScaleNx at Github](https://github.com/Dnyarri/PixelArtScaling). PNG support in this program is based on [PyPNG](https://gitlab.com/drj11/pypng), and PPM and PGM support - on [PyPNM](https://pypi.org/project/PyPNM/); both of the above are pure Python modules with good backward compatibility, which makes whole program rather cross-platform.
 
 ## Python compatibility
 

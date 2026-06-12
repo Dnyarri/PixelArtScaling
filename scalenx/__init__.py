@@ -118,13 +118,12 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '2026.2.12.34.post1'
+__version__ = '2026.6.12.34'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
 
-from .scalenx import scale2x
-from .scalenx import scale3x
+from .scalenx import scale2x, scale3x
 from .scalenxsfx import scale2x as scale2xsfx
 from .scalenxsfx import scale3x as scale3xsfx
 

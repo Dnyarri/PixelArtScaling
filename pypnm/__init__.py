@@ -25,7 +25,7 @@ or::
 
     from pypnm import list2bin, list2pnm, pnm2list
 
-legacy import, still operational but considered mauvais ton::
+legacy import, still fully operational but considered *mauvais ton*::
 
     from pypnm import pnmlpnm
 
@@ -96,7 +96,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '2.26.26.34'
+__version__ = '2.30.12.34'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
