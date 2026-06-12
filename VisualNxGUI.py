@@ -15,9 +15,10 @@ and allows fast switching between scaling algorithms to compare result,
 and previewing scaling result before saving (or not saving) it.
 
 Beware that "fast switching" may be quite slow for a big image. Also
-remember that generating preview takes additional CPU time and, most important,
-memory; therefore it is **not recommended** to use *VisualNxGUI.py*
-**for big images**.
+remember that generating preview takes additional CPU time and,
+most important, memory; therefore it is **not recommended**
+to use *VisualNxGUI.py* for **big images**.
+
 Use *ScaleNxGUI.py* for big images instead.
 
 File formats
@@ -47,6 +48,8 @@ Result may be copied to clipboard on info string *Ctrl+Click*.
 
 26.5.26.9   Introducing draggable canvas (somewhat jaggy).
 
+26.6.12.6   Works with updated optimized modules.
+
 ----
 Main site: `The Toad's Slimy Mudhole`_
 
@@ -68,7 +71,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '26.5.26.5'
+__version__ = '26.6.12.6'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -246,11 +249,11 @@ def GetSource(event=None) -> None:
     start = time()
     if Path(sourcefilename).suffix.lower() == '.png':
         # ↓ Reading PNG image as list
-        X, Y, Z, maxcolors, source_image, info = png2list(sourcefilename)
+        X, Y, Z, maxcolors, source_image, info = png2list(sourcefilename, tuplevel='image')
 
     elif Path(sourcefilename).suffix.lower() in ('.ppm', '.pgm', '.pbm', '.pnm'):
         # ↓ Reading PNM image as list
-        X, Y, Z, maxcolors, source_image = pnm2list(sourcefilename)
+        X, Y, Z, maxcolors, source_image = pnm2list(sourcefilename, tuplevel='image')
         # ↓ Creating dummy info required to correctly Save As PNG later.
         #   Fixing color mode, the rest is fixed with pnglpng v. 25.01.07.
         info = {'bitdepth': 16} if maxcolors > 255 else {'bitdepth': 8}
@@ -728,7 +731,7 @@ canvas.pack()
 
 zanyato = Label(
     canvas,
-    text='Preview area.\n  Double click to open image,\n  Right click or Alt+F for a menu.\nWith image opened,\n  Ctrl+Click to zoom in,\n  Alt+Click to zoom out,\n  Enter to filter.\nWhen filtered, click or Space bar\nto switch source/result.',
+    text='Preview area.\n  Double click to open image,\n  Right click or Alt+F for a menu.\nWith image opened,\n  Ctrl+Click to zoom in,\n  Alt+Click to zoom out,\n  Mouse wheel to zoom,\n  Enter to filter.\nWhen filtered, use Space bar\n  to switch source/result.',
     font=('helvetica', 12),
     justify='left',
     padx=24,

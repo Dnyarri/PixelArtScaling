@@ -40,6 +40,8 @@ added to GUI; preferences may be saved/loaded to/from file.
 
 26.05.09.09 Internal GUI code changes to facilitate further development.
 
+26.6.12.6   Works with updated optimized modules.
+
 ----
 Main site: `The Toad's Slimy Mudhole`_
 
@@ -61,7 +63,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '26.5.9.9'
+__version__ = '26.6.12.6'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -153,11 +155,11 @@ def FileNx(size: int, sfx: bool) -> None:
 
     if Path(sourcefilename).suffix.lower() == '.png':
         # ↓ Reading image as list
-        X, Y, Z, maxcolors, image3d, info = png2list(sourcefilename)
+        X, Y, Z, maxcolors, image3d, info = png2list(sourcefilename, tuplevel='image')
 
     elif Path(sourcefilename).suffix.lower() in ('.ppm', '.pgm', '.pbm'):
         # ↓ Reading image as list
-        X, Y, Z, maxcolors, image3d = pnm2list(sourcefilename)
+        X, Y, Z, maxcolors, image3d = pnm2list(sourcefilename, tuplevel='image')
         # ↓ Creating dummy info for PyPNG
         info = {}
         # ↓ Fixing color mode. The rest is fixed with pnglpng since ver. 25.01.07.
@@ -189,26 +191,26 @@ def FileNx(size: int, sfx: bool) -> None:
     if Z == 1:
         if src_extension in ('.pgm', '.pbm', '.pnm'):
             format = [('Portable grey map', '.pgm'), ('Portable network graphics', '.png')]
-            proposed_name = f'{Path(sourcefilename).stem}_{size}x.pgm'
+            proposed_name = f'{Path(sourcefilename).stem}_{size}x{"SFX" if sfx else ""}.pgm'
         else:
             format = [('Portable network graphics', '.png'), ('Portable grey map', '.pgm')]
-            proposed_name = f'{Path(sourcefilename).stem}_{size}x.png'
+            proposed_name = f'{Path(sourcefilename).stem}_{size}x{"SFX" if sfx else ""}.png'
     elif Z == 3:
         if src_extension in ('.ppm', '.pnm'):
             format = [('Portable pixel map', '.ppm'), ('Portable network graphics', '.png')]
-            proposed_name = f'{Path(sourcefilename).stem}_{size}x.pgm'
+            proposed_name = f'{Path(sourcefilename).stem}_{size}x{"SFX" if sfx else ""}.pgm'
         else:
             format = [('Portable network graphics', '.png'), ('Portable pixel map', '.ppm')]
-            proposed_name = f'{Path(sourcefilename).stem}_{size}x.png'
+            proposed_name = f'{Path(sourcefilename).stem}_{size}x{"SFX" if sfx else ""}.png'
     else:
         format = [('Portable network graphics', '.png')]
-        proposed_name = f'{Path(sourcefilename).stem}_{size}x.png'
+        proposed_name = f'{Path(sourcefilename).stem}_{size}x{"SFX" if sfx else ""}.png'
 
     UIWaiting()
 
     # ↓ Open export file
     resultfilename = asksaveasfilename(
-        title=f'Save {size}x image file',
+        title=f'Save {size}x{"SFX" if sfx else ""}-ed image file',
         filetypes=format,
         defaultextension='.png',  # No extension should never happen but just in case
         initialdir=Path(sourcefilename).parent,
@@ -241,7 +243,7 @@ def scale_file_png(runningfilename: Path, size: int, sfx: bool, compression: int
     newfile = oldfile  # Previous version used backup newfile = oldfile + '.2x.png'
 
     # ↓ Reading image as list
-    X, Y, Z, maxcolors, image3d, info = png2list(oldfile)
+    X, Y, Z, maxcolors, image3d, info = png2list(oldfile, tuplevel='image')
 
     # ↓ Scaling image
     scaled_image = scaleNx(image3d, size, sfx)
@@ -279,7 +281,7 @@ def scale_file_pnm(runningfilename: Path, size: int, sfx: bool, bin: bool = True
     newfile = oldfile  # Overwrite!
 
     # ↓ Reading image as list
-    X, Y, Z, maxcolors, image3d = pnm2list(oldfile)
+    X, Y, Z, maxcolors, image3d = pnm2list(oldfile, tuplevel='image')
 
     # ↓ Scaling image
     scaled_image = scaleNx(image3d, size, sfx)

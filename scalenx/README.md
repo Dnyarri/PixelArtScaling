@@ -24,13 +24,13 @@ Unfortunately, while specialised Scale2x and Scale3x screen renderers (*e.g.* sc
 
 Therefore, due to severe demand for general purpose ScaleNx library, and apparent lack thereof, current general purpose pure Python implementation of algorithms above was developed. Current implementation does not use any import, neither Python standard nor third party, and therefore is quite cross-platform and next to omnicompatible.
 
-Note that current wheel package is intended for developers, and therefore include ScaleNx core module only. For example of practical Python program utilizing this module, with Tkinter GUI, multiprocessing *etc.*, please visit [ScaleNx at Github](https://github.com/Dnyarri/PixelArtScaling) (PNG support in this program is based on [PyPNG](https://gitlab.com/drj11/pypng), and PPM and PGM support - on [PyPNM](https://pypi.org/project/PyPNM/), both of the above being pure Python modules with excellent backward compatibility as well).
+Note that current wheel package is intended for developers, and therefore include ScaleNx core module only. For example of practical Python program utilizing this module, with Tkinter GUI, multiprocessing *etc.*, please visit [ScaleNx at Github](https://github.com/Dnyarri/PixelArtScaling) (PNG support in this program is based on [PyPNG](https://gitlab.com/drj11/pypng "Pure Python module for reading and writing PNG image files"), and PPM and PGM support - on [PyPNM](https://pypi.org/project/PyPNM/  "Pure Python module for reading, displaying and writing PPM and PGM image files"), both of the above being pure Python modules with excellent backward compatibility as well).
 
 ## Python compatibility
 
 Current distribution is **ScaleNx main branch** build, proven to work with Python 3.10 and above.
 
-For a Python 3.4 compatible version, please refer to [ScaleNx for Python 3.4 branch](https://github.com/Dnyarri/PixelArtScaling/tree/py34).
+For a Python 3.4 compatible version, please refer to [ScaleNx for Python 3.4 branch](https://github.com/Dnyarri/PixelArtScaling/tree/py34 "ScaleNx for Python 3.4 and above").
 
 ## Installation
 
@@ -65,18 +65,18 @@ therefore no changes required for programs written using older (2024-2025) versi
 
 ## Copyright and redistribution
 
-Current Python implementation was written by [Ilya Razmanov](https://dnyarri.github.io/) and may be freely used, copied and improved. In case of making substantial improvements it's almost obligatory to share your work with the developer and lesser species.
+Current Python implementation was written by [Ilya Razmanov](https://dnyarri.github.io/ "The Toad's Slimy Mudhole - more Python freeware for image processing, POV-Ray and other 3D, and batch automation") and may be freely used, copied and improved. In case of making substantial improvements it's almost obligatory to share your work with the developer and lesser species.
 
 ## References
 
-1. [Scale2x and Scale3x algorithms description](https://www.scale2x.it/algorithm) by the inventor, Andrea Mazzoleni.
+1. [Scale2x and Scale3x algorithms description](https://www.scale2x.it/algorithm "Scale2x and Scale3x algorithms description by the inventor") by the inventor, Andrea Mazzoleni.
 
-2. [Scale2xSFX and Scale3xSFX algorithms description](https://web.archive.org/web/20160527015550/https://libretro.com/forums/archive/index.php?t-1655.html) at dead forum article, archived copy.
+2. [Scale2xSFX and Scale3xSFX algorithms description](https://web.archive.org/web/20160527015550/https://libretro.com/forums/archive/index.php?t-1655.html "Original Scale2xSFX and Scale3xSFX algorithms description") at dead forum article, archived copy.
 
-3. [Pixel-art scaling algorithms review](https://en.wikipedia.org/wiki/Pixel-art_scaling_algorithms) at Wikipedia.
+3. [Pixel-art scaling algorithms review](https://en.wikipedia.org/wiki/Pixel-art_scaling_algorithms "Pixel-art scaling algorithms review at Wikipedia") at Wikipedia.
 
-4. [Current ScaleNx implementation main page](https://dnyarri.github.io/scalenx.html) with some explanations and illustration.
+4. [Current ScaleNx implementation main page](https://dnyarri.github.io/scalenx.html  "ScaleNx described and illustrated") with some explanations and illustration.
 
-5. [ScaleNx source code at Github](https://github.com/Dnyarri/PixelArtScaling/) - current ScaleNx source at Github, containing main program for single and batch image processing, with GUI, multiprocessing *etc.*.
+5. [ScaleNx source code at Github](https://github.com/Dnyarri/PixelArtScaling/ "ScaleNx for Python 3.10 and above") - current ScaleNx source at Github, containing main program for single and batch image processing, with GUI, multiprocessing *etc.*.
 
-6. [ScaleNx source code for Python 3.4 at Github](https://github.com/Dnyarri/PixelArtScaling/tree/py34) - same as above, but fully compatible with Python 3.4 (both ScaleNx and image formats I/O and main application).
+6. [ScaleNx source code for Python 3.4 at Github](https://github.com/Dnyarri/PixelArtScaling/tree/py34 "ScaleNx for Python 3.4 and above") - same as above, but fully compatible with Python 3.4 (both ScaleNx and image formats I/O and main application).

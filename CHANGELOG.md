@@ -1,23 +1,24 @@
 # ScaleNx
 
-[ScaleNx](https://dnyarri.github.io/scalenx.html) is a pure Python module for pixel image rescaling using Scale2x, Scale3x, Scale2xSFX and Scale3xSFX algorithms.
+[ScaleNx](https://dnyarri.github.io/scalenx.html "Pure Python implementation of ScaleNx and ScaleNxSFX") is a pure Python module for pixel image rescaling using Scale2x, Scale3x, Scale2xSFX and Scale3xSFX algorithms.
 
 Current changelog is related to ScaleNx module, not the main GUI shell. Main GUI shell gets updated more frequently and without notice.
 
 ## Version
 
-Current changelog is related to [ScaleNx main branch for Python >= 3.10](https://github.com/Dnyarri/PixelArtScaling). For extended compatibility version see [ScaleNx py34 branch for Python >= 3.4](https://github.com/Dnyarri/PixelArtScaling/tree/py34).
+Current changelog is related to [ScaleNx **main** branch for Python >= 3.10](https://github.com/Dnyarri/PixelArtScaling "ScaleNx for Python >= 3.10"). For extended compatibility version see [ScaleNx **py34** branch for Python >= 3.4](https://github.com/Dnyarri/PixelArtScaling/tree/py34 "ScaleNx for Python >= 3.4").
 
 ## Downloads
 
-1. [ScaleNx main branch for Python >= 3.10](https://github.com/Dnyarri/PixelArtScaling)
-2. [ScaleNx py34 branch for Python >= 3.4](https://github.com/Dnyarri/PixelArtScaling/tree/py34)
-3. [ScaleNx py34 at PyPI](https://pypi.org/project/ScaleNx/)
+1. [ScaleNx **main** branch for Python >= 3.10](https://github.com/Dnyarri/PixelArtScaling "ScaleNx for Python >= 3.10")
+2. [ScaleNx **py34** branch for Python >= 3.4](https://github.com/Dnyarri/PixelArtScaling/tree/py34 "ScaleNx for Python >= 3.4")
+3. [ScaleNx **py34** at PyPI](https://pypi.org/project/ScaleNx/ "ScaleNx for Python >= 3.4 at PyPI")
 
 ## History
 
 | Version | Changes |
 | :--- | :--- |
+| 2026.06.12.6 | Attempts made to use `lru_cache` to increase conditional trees speed for big size low color images. Testing performed on 1 bpc text images, A4 size, 75-150 ppi range. According to test results, `lru_cache` is inefficient for Scale2x and Scale2xSFX, and gives speed gain *ca.* 4% (up to 6.4%) for Scale3x, and *ca.* 17% (up to 18.5%) for Scale3xSFX. Cache `maxsize` impact was also investigated using some actual images corpus. For Scale3x, cache size rarely exceeded 400; for Scale3xSFX it tended to exceed 2000 but speed impact of increasing cache size over 1024 appeared to be statistically insignificant, if any. Based on the results above, decision was made to leave 2x methods uncached, and use `lru_cache(maxsize=512)` for Scale3x, and `lru_cache(maxsize=1024)` for Scale3xSFX. Note that for `lru_cache` to work pixels must be tuple[int], as provided by newest [PyPNM](https://dnyarri.github.io/pypnm.html "Pure Python module for reading, displaying and writing PPM and PGM image files") version. |
 | 2026.02.16.16 | Module export/import generalized to simplify usage; main programs modified to illustrate new import scheme. |
 | 2025.11.15.01 | Some module restructure, more helpful docstrings. |
 | 2025.09.25.09 | Code improvements, mostly academic. Expected speed increase below limit of detection. |
