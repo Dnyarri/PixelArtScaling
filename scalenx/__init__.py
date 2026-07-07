@@ -118,10 +118,11 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '2026.6.12.34'
+__version__ = '2026.6.12.34.post1'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
+__all__ = ['scaleNx']
 
 from .scalenx import scale2x, scale3x
 from .scalenxsfx import scale2x as scale2xsfx
@@ -139,7 +140,7 @@ def scaleNx(source_image, n, sfx):
     :param int n: ``2`` or ``3``, choice between Scale2* and Scale3* methods;
     :param bool sfx: choice between ScaleNx and ScaleNxSFX methods.
     :raises ValueError: Attempt to use nonexistent method ``n``.
-    :return: rescaled image os the same type as ``source_image``.
+    :return: rescaled image of the same type as ``source_image``.
     :rtype: list[list[list[int]]]
 
     """

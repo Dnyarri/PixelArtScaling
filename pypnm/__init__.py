@@ -100,6 +100,7 @@ __version__ = '2.30.12.34'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
+__all__ = ['list2bin', 'list2pnm', 'pnm2list']
 
 from .pnmlpnm import list2bin, list2pnm, pnm2list
 
