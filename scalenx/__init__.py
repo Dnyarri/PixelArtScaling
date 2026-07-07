@@ -93,21 +93,21 @@ References
 Resources
 ---------
 
-The Developer's site: `The Toad's Slimy Mudhole`_
+The Developer's site: `The Toad's Slimy Mudhole`_;
 
 .. _The Toad's Slimy Mudhole: https://dnyarri.github.io
 
-`ScaleNx`_ explanations and illustrations page for current implementation.
+`ScaleNx`_ explanations and illustrations page for current implementation;
 
 .. _ScaleNx: https://dnyarri.github.io/scalenx.html
 
-ScaleNx source repositories: `ScaleNx@Github`_, `ScaleNx@Gitflic`_.
+ScaleNx source repositories: `ScaleNx@Github`_, `ScaleNx@Gitflic`_;
 
 .. _ScaleNx@Github: https://github.com/Dnyarri/PixelArtScaling
 
 .. _ScaleNx@Gitflic: https://gitflic.ru/project/dnyarri/pixelartscaling
 
-`Changelog`_ for current implementation:
+`Changelog`_ for current implementation.
 
 .. _Changelog: https://github.com/Dnyarri/PixelArtScaling/blob/main/CHANGELOG.md
 
@@ -121,13 +121,16 @@ __version__ = '2026.6.12.6'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
+__all__ = ['scaleNx']
+
+from typing import Literal
 
 from .scalenx import scale2x, scale3x
 from .scalenxsfx import scale2x as scale2xsfx
 from .scalenxsfx import scale3x as scale3xsfx
 
 
-def scaleNx(source_image: list[list[list[int]]], n: int, sfx: bool) -> list[list[list[int]]]:
+def scaleNx(source_image: list[list[list[int]]], n: Literal[2, 3], sfx: bool) -> list[list[list[int]]]:
     """ScaleNx image rescaling, configurable via ``n`` and ``sfx`` options.
     ----
 
@@ -138,7 +141,7 @@ def scaleNx(source_image: list[list[list[int]]], n: int, sfx: bool) -> list[list
     :param int n: ``2`` or ``3``, choice between Scale2* and Scale3* methods;
     :param bool sfx: choice between ScaleNx and ScaleNxSFX methods.
     :raises ValueError: Attempt to use nonexistent method ``n``.
-    :return: rescaled image os the same type as ``source_image``.
+    :return: rescaled image of the same type as ``source_image``.
     :rtype: list[list[list[int]]]
 
     """
@@ -148,11 +151,11 @@ def scaleNx(source_image: list[list[list[int]]], n: int, sfx: bool) -> list[list
         elif n == 3:
             return scale3xsfx(source_image)
         else:
-            raise ValueError(f'Attempt to use nonexistent method `{n}`\nOnly methods 2 and 3 allowed.')
+            raise ValueError(f'Attempt to use nonexistent method n=`{n}`\nOnly methods n=2 and n=3 allowed.')
     else:
         if n == 2:
             return scale2x(source_image)
         elif n == 3:
             return scale3x(source_image)
         else:
-            raise ValueError(f'Attempt to use nonexistent method `{n}`\nOnly methods 2 and 3 allowed.')
+            raise ValueError(f'Attempt to use nonexistent method n=`{n}`\nOnly methods n=2 and n=3 allowed.')
