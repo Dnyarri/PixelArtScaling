@@ -63,7 +63,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '26.6.12.6'
+__version__ = '26.8.2.8'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -77,7 +77,6 @@ from tkinter.filedialog import askdirectory, askopenfilename, asksaveasfilename
 
 from pypng import list2png, png2list
 from pypnm import list2pnm, pnm2list
-
 from scalenx import scaleNx  # Configurable ScaleNx as of 2026.2.12.14
 
 
@@ -149,7 +148,7 @@ def FileNx(size: int, sfx: bool) -> None:
     )
     if sourcefilename == '':
         UINormal()
-        return None
+        return
 
     UIBusy()
 
@@ -159,7 +158,7 @@ def FileNx(size: int, sfx: bool) -> None:
 
     elif Path(sourcefilename).suffix.lower() in ('.ppm', '.pgm', '.pbm'):
         # ↓ Reading image as list
-        X, Y, Z, maxcolors, image3d = pnm2list(sourcefilename, tuplevel='image')
+        X, Y, Z, maxcolors, image3d = pnm2list(sourcefilename, tuplevel='image')  # noqa: RUF059
         # ↓ Creating dummy info for PyPNG
         info = {}
         # ↓ Fixing color mode. The rest is fixed with pnglpng since ver. 25.01.07.
@@ -190,17 +189,29 @@ def FileNx(size: int, sfx: bool) -> None:
     src_extension = Path(sourcefilename).suffix.lower()
     if Z == 1:
         if src_extension in ('.pgm', '.pbm', '.pnm'):
-            format = [('Portable grey map', '.pgm'), ('Portable network graphics', '.png')]
+            format = [
+                ('Portable grey map', '.pgm'),
+                ('Portable network graphics', '.png'),
+            ]
             proposed_name = f'{Path(sourcefilename).stem}_{size}x{"SFX" if sfx else ""}.pgm'
         else:
-            format = [('Portable network graphics', '.png'), ('Portable grey map', '.pgm')]
+            format = [
+                ('Portable network graphics', '.png'),
+                ('Portable grey map', '.pgm'),
+            ]
             proposed_name = f'{Path(sourcefilename).stem}_{size}x{"SFX" if sfx else ""}.png'
     elif Z == 3:
         if src_extension in ('.ppm', '.pnm'):
-            format = [('Portable pixel map', '.ppm'), ('Portable network graphics', '.png')]
+            format = [
+                ('Portable pixel map', '.ppm'),
+                ('Portable network graphics', '.png'),
+            ]
             proposed_name = f'{Path(sourcefilename).stem}_{size}x{"SFX" if sfx else ""}.pgm'
         else:
-            format = [('Portable network graphics', '.png'), ('Portable pixel map', '.ppm')]
+            format = [
+                ('Portable network graphics', '.png'),
+                ('Portable pixel map', '.ppm'),
+            ]
             proposed_name = f'{Path(sourcefilename).stem}_{size}x{"SFX" if sfx else ""}.png'
     else:
         format = [('Portable network graphics', '.png')]
@@ -218,7 +229,7 @@ def FileNx(size: int, sfx: bool) -> None:
     )
     if resultfilename == '':
         UINormal()
-        return None
+        return
     UIBusy()
 
     if Path(resultfilename).suffix.lower() == '.png':
@@ -243,7 +254,7 @@ def scale_file_png(runningfilename: Path, size: int, sfx: bool, compression: int
     newfile = oldfile  # Previous version used backup newfile = oldfile + '.2x.png'
 
     # ↓ Reading image as list
-    X, Y, Z, maxcolors, image3d, info = png2list(oldfile, tuplevel='image')
+    X, Y, Z, maxcolors, image3d, info = png2list(oldfile, tuplevel='image')  # noqa: RUF059
 
     # ↓ Scaling image
     scaled_image = scaleNx(image3d, size, sfx)
@@ -281,7 +292,7 @@ def scale_file_pnm(runningfilename: Path, size: int, sfx: bool, bin: bool = True
     newfile = oldfile  # Overwrite!
 
     # ↓ Reading image as list
-    X, Y, Z, maxcolors, image3d = pnm2list(oldfile, tuplevel='image')
+    X, Y, Z, maxcolors, image3d = pnm2list(oldfile, tuplevel='image')  # noqa: RUF059
 
     # ↓ Scaling image
     scaled_image = scaleNx(image3d, size, sfx)
@@ -306,7 +317,7 @@ def FolderNx(size: int, sfx: bool) -> None:
     sourcedir = askdirectory(title=f'Open folder to Scale{size}x{"SFX" if sfx else ""} images')
     if sourcedir == '':
         UINormal()
-        return None
+        return
 
     path = Path(sourcedir)
 
@@ -410,7 +421,6 @@ def IniFileSave(event=None) -> None:
 
     """
 
-    global prefs
     FormatPrefs()
     prefs['time'] = ctime(time())
     pref_path = Path.home() / 'scalenx.ini'
@@ -426,9 +436,9 @@ def FormatPrefs() -> None:
     """Reading file output settings from UI and pushing it into global prefs dict."""
 
     prefs['single_deflation'] = int(png_single.get())
-    prefs['single_binarity'] = False if pnm_single.get() == 'ascii' else True
+    prefs['single_binarity'] = pnm_single.get() != 'ascii'
     prefs['batch_deflation'] = int(png_batch.get())
-    prefs['batch_binarity'] = False if pnm_batch.get() == 'ascii' else True
+    prefs['batch_binarity'] = pnm_batch.get() != 'ascii'
 
 
 """ ╔═══════════╗
@@ -492,14 +502,14 @@ if __name__ == '__main__':
     }
 
     # ↓ Binding mouseover function
-    def buttOver(button_name):
+    def _buttOver(button_name):
         button_name.bind('<Enter>', lambda event=None: button_name.config(foreground=butt['activeforeground'], background=butt['activebackground']))
         button_name.bind('<Leave>', lambda event=None: button_name.config(foreground=butt['foreground'], background=butt['background']))
 
     # ↓ Widgets
     butt99 = Button(sortir, text='Exit', font=(butt['font'][0], butt['font'][1] + 2), cursor=butt['cursor'], state='normal', border=butt['border'], relief=butt['relief'], overrelief=butt['overrelief'], command=DisMiss)
     butt99.pack(side='bottom', padx=2, pady=(4, 2), fill='both')
-    buttOver(butt99)
+    _buttOver(butt99)
 
     info_string = Label(sortir, text=info_normal['txt'], font=info_normal['font'], foreground=info_normal['fg'], background=info_normal['bg'], relief='groove', state=info_normal['status'])
     info_string.pack(side='bottom', padx=2, pady=(6, 1), fill='both')
@@ -523,22 +533,22 @@ if __name__ == '__main__':
 
     butt01 = Button(frame_left, text='Open file ➔ 2x', font=butt['font'], cursor=butt['cursor'], state='normal', border=butt['border'], relief=butt['relief'], overrelief=butt['overrelief'], command=lambda: FileNx(2, False))
     butt01.pack(side='top', padx=4, pady=2, fill='both')
-    buttOver(butt01)
+    _buttOver(butt01)
 
     butt02 = Button(frame_left, text='Open file ➔ 3x', font=butt['font'], cursor=butt['cursor'], state='normal', border=butt['border'], relief=butt['relief'], overrelief=butt['overrelief'], command=lambda: FileNx(3, False))
     butt02.pack(side='top', padx=4, pady=2, fill='both')
-    buttOver(butt02)
+    _buttOver(butt02)
 
     label11 = Label(frame_left, text='ScaleNxSFX', font=blue['font'], borderwidth=2, relief='flat', foreground=blue['foreground'], background=blue['background'])
     label11.pack(side='top', pady=blue['pady'], fill='both')
 
     butt11 = Button(frame_left, text='Open file ➔ 2xSFX', font=butt['font'], cursor=butt['cursor'], state='normal', border=butt['border'], relief=butt['relief'], overrelief=butt['overrelief'], command=lambda: FileNx(2, True))
     butt11.pack(side='top', padx=4, pady=2, fill='both')
-    buttOver(butt11)
+    _buttOver(butt11)
 
     butt12 = Button(frame_left, text='Open file ➔ 3xSFX', font=butt['font'], cursor=butt['cursor'], state='normal', border=butt['border'], relief=butt['relief'], overrelief=butt['overrelief'], command=lambda: FileNx(3, True))
     butt12.pack(side='top', padx=4, pady=2, fill='both')
-    buttOver(butt12)
+    _buttOver(butt12)
 
     frame_right = Frame(sortir, borderwidth=2, relief='groove')
     frame_right.pack(side='right', anchor='ne', padx=(6, 2), pady=0)
@@ -552,22 +562,22 @@ if __name__ == '__main__':
 
     butt03 = Button(frame_right, text='Select folder ➔ 2x', font=butt['font'], cursor=butt['cursor'], state='normal', border=butt['border'], relief=butt['relief'], overrelief=butt['overrelief'], command=lambda: FolderNx(2, False))
     butt03.pack(side='top', padx=4, pady=2, fill='both')
-    buttOver(butt03)
+    _buttOver(butt03)
 
     butt04 = Button(frame_right, text='Select folder ➔ 3x', font=butt['font'], cursor=butt['cursor'], state='normal', border=butt['border'], relief=butt['relief'], overrelief=butt['overrelief'], command=lambda: FolderNx(3, False))
     butt04.pack(side='top', padx=4, pady=2, fill='both')
-    buttOver(butt04)
+    _buttOver(butt04)
 
     label02 = Label(frame_right, text='ScaleNxSFX', font=blue['font'], borderwidth=2, relief='flat', foreground=blue['foreground'], background=blue['background'])
     label02.pack(side='top', pady=blue['pady'], fill='both')
 
     butt13 = Button(frame_right, text='Select folder ➔ 2xSFX', font=butt['font'], cursor=butt['cursor'], state='normal', border=butt['border'], relief=butt['relief'], overrelief=butt['overrelief'], command=lambda: FolderNx(2, True))
     butt13.pack(side='top', padx=4, pady=2, fill='both')
-    buttOver(butt13)
+    _buttOver(butt13)
 
     butt14 = Button(frame_right, text='Select folder ➔ 3xSFX', font=butt['font'], cursor=butt['cursor'], state='normal', border=butt['border'], relief=butt['relief'], overrelief=butt['overrelief'], command=lambda: FolderNx(3, True))
     butt14.pack(side='top', padx=4, pady=2, fill='both')
-    buttOver(butt14)
+    _buttOver(butt14)
 
     """ ┌────────────────────────┐
         │ Saving formats options │
@@ -580,7 +590,12 @@ if __name__ == '__main__':
         'activebackground': butt['activebackground'],
     }
     # ↓ Left frame file output options
-    options_left = LabelFrame(frame_left, text='Single file saving options', font=('helvetica', 8), foreground=blue['foreground'])
+    options_left = LabelFrame(
+        frame_left,
+        text='Single file saving options',
+        font=('helvetica', 8),
+        foreground=blue['foreground'],
+    )
     options_left.pack(side='top', anchor='ne', padx=4, fill='none')
 
     options_left_png_label = Label(options_left, text='PNG Compression:', font=option['font_label'])
@@ -610,7 +625,12 @@ if __name__ == '__main__':
     options_left_pnm['menu'].configure(font=options_left_pnm['font'])
 
     # ↓ Right frame file output options
-    options_right = LabelFrame(frame_right, text='Batch file saving options', font=('helvetica', 8), foreground=blue['foreground'])
+    options_right = LabelFrame(
+        frame_right,
+        text='Batch file saving options',
+        font=('helvetica', 8),
+        foreground=blue['foreground'],
+    )
     options_right.pack(side='top', anchor='ne', padx=4, fill='none')
 
     options_right_png_label = Label(options_right, text='PNG Compression:', font=option['font_label'])

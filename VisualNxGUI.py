@@ -71,7 +71,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '26.6.12.6'
+__version__ = '26.8.2.8'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -139,9 +139,9 @@ def UIFit() -> None:
     """Readopting 'sortir.minsize' to fit the screen."""
 
     sortir.update()
-    fit_width = min(sortir.winfo_reqwidth(), 9 * sortir.winfo_screenwidth() // 10)
-    fit_height = min(sortir.winfo_reqheight(), 9 * sortir.winfo_screenheight() // 10)
+    fit_width, fit_height = min(sortir.winfo_reqwidth(), 9 * sortir.winfo_screenwidth() // 10), min(sortir.winfo_reqheight(), 9 * sortir.winfo_screenheight() // 10)
     sortir.minsize(fit_width, fit_height)
+    sortir.update()
 
 
 def canvasCoord(event):
@@ -164,7 +164,7 @@ def canvasDrag(event):
 def ShowPreview(preview_choice: PhotoImage, caption: str) -> None:
     """Show 'preview_choice' PhotoImage, trying to fit 'zanyato' to screen."""
 
-    global zoom_factor, preview
+    global preview
 
     preview = preview_choice
 
@@ -178,8 +178,7 @@ def ShowPreview(preview_choice: PhotoImage, caption: str) -> None:
         label_zoom['text'] = f'{caption} 1:1'
 
     # ↓ Sizes of preview to fit the screen
-    preview_width = min(preview.width(), 8 * sortir.winfo_screenwidth() // 10)
-    preview_height = min(preview.height(), (8 * sortir.winfo_screenheight() // 10) - frame_top.winfo_height() - info_string.winfo_height() - frame_zoom.winfo_height())
+    preview_width, preview_height = min(preview.width(), 8 * sortir.winfo_screenwidth() // 10), min(preview.height(), (8 * sortir.winfo_screenheight() // 10) - frame_top.winfo_height() - info_string.winfo_height() - frame_zoom.winfo_height())
 
     zanyato.config(
         image=preview,
@@ -200,7 +199,7 @@ def ShowPreview(preview_choice: PhotoImage, caption: str) -> None:
 def SwitchView(event=None) -> None:
     """Switch preview between preview_src and preview_filtered."""
 
-    global zoom_factor, view_src, preview
+    global view_src
     global xs, ys, xr, yr  # view point coordinates in *s*ource and *r*esult image
 
     view_src = not view_src  # cycling before ⇄ after
@@ -333,11 +332,11 @@ def GetSource(event=None) -> None:
 def RunFilter(event=None) -> None:
     """Filter image, then preview result."""
 
-    global zoom_factor, view_src, is_filtered, is_saved, info_normal, color_mode_str, operation, timing
-    global preview, preview_filtered
-    global X, Y, Z, maxcolors, source_image, info
+    global view_src, is_filtered, is_saved, info_normal, operation, timing
+    global preview_filtered
+    global X, Y, Z
     global result_image
-    global xs, ys, xr, yr  # view point coordinates in *s*ource and *r*esult image
+    global xs, ys, xr, yr  # view point coordinates in *s*ource and *r*esult image  # noqa: PLW0602
 
     xs, ys = canvas.xview()[0], canvas.yview()[0]  # remember view point coordinates before anything happens
 
@@ -393,9 +392,7 @@ def RunFilter(event=None) -> None:
 
         ShowPreview(preview_filtered, 'Result')
 
-        # ↓ Binding switch on preview click
-        # zanyato.bind('<Button-1>', SwitchView)
-        # zanyato.bind('<ButtonRelease-1>', SwitchView)
+        # ↓ Binding preview switch
         zanyato.bind('<space>', SwitchView)  # # "Space" key. May be worth binding whole sortir?
 
     else:
@@ -404,8 +401,7 @@ def RunFilter(event=None) -> None:
         # ↓ Disabling save
         menu02.entryconfig('Save', state='disabled')
         sortir.unbind_all('<Control-s>')
-        # ↓ Binding switch on preview click
-        # zanyato.unbind('<Button-1>')  # left click
+        # ↓ Binding preview switch
         zanyato.unbind('<space>')  # # "Space" key. May be worth binding whole sortir?
         # ↓ Preview source
         ShowPreview(preview_src, 'Source')
@@ -420,7 +416,8 @@ def RunFilter(event=None) -> None:
 def zoomIn(event=None) -> None:
     """Zoom preview in."""
 
-    global zoom_factor, view_src, preview
+    global zoom_factor
+
     zoom_factor = min(zoom_factor + 1, 4)  # max zoom 5
 
     if view_src:
@@ -435,13 +432,13 @@ def zoomIn(event=None) -> None:
     else:
         butt_plus.config(state='normal', cursor='hand2')
     UIFit()
-    sortir.update()
 
 
 def zoomOut(event=None) -> None:
     """Zoom preview out."""
 
-    global zoom_factor, view_src, preview
+    global zoom_factor
+
     zoom_factor = max(zoom_factor - 1, -19)  # min zoom 1/20
 
     if view_src:
@@ -456,13 +453,13 @@ def zoomOut(event=None) -> None:
     else:
         butt_minus.config(state='normal', cursor='hand2')
     UIFit()
-    sortir.update()
 
 
 def zoomOne(event=None) -> None:
     """Zoom 1:1."""
 
-    global zoom_factor, view_src, preview
+    global zoom_factor
+
     zoom_factor = 0
 
     if view_src:
@@ -474,7 +471,6 @@ def zoomOne(event=None) -> None:
     butt_plus.config(state='normal', cursor='hand2')
     butt_minus.config(state='normal', cursor='hand2')
     UIFit()
-    sortir.update()
 
 
 def zoomWheel(event) -> None:
@@ -489,9 +485,8 @@ def zoomWheel(event) -> None:
 def onSave() -> None:
     """Reassign images and other objects from new to old upon saving."""
 
-    global preview_filtered, preview_src, info_normal
-    global sourcefilename, X, Y, Z, maxcolors, source_image
-    global resultfilename, result_image
+    global preview_src, info_normal
+    global sourcefilename, X, Y, Z, source_image
 
     sourcefilename = resultfilename  # Now saved file becomes new source file
     source_image = result_image
@@ -517,8 +512,7 @@ def onSave() -> None:
 def Save(event=None) -> None:
     """Once pressed on Save."""
 
-    global is_filtered, is_saved, info_normal, color_mode_str, operation, timing
-    global source_image, preview_src, preview_filtered
+    global is_filtered, is_saved, operation, timing
 
     operation = 'Saving'
 
@@ -547,8 +541,8 @@ def Save(event=None) -> None:
 def SaveAs(event=None) -> None:
     """Once pressed on Save as..."""
 
-    global is_saved, is_filtered, info_normal, color_mode_str, operation, timing
-    global sourcefilename, resultfilename, source_image, preview_src, preview_filtered
+    global is_saved, is_filtered, operation, timing
+    global resultfilename
 
     operation = 'Saving'
 
@@ -601,7 +595,7 @@ def SaveAs(event=None) -> None:
         initialfile=proposed_name,
     )
     if resultfilename == '':
-        return None
+        return
     UIBusy()
     start = time()
     # ↓ Save format choice
