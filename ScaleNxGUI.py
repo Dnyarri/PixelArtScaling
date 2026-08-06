@@ -58,12 +58,13 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '26.6.12.34'
+__version__ = '26.8.6.34'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
 
 import os
+import sys
 from json import dump, load
 from multiprocessing import Pool, freeze_support
 from time import ctime, time
@@ -72,7 +73,6 @@ from tkinter.filedialog import askdirectory, askopenfilename, asksaveasfilename
 
 from pypng import list2png, png2list
 from pypnm import list2pnm, pnm2list
-
 from scalenx import scaleNx  # Configurable ScaleNx as of 2026.2.12.34
 
 
@@ -142,7 +142,7 @@ def FileNx(size, sfx):
     )
     if sourcefilename == '':
         UINormal()
-        return None
+        return
     prefs['mru'] = os.path.dirname(sourcefilename)
     UIBusy()
 
@@ -211,7 +211,7 @@ def FileNx(size, sfx):
     )
     if resultfilename == '':
         UINormal()
-        return None
+        return
     UIBusy()
 
     if (os.path.splitext(resultfilename)[1]).lower() == '.png':
@@ -308,7 +308,7 @@ def FolderNx(size, sfx):
     sourcedir = askdirectory(title='Open folder to Scale{}x{} images'.format(size, 'SFX' if sfx else ''), initialdir=prefs['mru'])
     if sourcedir == '':
         UINormal()
-        return None
+        return
     prefs['mru'] = sourcedir
 
     UIBusy()
@@ -451,9 +451,9 @@ def FormatPrefs():
     """Reading file output settings from UI and pushing it into global prefs dict."""
 
     prefs['single_deflation'] = int(png_single.get())
-    prefs['single_binarity'] = False if pnm_single.get() == 'ascii' else True
+    prefs['single_binarity'] = pnm_single.get() != 'ascii'
     prefs['batch_deflation'] = int(png_batch.get())
-    prefs['batch_binarity'] = False if pnm_batch.get() == 'ascii' else True
+    prefs['batch_binarity'] = pnm_batch.get() != 'ascii'
 
 
 """ ╔═══════════╗
@@ -466,7 +466,11 @@ if __name__ == '__main__':
     sortir = Tk()
     sortir.title('ScaleNx')
 
-    icon_path = os.path.dirname(os.path.realpath(__file__)) + '/32.ico'
+    try:  # ↓ Icon location for PyInstaller
+        base_path = sys._MEIPASS
+        icon_path = base_path + '/32.ico'
+    except AttributeError:  # ↓ Icon location for Python and Nuitka
+        icon_path = os.path.dirname(os.path.realpath(__file__)) + '/32.ico'
     if os.path.exists(icon_path):
         sortir.iconbitmap(icon_path)
 
