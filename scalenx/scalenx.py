@@ -65,7 +65,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024-2026 Ilya Razmanov'
 __credits__ = ['Andrea Mazzoleni', 'Ilya Razmanov']
 __license__ = 'unlicense'
-__version__ = '2026.6.12.6'
+__version__ = '2026.8.6.312'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -287,8 +287,8 @@ def scale3x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
         scaled_image.append(row_dvo)
         scaled_image.append(row_tre)
 
-    '''if type(image3d[0][0]) is tuple:
-        print(_tri.cache_info())'''
+    """if type(image3d[0][0]) is tuple:
+        print(_tri.cache_info())"""
 
     return scaled_image
 

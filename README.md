@@ -18,12 +18,12 @@ Currently **Scale2x** (aka AdvMAME2x), **Scale3x** (aka AdvMAME3x), **Scale2xSFX
 
 [**ScaleNxGUI.py**](https://github.com/Dnyarri/PixelArtScaling/blob/main/ScaleNxGUI.py) is a common shell joining together image formats reading/writing and image rescaling modules. Program provides suitable GUI to access both single file and batch files processing.
 
+> [!NOTE]
+> Main version of ScaleNxGUI.py is compatible with **Python 3.10 and above**. For older Python users, there is [extended compatibility version](https://github.com/Dnyarri/PixelArtScaling/tree/py34), successfully validated with **Python 3.4** under Windows XP 32-bit.
+
 | ScaleNxGUI |
 | :---: |
 | [![Main ScaleNx program GUI](https://dnyarri.github.io/imgscalenx/guismall.png "Main ScaleNx program GUI")](https://dnyarri.github.io/scalenx.html) |
-
-> [!NOTE]
-> Main version of ScaleNx is compatible with **Python 3.10 and above**. For older Python users, there is [extended compatibility version](https://github.com/Dnyarri/PixelArtScaling/tree/py34), successfully validated with **Python 3.4** under Windows XP 32-bit.
 
 > [!CAUTION]
 > Batch processing program replace original files with scaled copies. Batch processing programs in this version use async multiprocessing, thus drastically reducing processing time but loading all CPUs at 100% and rendering GUI almost unresponsive.
@@ -33,6 +33,9 @@ Currently **Scale2x** (aka AdvMAME2x), **Scale3x** (aka AdvMAME3x), **Scale2xSFX
 | VisualNxGUI |
 | :---: |
 | [![Visual ScaleNx program GUI](https://dnyarri.github.io/imgscalenx/vissmall.png "Visual ScaleNx program GUI")](https://dnyarri.github.io/scalenx.html) |
+
+> [!NOTE]
+> VisualNxGUI.py is compatible with **Python 3.11 and above**.
 
 ## Sample of Scale3x (twice)
 
@@ -83,7 +86,7 @@ scaled_image = scalenxsfx.scale3x(source_image)
 
 ### Related
 
-[Dnyarri website - more Python freeware for image processing, POV-Ray and other 3D, and batch automation](https://dnyarri.github.io "The Toad's Slimy Mudhole - Python freeware for POV-Ray and other 3D, Scale2x, Scale3x, Scale2xSFX, Scale3xSFX, PPM and PGM image support, bilinear and barycentric image interpolation, and batch processing") by the same author.
+[The Toad's Slimy Mudhole website - more Python freeware for 2D image processing, POV-Ray and other 3D, and batch automation](https://dnyarri.github.io "The Toad's Slimy Mudhole - Python freeware for POV-Ray and other 3D, Scale2x, Scale3x, Scale2xSFX, Scale3xSFX, PPM and PGM image support, bilinear and barycentric image interpolation, PNG to ICO conversion, and batch processing") by the same author.
 
 [ScaleNx page with illustrations](https://dnyarri.github.io/scalenx.html "ScaleNx main page, illustrated"), explanations etc.
 

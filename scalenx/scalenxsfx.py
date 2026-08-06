@@ -63,7 +63,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '2026.6.12.6'
+__version__ = '2026.8.6.312'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -218,9 +218,7 @@ def scale3x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
         r1 = r2 = r3 = r4 = r5 = r6 = r7 = r8 = r9 = E
 
         if B == D:
-            if C == E and C != J and A != E:
-                r1 = B
-            elif E == G and A != E and G != K:
+            if (C == E and C != J and A != E) or (E == G and A != E and G != K):
                 r1 = B
             if B != F and D != H:
                 if A != E or C == E or E == G or A == J or A == K:
@@ -231,9 +229,7 @@ def scale3x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
                     r4 = D
 
         if B == F:
-            if A == E and A != J and C != E:
-                r3 = B
-            elif E == I and C != E and I != L:
+            if (A == E and A != J and C != E) or (E == I and C != E and I != L):
                 r3 = B
             if B != D and F != H:
                 if C != E or A == E or E == I or C == J or C == L:
@@ -244,9 +240,7 @@ def scale3x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
                     r6 = F
 
         if D == H:
-            if A == E and A != K and E != G:
-                r7 = H
-            elif E == I and E != G and I != M:
+            if (A == E and A != K and E != G) or (E == I and E != G and I != M):
                 r7 = H
             if B != D and F != H:
                 if E != G or A == E or E == I or G == K or G == M:
@@ -257,9 +251,7 @@ def scale3x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
                     r8 = H
 
         if F == H:
-            if C == E and C != L and E != I:
-                r9 = H
-            elif E == G and E != I and G != M:
+            if (C == E and C != L and E != I) or (E == G and E != I and G != M):
                 r9 = H
             if B != F and D != H:
                 if E != I or C == E or E == G or I == L or I == M:
@@ -347,8 +339,8 @@ def scale3x(image3d: list[list[list[int]]]) -> list[list[list[int]]]:
         scaled_image.append(row_dvo)
         scaled_image.append(row_tre)
 
-    '''if type(image3d[0][0]) is tuple:
-        print(_tri.cache_info())'''
+    """if type(image3d[0][0]) is tuple:
+        print(_tri.cache_info())"""
 
     return scaled_image
 

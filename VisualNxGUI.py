@@ -71,7 +71,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '26.8.2.8'
+__version__ = '26.8.6.4'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -139,7 +139,10 @@ def UIFit() -> None:
     """Readopting 'sortir.minsize' to fit the screen."""
 
     sortir.update()
-    fit_width, fit_height = min(sortir.winfo_reqwidth(), 9 * sortir.winfo_screenwidth() // 10), min(sortir.winfo_reqheight(), 9 * sortir.winfo_screenheight() // 10)
+    fit_width, fit_height = (
+        min(sortir.winfo_reqwidth(), 9 * sortir.winfo_screenwidth() // 10),
+        min(sortir.winfo_reqheight(), 9 * sortir.winfo_screenheight() // 10),
+    )
     sortir.minsize(fit_width, fit_height)
     sortir.update()
 
@@ -178,10 +181,13 @@ def ShowPreview(preview_choice: PhotoImage, caption: str) -> None:
         label_zoom['text'] = f'{caption} 1:1'
 
     # ↓ Sizes of preview to fit the screen
-    preview_width, preview_height = min(preview.width(), 8 * sortir.winfo_screenwidth() // 10), min(preview.height(), (8 * sortir.winfo_screenheight() // 10) - frame_top.winfo_height() - info_string.winfo_height() - frame_zoom.winfo_height())
-
+    preview_width, preview_height = (
+        min(preview.width(), 8 * sortir.winfo_screenwidth() // 10),
+        min(preview.height(), (8 * sortir.winfo_screenheight() // 10) - frame_top.winfo_height() - info_string.winfo_height() - frame_zoom.winfo_height()),
+    )
     zanyato.config(
         image=preview,
+        relief='flat',
     )
     canvas.config(
         width=preview_width,
