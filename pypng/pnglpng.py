@@ -76,7 +76,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '26.6.12.312'
+__version__ = '26.8.28.312'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -90,7 +90,7 @@ from .png import Reader, Writer
     ╰──────────╯ """
 
 
-def png2list(in_filename: str, tuplevel: Literal['none', 'pixel', 'image', None] = None) -> tuple[int, int, int, int, list[list[list[int]]] | list[list[tuple[int]]] | tuple[tuple[tuple[int]]], dict[str, int | bool | tuple | list[tuple]]]:
+def png2list(in_filename: str, tuplevel: Literal['none', 'pixel', 'image'] | None = None) -> tuple[int, int, int, int, list[list[list[int]]] | list[list[tuple[int]]] | tuple[tuple[tuple[int]]], dict[str, int | bool | tuple | list[tuple]]]:
     """Take PNG filename and return PNG data in a human-friendly form.
 
     :param str in_filename: input file name;
@@ -162,7 +162,8 @@ def list2png(out_filename: str, list_3d: list[list[list[int]]], info: dict[str, 
     :param str out_filename: output PNG file name (str).
 
     .. note:: ``X``, ``Y`` and ``Z`` detected from the list structure
-       override those set in ``info``.
+       override those set in ``info``. Thus you don't have to edit ``info``
+       every time you resize image.
     .. warning:: Correct ``info['bitdepth']`` is **critical**
        because it cannot be detected from the list structure.
 
@@ -177,14 +178,14 @@ def list2png(out_filename: str, list_3d: list[list[list[int]]], info: dict[str, 
     #   Necessary when image is edited.
     info['size'] = (X, Y)
     info['planes'] = Z
-    if 'palette' in info:
-        del info['palette']  # images get promoted to smooth color when editing.
-    if 'background' in info:
-        # ↓ as image tend to get promoted to smooth color when editing,
-        #   background must either be rebuilt to match channels structure every time,
-        #   or be deleted.
-        #   info['background'] = (0,) * (Z - 1 + Z % 2)  # black for any color mode
-        del info['background']  # Destroy is better than rebuild ;-)
+    # ↓ As image tend to get promoted to smooth color when editing,
+    #   we'd better remove palette from the very beginning.
+    info.pop('palette', None)  # Removes palette if any.
+    # ↓ As image tend to get promoted to smooth color when editing,
+    #   background must either be rebuilt to match channels structure every time,
+    #   or be deleted.
+    info.pop('background', None)  # Destroy is better than rebuild ;-)
+    #   info['background'] = (0,) * (Z - 1 + Z % 2)  # black for any color mode
     if (Z % 2) == 1:
         info['alpha'] = False
     else:
@@ -205,8 +206,6 @@ def list2png(out_filename: str, list_3d: list[list[list[int]]], info: dict[str, 
     writer = Writer(X, Y, **info)
     with open(out_filename, 'wb') as result_png:
         writer.write(result_png, flatten_2d(list_3d))
-
-    return None
 
 
 """ ╭────────────────────╮

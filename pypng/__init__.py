@@ -8,9 +8,7 @@ Usage::
 
 """
 
-__version__ = '26.6.12.312'
+__version__ = '26.8.28.312'
+__all__ = ['list2png', 'png2list']
 
 from .pnglpng import list2png, png2list
-
-png2list = png2list
-list2png = list2png

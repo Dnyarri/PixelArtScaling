@@ -110,7 +110,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '2.30.12.312'
+__version__ = '2.33.3.312' # 3 Sep 2026
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -128,7 +128,7 @@ from typing import Literal
     ╚══════════════════════════════╝ """
 
 
-def pnm2list(in_filename: str, tuplevel: Literal['none', 'pixel', 'image', None] = None) -> tuple[int, int, int, int, list[list[list[int]]] | list[list[tuple[int]]] | tuple[tuple[tuple[int]]]]:
+def pnm2list(in_filename: str, tuplevel: Literal['none', 'pixel', 'image'] | None = None) -> tuple[int, int, int, int, list[list[list[int]]] | list[list[tuple[int]]] | tuple[tuple[tuple[int]]]]:
     """Read PBM, PGM or PPM file to nested image data list.
 
     :param str in_filename: input file name;
@@ -155,8 +155,8 @@ def pnm2list(in_filename: str, tuplevel: Literal['none', 'pixel', 'image', None]
 
     def _p65(in_filename: str, tuplevel=None) -> tuple[int, int, int, int, list[list[list[int]]]]:
         """Open P6 and P5 PNM."""
-        with open(in_filename, 'rb') as file:  # Open file for mmap
-            with mmap.mmap(file.fileno(), 0, access=mmap.ACCESS_READ) as full_bytes_mmap:
+        with open(in_filename, 'rb') as file:  # Open file for mmap  # noqa: SIM117
+            with mmap.mmap(file.fileno(), 0, access=mmap.ACCESS_READ) as full_bytes_mmap:  # Opening mmap
                 # ↓ Getting header by pattern
                 header = search(
                     rb'(^P\d\s(?:\s*#.*\s)*'  # last \s gives better compatibility than [\r\n]
@@ -219,7 +219,7 @@ def pnm2list(in_filename: str, tuplevel: Literal['none', 'pixel', 'image', None]
 
     def _p32(in_filename: str, tuplevel=None) -> tuple[int, int, int, int, list[list[list[int]]]]:
         """Open P3 and P2 PNM."""
-        with open(in_filename, 'r') as file:  # Open file for mmap
+        with open(in_filename, 'r') as file:  # noqa: SIM117
             with mmap.mmap(file.fileno(), 0, access=mmap.ACCESS_READ) as full_bytes_mmap:
                 # ↓ Getting header by pattern
                 header = search(
@@ -275,7 +275,7 @@ def pnm2list(in_filename: str, tuplevel: Literal['none', 'pixel', 'image', None]
 
     def _p4(in_filename: str, tuplevel=None) -> tuple[int, int, int, int, list[list[list[int]]]]:
         """Open P4 PNM."""
-        with open(in_filename, 'rb') as file:  # Open file for mmap
+        with open(in_filename, 'rb') as file:  # noqa: SIM117
             with mmap.mmap(file.fileno(), 0, access=mmap.ACCESS_READ) as full_bytes_mmap:
                 # ↓ Getting header by pattern. Note that for 1 bit pattern does not include maxcolors
                 header = search(
@@ -315,7 +315,7 @@ def pnm2list(in_filename: str, tuplevel: Literal['none', 'pixel', 'image', None]
                 single_byte_bits = [int(bit) for bit in bin(single_byte)[2:].zfill(8)]
                 # ↓ renormalizing colors from ink on/off to L model, replacing int with [int]
                 if tuplevel == 'pixel' or tuplevel == 'image':  # create tuple[int]]
-                    single_byte_bits_normalized = [tuple([maxcolors * (1 - c)]) for c in single_byte_bits]
+                    single_byte_bits_normalized = [(maxcolors * (1 - c),) for c in single_byte_bits]
                 else:
                     single_byte_bits_normalized = [[maxcolors * (1 - c)] for c in single_byte_bits]
                 # ↓ assembling row, junk at the end included
@@ -335,7 +335,7 @@ def pnm2list(in_filename: str, tuplevel: Literal['none', 'pixel', 'image', None]
 
     def _p1(in_filename: str, tuplevel=None) -> tuple[int, int, int, int, list[list[list[int]]]]:
         """Open P1 PNM."""
-        with open(in_filename, 'r') as file:  # Open file for mmap
+        with open(in_filename, 'r') as file:  # noqa: SIM117
             with mmap.mmap(file.fileno(), 0, access=mmap.ACCESS_READ) as full_bytes_mmap:
                 # ↓ Getting header by pattern. Note that for 1 bit pattern does not include maxcolors
                 header = search(
@@ -370,12 +370,12 @@ def pnm2list(in_filename: str, tuplevel: Literal['none', 'pixel', 'image', None]
         # ↓ Converting str to 3D list of int,
         #   inverting values and multiplying by maxcolors to obtain 8 bit L.
         if tuplevel == 'pixel':  # create list[list[tuple[int]]]
-            list_3d = [[tuple([maxcolors * (1 - int(str_1d[x + y * X]))]) for x in range(X)] for y in range(Y)]
+            list_3d = [[(maxcolors * (1 - int(str_1d[x + y * X])),) for x in range(X)] for y in range(Y)]
             del str_1d  # Cleanup
             return (X, Y, Z, maxcolors, list_3d)
 
         if tuplevel == 'image':  # create tuple[tuple[tuple[int]]]
-            list_3d = tuple([tuple([tuple([maxcolors * (1 - int(str_1d[x + y * X]))]) for x in range(X)]) for y in range(Y)])
+            list_3d = tuple([tuple([(maxcolors * (1 - int(str_1d[x + y * X])),) for x in range(X)]) for y in range(Y)])
             del str_1d  # Cleanup
             return (X, Y, Z, maxcolors, list_3d)
 
@@ -391,17 +391,13 @@ def pnm2list(in_filename: str, tuplevel: Literal['none', 'pixel', 'image', None]
     with open(in_filename, 'rb') as file:  # Open file in binary mode
         beginnings = file.read(2)  # Read first two bytes 'Pn' and close file
 
-    if beginnings.startswith(b'P6'):  # Binary PPM
+    if beginnings.startswith((b'P6', b'P5')):  # Binary PPM or PGM
         return _p65(in_filename, tuplevel)
-    elif beginnings.startswith(b'P5'):  # Binary PGM
-        return _p65(in_filename, tuplevel)
-    elif beginnings.startswith(b'P4'):  # Binary PBM
+    if beginnings.startswith((b'P3', b'P2')):  # ASCII PPM or PGM
+        return _p32(in_filename, tuplevel)
+    if beginnings.startswith(b'P4'):  # Binary PBM
         return _p4(in_filename, tuplevel)
-    elif beginnings.startswith(b'P3'):  # ASCII PPM
-        return _p32(in_filename, tuplevel)
-    elif beginnings.startswith(b'P2'):  # ASCII PGM
-        return _p32(in_filename, tuplevel)
-    elif beginnings.startswith(b'P1'):  # ASCII PBM
+    if beginnings.startswith(b'P1'):  # ASCII PBM
         return _p1(in_filename, tuplevel)
     else:
         raise ValueError(f'Header {beginnings} is not in P1:P6 range')
@@ -513,8 +509,6 @@ def list2pnmbin(out_filename: str, list_3d: list[list[list[int]]], maxcolors: in
                 row_array.byteswap()  # Critical for 16 bits per channel
             file_pnm.write(row_array)  # Writing row bytes array to file
 
-    return None
-
 
 # ↑ End of 'list2pnmbin' function writing binary PPM/PGM file
 
@@ -558,8 +552,6 @@ def list2pnmascii(out_filename: str, list_3d: list[list[list[int]]], maxcolors: 
                         file_pnm.write('\n')  # Writing break to fulfill specs line <= 60 char
                     file_pnm.write(f'{list_3d[y][x][z]} ')  # Writing channel value to file
 
-    return None
-
 
 # ↑ End of 'list2pnmascii' function writing ASCII PPM/PGM file
 
@@ -587,8 +579,6 @@ def list2pnm(out_filename: str, list_3d: list[list[list[int]]], maxcolors: int, 
         list2pnmbin(out_filename, list_3d, maxcolors)
     else:
         list2pnmascii(out_filename, list_3d, maxcolors)
-
-    return None
 
 
 # ↑ End of 'list2pnm' switch function writing any type of PPM/PGM file
