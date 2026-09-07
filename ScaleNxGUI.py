@@ -58,7 +58,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '26.8.6.34'
+__version__ = '26.9.7.34'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -644,6 +644,9 @@ if __name__ == '__main__':
     FormatPrefs()
 
     sortir.bind_all('<Control-q>', DisMiss)
+    sortir.bind_all('<Control-Q>', DisMiss)
+    sortir.bind_all('<Control-w>', DisMiss)
+    sortir.bind_all('<Control-W>', DisMiss)
 
     # ↓ Center window horizontally, one third vertically
     sortir.update()
