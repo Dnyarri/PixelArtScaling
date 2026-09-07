@@ -63,7 +63,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '26.8.6.312'
+__version__ = '26.9.7.312'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -77,7 +77,7 @@ from tkinter.filedialog import askdirectory, askopenfilename, asksaveasfilename
 
 from pypng import list2png, png2list
 from pypnm import list2pnm, pnm2list
-from scalenx import scaleNx  # Configurable ScaleNx as of 2026.2.12.14
+from scalenx import scaleNx
 
 
 def DisMiss(event=None) -> None:
@@ -328,6 +328,8 @@ def FolderNx(size: int, sfx: bool) -> None:
     compression = prefs['batch_deflation']
     bin = prefs['batch_binarity']
 
+    start = time()
+
     # ↓ Creating pool
     scalepool = Pool()
 
@@ -357,7 +359,9 @@ def FolderNx(size: int, sfx: bool) -> None:
     # ↓ Everything fed into the pool, waiting and closing
     scalepool.close()
     scalepool.join()
+    timing = time() - start
     UINormal()
+    info_string.config(text=f'Processing took {round(timing, 3)} sec')
 
 
 def IniFileLoad(event=None) -> dict:
@@ -457,6 +461,8 @@ if __name__ == '__main__':
     icon_path = Path(__file__).resolve().parent / '32.ico'
     if icon_path.exists():
         sortir.iconbitmap(icon_path)
+
+    timing = 0
 
     # ↓ Info statuses dictionaries
     info_normal = {
@@ -667,6 +673,9 @@ if __name__ == '__main__':
     FormatPrefs()
 
     sortir.bind_all('<Control-q>', DisMiss)
+    sortir.bind_all('<Control-Q>', DisMiss)
+    sortir.bind_all('<Control-w>', DisMiss)
+    sortir.bind_all('<Control-W>', DisMiss)
 
     # ↓ Center window horizontally, one third vertically
     sortir.update()

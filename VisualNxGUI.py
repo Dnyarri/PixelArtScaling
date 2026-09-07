@@ -71,7 +71,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '26.8.6.4'
+__version__ = '26.9.7.9'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -102,7 +102,7 @@ def DisMiss(event=None) -> None:
 def ShowMenu(event) -> None:
     """Pop menu up (or sort of drop it down)."""
 
-    menu02.post(event.x_root, event.y_root)
+    menu_file.post(event.x_root, event.y_root)
 
 
 def ShowInfo(event=None) -> None:
@@ -121,7 +121,7 @@ def UINormal() -> None:
     """Normal UI state, buttons enabled."""
 
     method_menu['state'] = 'normal'
-    info00['state'] = 'normal'
+    info_method['state'] = 'normal'
     info_string.config(text=info_normal['txt'], foreground=info_normal['fg'], background=info_normal['bg'])
     sortir.update()
 
@@ -130,7 +130,7 @@ def UIBusy() -> None:
     """Busy UI state, buttons disabled."""
 
     method_menu['state'] = 'disabled'
-    info00['state'] = 'disabled'
+    info_method['state'] = 'disabled'
     info_string.config(text=info_busy['txt'], foreground=info_busy['fg'], background=info_busy['bg'])
     sortir.update()
 
@@ -206,7 +206,7 @@ def SwitchView(event=None) -> None:
     """Switch preview between preview_src and preview_filtered."""
 
     global view_src
-    global xs, ys, xr, yr  # view point coordinates in *s*ource and *r*esult image
+    global xs, ys, xr, yr
 
     view_src = not view_src  # cycling before ⇄ after
     if view_src:
@@ -278,17 +278,17 @@ def GetSource(event=None) -> None:
     preview_data = list2bin(result_image, maxcolors, show_chessboard=True)
     # ↓ Now generating preview from "preview_data" bytes using Tkinter
     preview = PhotoImage(data=preview_data)
-    # ↓ Finally the show part
-    ShowPreview(preview, 'Source')
 
     # ↓ Creating copy of source preview for further
     #   fast switch between source and result.
     preview_src = preview_filtered = preview
 
-    # ↓ Attempt to zoom to fit. Singe zoomOut() must fit for a reasonable image size.
-    #   GUI X extra = 8 px, GUI Y extra = 150 px
-    if X + 16 > sortir.winfo_screenwidth() or Y + 152 > sortir.winfo_screenheight():
-        zoomOut()
+    # ↓ Calculate zoom factor for ShowPreview below ("Zoom to fit").
+    if preview.width() > sortir.winfo_screenwidth() or (128 + preview.height() + frame_top.winfo_reqheight()) > sortir.winfo_screenheight():
+        zoom_factor = max(-max(preview.width() // sortir.winfo_screenwidth(), (128 + preview.height() + frame_top.winfo_reqheight() + frame_zoom.winfo_reqheight() + info_string.winfo_reqheight()) // sortir.winfo_screenheight()), minizoom)
+
+    # ↓ Finally the show part
+    ShowPreview(preview, 'Source')
 
     # ↓ Binding preview mouse drag
     zanyato.bind('<Motion>', canvasCoord)
@@ -306,13 +306,13 @@ def GetSource(event=None) -> None:
     zanyato.bind('<Control-Alt-Key-0>', zoomOne)
     sortir.bind_all('<MouseWheel>', zoomWheel)  # Wheel scroll
     sortir.bind_all('<Control-i>', ShowInfo)
-    menu02.entryconfig('Image Info...', state='normal')
+    menu_file.entryconfig('Image Info...', state='normal')
     # ↓ Binding global
     sortir.bind_all('<Return>', RunFilter)
     # ↓ Resetting menu to 'None' for every image
     method_str.set('None')
     # ↓ Enabling 'Save as...'
-    menu02.entryconfig('Save as...', state='normal')
+    menu_file.entryconfig('Save as...', state='normal')
     sortir.bind_all('<Control-Shift-S>', SaveAs)
     # ↓ Enabling zoom buttons
     butt_plus.config(state='normal', cursor='hand2')
@@ -389,7 +389,7 @@ def RunFilter(event=None) -> None:
         is_filtered = True
         is_saved = view_src = False
         # ↓ Enabling save
-        menu02.entryconfig('Save', state='normal')
+        menu_file.entryconfig('Save', state='normal')
         sortir.bind_all('<Control-s>', Save)
 
         # ↓ Preview result
@@ -405,7 +405,7 @@ def RunFilter(event=None) -> None:
         is_filtered = False
         is_saved = view_src = True
         # ↓ Disabling save
-        menu02.entryconfig('Save', state='disabled')
+        menu_file.entryconfig('Save', state='disabled')
         sortir.unbind_all('<Control-s>')
         # ↓ Binding preview switch
         zanyato.unbind('<space>')  # # "Space" key. May be worth binding whole sortir?
@@ -424,7 +424,7 @@ def zoomIn(event=None) -> None:
 
     global zoom_factor
 
-    zoom_factor = min(zoom_factor + 1, 4)  # max zoom 5
+    zoom_factor = min(zoom_factor + 1, maxizoom)  # max zoom 5
 
     if view_src:
         ShowPreview(preview_src, 'Source')
@@ -433,7 +433,7 @@ def zoomIn(event=None) -> None:
 
     # ↓ reenabling +/- buttons
     butt_minus.config(state='normal', cursor='hand2')
-    if zoom_factor == 4:  # max zoom 5
+    if zoom_factor == maxizoom:  # max zoom 5
         butt_plus.config(state='disabled', cursor='arrow')
     else:
         butt_plus.config(state='normal', cursor='hand2')
@@ -445,7 +445,7 @@ def zoomOut(event=None) -> None:
 
     global zoom_factor
 
-    zoom_factor = max(zoom_factor - 1, -19)  # min zoom 1/20
+    zoom_factor = max(zoom_factor - 1, minizoom)  # min zoom 1/20
 
     if view_src:
         ShowPreview(preview_src, 'Source')
@@ -454,7 +454,7 @@ def zoomOut(event=None) -> None:
 
     # ↓ reenabling +/- buttons
     butt_plus.config(state='normal', cursor='hand2')
-    if zoom_factor == -19:  # min zoom 1/20
+    if zoom_factor == minizoom:  # min zoom 1/20
         butt_minus.config(state='disabled', cursor='arrow')
     else:
         butt_minus.config(state='normal', cursor='hand2')
@@ -502,7 +502,7 @@ def onSave() -> None:
     # ↓ Returning method OptionMenu to 'None'
     method_str.set('None')
     # ↓ Disabling save
-    menu02.entryconfig('Save', state='disabled')
+    menu_file.entryconfig('Save', state='disabled')
     sortir.unbind_all('<Control-s>')
     # ↓ Binding switch on preview click
     # zanyato.unbind('<Button-1>')  # left click
@@ -621,28 +621,42 @@ def SaveAs(event=None) -> None:
     UINormal()
 
 
+""" ╒══════════════╕
+    │ Initializing │
+    ╰──────────────╯ """
+product_name = 'Visual ScaleNx'
+"""Program name."""
+sourcefilename = ''
+"""Name of file to be opened."""
+zoom_factor = 0
+"""Current zoom. Midpoint value 0 correspond to 1:1 zoom."""
+view_src = True
+"""Whether source image should be shown rather than the result."""
+is_filtered = False
+"""Whether image filtering was performed."""
+is_saved = False
+"""Whether image was saved after filtering was performed."""
+operation = 'Awaiting orders'
+"""Name of most recent operation timing was calculated for."""
+timing = 0
+"""Execution time for most recent operation."""
+minizoom, maxizoom = (-19, 4)  # Zoom from 1:20 to 5:1
+"""`minizoom` is a maximal zoom out + 1 (image looks `mini`),
+   `maxizoom` is a maximal zoom in + 1 (image looks `maxi`)."""
+xr = xs = yr = ys = 0
+"""Viewpoint coordinates in source and result images.
+   Used for syncing viewpoint between source and scaled."""
+
 """ ╔═══════════╗
     ║ Main body ║
     ╚═══════════╝ """
-# ↓ Initializing
-sourcefilename = ''
-zoom_factor = 0
-view_src = True
-is_filtered = False
-product_name = 'Visual ScaleNx'
-operation = 'Awaiting orders'
-timing = 0
-
-xr = xs = yr = ys = 0
-
 sortir = Tk()
-
+"""Main dialog window."""
 icon_path = Path(__file__).resolve().parent / '32.ico'
 if icon_path.exists():
     sortir.iconbitmap(icon_path)
 else:
     sortir.iconphoto(True, PhotoImage(data='P6\n3 3\n255\n'.encode(encoding='ascii') + randbytes(3 * 3 * 3)))
-
 sortir.title(product_name)
 
 # ↓ Info statuses dictionaries
@@ -658,12 +672,14 @@ info_string = Label(
     background=info_normal['bg'],
     relief='groove',
 )
+"""Info text label below main image, regularly updated."""
 info_string.pack(side='bottom', padx=0, pady=(2, 0), fill='both')
 
 """ ┌──────────────────────┐
     │ Top frame (controls) │
     └─────────────────────-┘ """
 frame_top = Frame(sortir, borderwidth=2, relief='groove')
+"""Frame containing controls."""
 frame_top.pack(side='top', anchor='nw', pady=2)
 
 # ↓ File menu
@@ -681,25 +697,34 @@ butt_file = Menubutton(
     state='normal',
     indicatoron=False,
 )
+"""File menu button."""
 butt_file.pack(side='left', fill='y', padx=(0, 6))
 
-menu02 = Menu(butt_file, tearoff=False)  # "File" menu
-menu02.add_command(label='Open...', state='normal', command=GetSource, accelerator='Ctrl+O')
-menu02.add_separator()
-menu02.add_command(label='Save', state='disabled', command=Save, accelerator='Ctrl+S')
-menu02.add_command(label='Save as...', state='disabled', command=SaveAs, accelerator='Ctrl+Shift+S')
-menu02.add_separator()
-menu02.add_command(label='Image Info...', accelerator='Ctrl+I', state='disabled', command=ShowInfo)
-menu02.add_separator()
-menu02.add_command(label='Exit', state='normal', command=DisMiss, accelerator='Ctrl+Q')
+menu_file = Menu(butt_file, tearoff=False)
+"""File menu."""
+menu_file.add_command(label='Open...', state='normal', command=GetSource, accelerator='Ctrl+O')
+menu_file.add_separator()
+menu_file.add_command(label='Save', state='disabled', command=Save, accelerator='Ctrl+S')
+menu_file.add_command(label='Save as...', state='disabled', command=SaveAs, accelerator='Ctrl+Shift+S')
+menu_file.add_separator()
+menu_file.add_command(label='Image Info...', accelerator='Ctrl+I', state='disabled', command=ShowInfo)
+menu_file.add_separator()
+menu_file.add_command(label='Exit', state='normal', command=DisMiss, accelerator='Ctrl+Q')
 
-butt_file['menu'] = menu02
+butt_file['menu'] = menu_file
 
 # ↓ Filter section begins
-info00 = Label(frame_top, text='Scaling method:', font=('helvetica', 12, 'italic'), foreground='brown', state='disabled')
-info00.pack(side='left', fill='both', padx=6)
+info_method = Label(
+    frame_top,
+    text='Scaling method:',
+    font=('helvetica', 12, 'italic'),
+    foreground='brown',
+    state='disabled',
+)
+info_method.pack(side='left', fill='both', padx=6)
 
 method_str = StringVar(value='None')
+"""Name of scaling method chosen."""
 method_menu = OptionMenu(
     frame_top,
     method_str,
@@ -711,15 +736,25 @@ method_menu = OptionMenu(
         'Scale3xSFX',
     ],
 )
+"""Scaling method choice menu."""
 method_menu.pack(side='left')
-method_menu.configure(font=('courier', 12), width=10, relief='groove', activebackground='#E5F1FB', state='disabled')
-method_menu['menu'].configure(font=method_menu['font'])
+method_menu.configure(  # configuring menu, it can't be done when declaring
+    font=('courier', 12),
+    width=10,
+    relief='groove',
+    activebackground='#E5F1FB',
+    state='disabled',
+)
+method_menu['menu'].configure(  # configuring menu item must be separate from menu
+    font=method_menu['font'],
+)
 method_str.trace_add('write', lambda *args: RunFilter())
 
 """ ┌──────────────────────────────┐
     │ Center frame (image preview) │
     └─────────────────────────────-┘ """
 frame_preview = Frame(sortir, borderwidth=2, relief='groove')
+"""Frame containing main label (image preview) and zoom control subframe."""
 frame_preview.pack(side='top', anchor='center', expand=True)
 
 canvas = Canvas(
@@ -727,11 +762,12 @@ canvas = Canvas(
     borderwidth=1,
     highlightthickness=1,
 )
+"""Canvas containing preview."""
 canvas.pack()
 
 zanyato = Label(
     canvas,
-    text='Preview area.\n  Double click to open image,\n  Right click or Alt+F for a menu.\nWith image opened,\n  Ctrl+Click to zoom in,\n  Alt+Click to zoom out,\n  Mouse wheel to zoom,\n  Enter to filter.\nWhen filtered, use Space bar\n  to switch source/result.',
+    text='Preview area.\n  Double click to open image,\n  Right click or Alt+F for a menu.\nWith image opened,\n  Ctrl+Click to zoom in,\n  Alt+Click to zoom out,\n  Ctrl+1 to zoom 1:1,\n  Mouse wheel to zoom,\n  Enter to rescale image.\nWhen rescaled, use Space bar\n  to switch source/result.',
     font=('helvetica', 12),
     justify='left',
     padx=24,
@@ -740,6 +776,7 @@ zanyato = Label(
     background='grey90',
     relief='groove',
 )
+"""Main label containing canvas containing preview."""
 zanyato.pack(side='top')
 
 zanyato_ = canvas.create_window(
@@ -750,6 +787,8 @@ zanyato_ = canvas.create_window(
     height=zanyato.winfo_reqheight(),
     anchor='nw',
 )
+"""Create/config canvas in main label."""
+
 canvas.config(
     width=zanyato.winfo_reqwidth(),
     height=zanyato.winfo_reqheight(),
@@ -757,6 +796,7 @@ canvas.config(
 )
 
 frame_zoom = Frame(frame_preview, borderwidth=2, relief='groove')
+"""Zoom control subframe."""
 frame_zoom.pack(side='bottom')
 
 butt_plus = Button(frame_zoom, text='+', font=('courier', 8), width=2, cursor='arrow', state='disabled', borderwidth=1, command=zoomIn)
@@ -781,8 +821,13 @@ frame_preview.bind('<Double-Button-1>', GetSource)
 # ↓ Whole sortir binding menu, "Open..." and "Exit"
 sortir.bind_all('<Button-3>', ShowMenu)
 sortir.bind_all('<Alt-f>', ShowMenu)
+sortir.bind_all('<Alt-F>', ShowMenu)
 sortir.bind_all('<Control-o>', GetSource)
+sortir.bind_all('<Control-O>', GetSource)
 sortir.bind_all('<Control-q>', DisMiss)
+sortir.bind_all('<Control-Q>', DisMiss)
+sortir.bind_all('<Control-w>', DisMiss)
+sortir.bind_all('<Control-W>', DisMiss)
 
 # ↓ Center window horizontally, +64 vertically
 sortir.update()
