@@ -20,22 +20,23 @@ Currently **Scale2x** (aka AdvMAME2x), **Scale3x** (aka AdvMAME3x), **Scale2xSFX
 
 > [!NOTE]
 > Main version of ScaleNxGUI.py is compatible with **Python 3.10 and above**. For older Python users, there is [extended compatibility version](https://github.com/Dnyarri/PixelArtScaling/tree/py34), successfully validated with **Python 3.4** under Windows XP 32-bit.
+> Batch processing programs in this version use async multiprocessing, thus drastically reducing processing time for a price of loading all CPUs at 100% and rendering GUI almost unresponsive.
 
 | ScaleNxGUI |
 | :---: |
 | [![Main ScaleNx program GUI](https://dnyarri.github.io/imgscalenx/guismall.png "Main ScaleNx program GUI")](https://dnyarri.github.io/scalenx.html) |
 
 > [!CAUTION]
-> Batch processing program replace original files with scaled copies. Batch processing programs in this version use async multiprocessing, thus drastically reducing processing time but loading all CPUs at 100% and rendering GUI almost unresponsive.
+> Batch processing program replace original files with scaled copies. This is done on purpose: you may scale whole project with linked PNGs, and rescaled versions will silently fit print layout since ScaleNxGUI multiplies resolution value onto scaling factor when saving PNGs.
 
-[**VisualNxGUI.py**](https://github.com/Dnyarri/PixelArtScaling/blob/main/VisualNxGUI.py) is a visual common shell, providing single image rescaling with preview. After saving rescaled image with, say, Ctrl+S, you may repeat rescaling. Note, however, that during such a sequential upscaling image size grows geometrically - every run of, say, Scale3x makes image 3×3=9 times bigger, so you quickly end up with image of gigabyte size, devouring all your computer memory.
+[**Scaler_Vi.py**](https://github.com/Dnyarri/PixelArtScaling/blob/main/Scaler_Vi.py) is a visual common shell, providing single image rescaling with preview. After saving rescaled image with, say, Ctrl+S, you may repeat rescaling. Note, however, that during such a sequential upscaling image size grows geometrically - every run of, say, Scale3x makes image 3×3=9 times bigger, so you quickly end up with image of gigabyte size, devouring all your computer memory.
 
-| VisualNxGUI |
+| Scaler Vi GUI |
 | :---: |
 | [![Visual ScaleNx program GUI](https://dnyarri.github.io/imgscalenx/vissmall.png "Visual ScaleNx program GUI")](https://dnyarri.github.io/scalenx.html) |
 
 > [!NOTE]
-> VisualNxGUI.py is compatible with **Python 3.11 and above**.
+> Scaler_Vi.py is compatible with **Python 3.11 and above**.
 
 ## Sample of Scale3x (twice)
 
