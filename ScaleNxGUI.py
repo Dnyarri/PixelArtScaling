@@ -58,7 +58,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '26.9.7.34'
+__version__ = '26.10.1.34'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -650,8 +650,7 @@ if __name__ == '__main__':
 
     # ↓ Center window horizontally, one third vertically
     sortir.update()
-    # print(sortir.winfo_width(), sortir.winfo_height())
-    sortir.minsize(sortir.winfo_width(), sortir.winfo_height())
-    sortir.geometry('+{x_position:d}+{y_position:d}'.format(x_position=(sortir.winfo_screenwidth() - sortir.winfo_width()) // 2, y_position=(sortir.winfo_screenheight() - sortir.winfo_height()) // 3))
+    sortir.geometry('{x_size:d}x{y_size:d}+{x_position:d}+{y_position:d}'.format(x_size=sortir.winfo_reqwidth(), y_size=sortir.winfo_reqheight(), x_position=(sortir.winfo_screenwidth() - sortir.winfo_width()) // 2, y_position=(sortir.winfo_screenheight() - sortir.winfo_height()) // 3))
+    sortir.resizable(False, False)
 
     sortir.mainloop()
