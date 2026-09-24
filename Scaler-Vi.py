@@ -65,7 +65,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '26.9.19.19'
+__version__ = '26.10.1.7'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -190,7 +190,7 @@ def ShowPreview(preview_choice: PhotoImage, caption: str) -> None:
     # ↓ Sizes of preview to fit the screen
     preview_width, preview_height = (
         min(preview.width(), sortir.winfo_screenwidth() - 16),
-        min(preview.height(), sortir.winfo_screenheight() - control_height - info_string.winfo_height() - frame_zoom.winfo_height() - 96),
+        min(preview.height(), sortir.winfo_screenheight() - control_height - info_string.winfo_height() - frame_zoom.winfo_reqheight() - 96),
     )
     zanyato.config(
         image=preview,
@@ -342,7 +342,7 @@ def GetSource(event=None) -> None:
     info_normal = {'txt': f'{Path(sourcefilename).name}{"*" if is_filtered else ""} X={X} Y={Y} Z={Z} maxcolors={maxcolors}', 'fg': 'grey', 'bg': 'grey90'}
     UINormal()
     UIFit()
-    sortir.geometry(f'+{(sortir.winfo_screenwidth() - sortir.winfo_width()) // 2}+{128 - control_height}')
+    sortir.geometry(f'{sortir.winfo_reqwidth()}x{sortir.winfo_reqheight()}+{(sortir.winfo_screenwidth() - sortir.winfo_reqwidth()) // 2}+{(128 + control_height) if makeup else 96}')
 
 
 def RunFilter(event=None) -> None:
@@ -677,6 +677,14 @@ some_help = (
 help_str = '\n'.join(some_help)
 """Help str to be used for both main window and F1."""
 
+# ↓ Info statuses dictionaries
+info_normal = {'txt': f'{product_name} {__version__}', 'fg': 'grey', 'bg': 'grey90'}
+"""`info_string` properties in normal state"""
+info_busy = {'txt': 'BUSY, PLEASE WAIT', 'fg': 'red', 'bg': 'yellow'}
+"""`info_string` properties in busy state"""
+color_mode_str = ' '
+"""Info on the top of main `sortir` window"""
+
 # ↓ Command line options parsing, figuring out appropriate `makeup` value.
 parser = argparse.ArgumentParser(
     description='Scaler Vi - visual ScaleNx shell',
@@ -719,10 +727,6 @@ if makeup:
     panel.protocol('WM_DELETE_WINDOW', lambda: None)
     whoever = panel
 
-# ↓ Info statuses dictionaries
-info_normal = {'txt': f'{product_name} {__version__}', 'fg': 'grey', 'bg': 'grey90'}
-info_busy = {'txt': 'BUSY, PLEASE WAIT', 'fg': 'red', 'bg': 'yellow'}
-color_mode_str = ' '
 # ↓ Info string
 info_string = Label(
     sortir,
@@ -816,7 +820,7 @@ control_height = frame_top.winfo_reqheight() + 32
 """Height to be subtracted from `sortir` to fit image in.
    Either `frame_top` Frame height (normal dialog) or `0` (modular dialog)."""
 if makeup:
-    control_height = 0
+    control_height = 32  # need some room for window title
 
 """ ┌──────────────────────────────┐
     │ Center frame (image preview) │
@@ -914,9 +918,9 @@ sortir.lift()
 sortir.focus_set()
 
 if makeup:
+    whoever.lift()  # geometry results are irreproducible without .lift() repetitions
+    whoever.geometry(f'{whoever.winfo_reqwidth()}x{whoever.winfo_reqheight()}+{modular_geometry[0]}+{modular_geometry[1]}')
     whoever.resizable(False, False)
-    whoever.lift()
-    whoever.geometry(f'+{modular_geometry[0]}+{modular_geometry[1]}')
     whoever.lift()
     whoever.focus_set()
 

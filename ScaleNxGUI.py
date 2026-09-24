@@ -63,7 +63,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '26.9.7.312'
+__version__ = '26.10.1.312'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -679,8 +679,7 @@ if __name__ == '__main__':
 
     # ↓ Center window horizontally, one third vertically
     sortir.update()
-    # print(sortir.winfo_width(), sortir.winfo_height())
-    sortir.minsize(sortir.winfo_width(), sortir.winfo_height())
-    sortir.geometry(f'+{(sortir.winfo_screenwidth() - sortir.winfo_width()) // 2}+{(sortir.winfo_screenheight() - sortir.winfo_height()) // 3}')
+    sortir.geometry(f'{sortir.winfo_reqwidth()}x{sortir.winfo_reqheight()}+{(sortir.winfo_screenwidth() - sortir.winfo_width()) // 2}+{(sortir.winfo_screenheight() - sortir.winfo_height()) // 3}')
+    sortir.resizable(False, False)
 
     sortir.mainloop()  # That's the end, little girl la-la-la

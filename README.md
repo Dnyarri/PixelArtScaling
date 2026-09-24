@@ -29,14 +29,14 @@ Currently **Scale2x** (aka AdvMAME2x), **Scale3x** (aka AdvMAME3x), **Scale2xSFX
 > [!CAUTION]
 > Batch processing program replace original files with scaled copies. This is done on purpose: you may scale whole project with linked PNGs, and rescaled versions will silently fit print layout since ScaleNxGUI multiplies resolution value onto scaling factor when saving PNGs.
 
-[**Scaler_Vi.py**](https://github.com/Dnyarri/PixelArtScaling/blob/main/Scaler_Vi.py) is a visual common shell, providing single image rescaling with preview. After saving rescaled image with, say, Ctrl+S, you may repeat rescaling. Note, however, that during such a sequential upscaling image size grows geometrically - every run of, say, Scale3x makes image 3×3=9 times bigger, so you quickly end up with image of gigabyte size, devouring all your computer memory.
+[**Scaler-Vi.py**](https://github.com/Dnyarri/PixelArtScaling/blob/main/Scaler-Vi.py) is a visual common shell, providing single image rescaling with preview. After saving rescaled image with, say, Ctrl+S, you may repeat rescaling. Note, however, that during such a sequential upscaling image size grows geometrically - every run of, say, Scale3x makes image 3×3=9 times bigger, so you quickly end up with image of gigabyte size, devouring all your computer memory.
 
 | Scaler Vi GUI |
 | :---: |
 | [![Visual ScaleNx program GUI](https://dnyarri.github.io/imgscalenx/vissmall.png "Visual ScaleNx program GUI")](https://dnyarri.github.io/scalenx.html) |
 
 > [!NOTE]
-> Scaler_Vi.py is compatible with **Python 3.11 and above**.
+> Scaler-Vi.py is compatible with **Python 3.11 and above**.
 
 ## Sample of Scale3x (twice)
 
