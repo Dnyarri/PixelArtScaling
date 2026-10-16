@@ -65,7 +65,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '26.10.1.7'
+__version__ = '26.10.16.24'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -125,19 +125,18 @@ def ShowHelp(event=None) -> None:
 def UINormal() -> None:
     """Normal UI state, buttons enabled."""
 
-    method_menu['state'] = 'normal'
-    info_method['state'] = 'normal'
     info_string.config(text=info_normal['txt'], foreground=info_normal['fg'], background=info_normal['bg'])
+    whoever['cursor'] = sortir['cursor'] = zanyato['cursor'] = ''
+    method_menu['state'] = info_method['state'] = zanyato['state'] = 'normal'
     sortir.update()
-    whoever.lift()
 
 
 def UIBusy() -> None:
     """Busy UI state, buttons disabled."""
 
-    method_menu['state'] = 'disabled'
-    info_method['state'] = 'disabled'
     info_string.config(text=info_busy['txt'], foreground=info_busy['fg'], background=info_busy['bg'])
+    whoever['cursor'] = sortir['cursor'] = zanyato['cursor'] = 'wait'
+    method_menu['state'] = info_method['state'] = zanyato['state'] = 'disabled'
     sortir.update()
 
 
@@ -150,8 +149,8 @@ def UIFit() -> None:
         min(sortir.winfo_reqheight(), sortir.winfo_screenheight() - 96),
     )
     sortir.minsize(fit_width, fit_height)
+    sortir.geometry(f'{sortir.winfo_reqwidth()}x{sortir.winfo_reqheight()}')
     sortir.update()
-    whoever.lift()
 
 
 def canvasCoord(event):
@@ -207,7 +206,6 @@ def ShowPreview(preview_choice: PhotoImage, caption: str) -> None:
         width=preview.width(),
         height=preview.height(),
     )
-    whoever.lift()
 
 
 def SwitchView(event=None) -> None:
@@ -299,21 +297,23 @@ def GetSource(event=None) -> None:
     # ↓ Finally the show part
     ShowPreview(preview, 'Source')
 
-    # ↓ Binding preview mouse drag
-    zanyato.bind('<Motion>', canvasCoord)
-    zanyato.bind('<B1-Motion>', canvasDrag)
+    # ↓ Binding preview click and mouse drag
+    bind = {
+        '<Motion>': canvasCoord,
+        '<B1-Motion>': canvasDrag,
+        '<Control-Button-1>': zoomIn,
+        '<Double-Control-Button-1>': zoomIn,
+        '<Control-+>': zoomIn,
+        '<Control-=>': zoomIn,
+        '<Alt-Button-1>': zoomOut,
+        '<Double-Alt-Button-1>': zoomOut,
+        '<Control-minus>': zoomOut,
+        '<Control-Key-1>': zoomOne,
+        '<Control-Alt-Key-0>': zoomOne,
+    }
+    for happens, function in bind.items():
+        zanyato.bind(happens, function)
     zanyato.bind('<ButtonRelease-1>', lambda event: canvas.config(cursor='arrow'))  # cursor back after drag
-    zanyato.bind('<ButtonRelease-1>', lambda event: whoever.lift(), add='+')  # sortir back after drag
-    # ↓ Binding preview click
-    zanyato.bind('<Control-Button-1>', zoomIn)  # Ctrl + left click
-    zanyato.bind('<Double-Control-Button-1>', zoomIn)  # Ctrl + left click too fast
-    zanyato.bind('<Control-+>', zoomIn)
-    zanyato.bind('<Control-=>', zoomIn)
-    zanyato.bind('<Alt-Button-1>', zoomOut)  # Alt + left click
-    zanyato.bind('<Double-Alt-Button-1>', zoomOut)  # Alt + left click too fast
-    zanyato.bind('<Control-minus>', zoomOut)
-    zanyato.bind('<Control-Key-1>', zoomOne)
-    zanyato.bind('<Control-Alt-Key-0>', zoomOne)
     sortir.bind_all('<MouseWheel>', zoomWheel)  # Wheel scroll
     sortir.bind_all('<Control-i>', ShowInfo)
     menu_file.entryconfig('Image Info...', state='normal')
@@ -342,7 +342,7 @@ def GetSource(event=None) -> None:
     info_normal = {'txt': f'{Path(sourcefilename).name}{"*" if is_filtered else ""} X={X} Y={Y} Z={Z} maxcolors={maxcolors}', 'fg': 'grey', 'bg': 'grey90'}
     UINormal()
     UIFit()
-    sortir.geometry(f'{sortir.winfo_reqwidth()}x{sortir.winfo_reqheight()}+{(sortir.winfo_screenwidth() - sortir.winfo_reqwidth()) // 2}+{(128 + control_height) if makeup else 96}')
+    sortir.geometry(f'{sortir.winfo_reqwidth()}x{sortir.winfo_reqheight()}+{(sortir.winfo_screenwidth() - sortir.winfo_reqwidth()) // 2}+{64 + makeup * 64}')
 
 
 def RunFilter(event=None) -> None:
@@ -426,6 +426,7 @@ def RunFilter(event=None) -> None:
     sortir.title(f'{"" if makeup else f"{product_name}: "}{Path(sourcefilename).name}{color_mode_str}{"*" if is_filtered else ""}')
     info_normal = {'txt': f'{Path(sourcefilename).name}{"*" if is_filtered else ""} X={XNEW if is_filtered else X} Y={YNEW if is_filtered else Y} Z={Z} maxcolors={maxcolors}', 'fg': 'grey', 'bg': 'grey90'}
     UINormal()
+    UIFit()
     zanyato.focus_set()  # moving focus to preview
 
 
@@ -724,7 +725,8 @@ if makeup:
     if icon_path.exists():
         panel.iconbitmap(icon_path)
     panel.title(f'{product_name} {__version__}')
-    panel.protocol('WM_DELETE_WINDOW', lambda: None)
+    sortir.protocol('WM_DELETE_WINDOW', lambda: None)
+    panel.protocol('WM_DELETE_WINDOW', DisMiss)
     whoever = panel
 
 # ↓ Info string
@@ -891,37 +893,34 @@ info_string.bind('<Control-Button-1>', lambda event=None: [sortir.clipboard_clea
 zanyato.bind('<Double-Button-1>', GetSource)
 frame_preview.bind('<Double-Button-1>', GetSource)
 # ↓ Whole sortir binding menu, "Open..." and "Exit"
-sortir.bind_all('<Button-3>', ShowMenu)
-sortir.bind_all('<Alt-f>', ShowMenu)
-sortir.bind_all('<Alt-F>', ShowMenu)
-sortir.bind_all('<F1>', ShowHelp)
-sortir.bind_all('<Control-o>', GetSource)
-sortir.bind_all('<Control-O>', GetSource)
-sortir.bind_all('<Control-q>', DisMiss)
-sortir.bind_all('<Control-Q>', DisMiss)
-sortir.bind_all('<Control-w>', DisMiss)
-sortir.bind_all('<Control-W>', DisMiss)
+bind_all = {
+    '<Button-3>': ShowMenu,
+    '<Alt-f>': ShowMenu,
+    '<Alt-F>': ShowMenu,
+    '<F1>': ShowHelp,
+    '<Control-o>': GetSource,
+    '<Control-O>': GetSource,
+    '<Control-q>': DisMiss,
+    '<Control-Q>': DisMiss,
+    '<Control-w>': DisMiss,
+    '<Control-W>': DisMiss,
+}
+for happens, function in bind_all.items():
+    sortir.bind_all(happens, function)
 
-# ↓ Center window horizontally, +128 vertically
+# ↓ Center window horizontally
 sortir.update()
-# print(sortir.winfo_width(), sortir.winfo_height())
 sortir.minsize(zanyato.winfo_width(), sortir.winfo_height())
 sortir.maxsize(9 * sortir.winfo_screenwidth() // 10, 9 * sortir.winfo_screenheight() // 10)
 if makeup:
-    sortir_geometry = ((sortir.winfo_screenwidth() - sortir.winfo_width()) // 2, panel.winfo_reqheight() + 128)
-    modular_geometry = ((sortir.winfo_screenwidth() - panel.winfo_width()) // 2, sortir_geometry[1] - panel.winfo_reqheight() - 64)
-else:
-    sortir_geometry = ((sortir.winfo_screenwidth() - sortir.winfo_width()) // 2, 128 - control_height)
-sortir.lift()
-sortir.geometry(f'+{sortir_geometry[0]}+{sortir_geometry[1]}')
-sortir.lift()
-sortir.focus_set()
-
-if makeup:
-    whoever.lift()  # geometry results are irreproducible without .lift() repetitions
-    whoever.geometry(f'{whoever.winfo_reqwidth()}x{whoever.winfo_reqheight()}+{modular_geometry[0]}+{modular_geometry[1]}')
+    whoever.update()
+    whoever.geometry(f'{whoever.winfo_reqwidth()}x{whoever.winfo_reqheight()}+{(sortir.winfo_screenwidth() - sortir.winfo_width() + whoever.winfo_width() - 128) // 2}+192')
+    sortir.geometry(f'{sortir.winfo_reqwidth()}x{sortir.winfo_reqheight()}+{(sortir.winfo_screenwidth() - sortir.winfo_width() - whoever.winfo_width() + 128) // 2}+64')
     whoever.resizable(False, False)
-    whoever.lift()
+    whoever.transient(sortir)  # sets 'whoever' to be always above 'sortir'
+    sortir.update()  # for unknown reason doesn't work without it
     whoever.focus_set()
+else:
+    sortir.geometry(f'{sortir.winfo_reqwidth()}x{sortir.winfo_reqheight()}+{(sortir.winfo_screenwidth() - sortir.winfo_reqwidth()) // 2}+64')
 
 sortir.mainloop()
