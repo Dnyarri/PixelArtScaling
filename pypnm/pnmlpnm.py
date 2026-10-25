@@ -110,7 +110,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '2.33.3.34'  # 3 Sep 2026
+__version__ = '3.34.21.34'  # 21 Oct 2026
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -448,9 +448,6 @@ def list2bin(list_3d, maxcolors, show_chessboard=False):
         else:
             chess_size = 8
         return int(maxcolors * 0.8) if ((y // chess_size) % 2) == ((x // chess_size) % 2) else maxcolors
-
-    # ↓ Image X, Y, Z sizes
-    Y, X, Z = (len(list_3d), len(list_3d[0]), len(list_3d[0][0]))
 
     magic = 'P5' if Z < 3 else 'P6'  # PGM or PPM
 

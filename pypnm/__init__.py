@@ -61,12 +61,29 @@ These workarounds make program work a bit slower under some circumstances.
 If you are sure you will never use Python versions below 3.11, you may
 consider downloading and using `PyPNM for Python >= 3.11`_ branch.
 
+.. note:: versions 3.x.x.x of PyPNM include ``list2bin`` patch with
+    multithreading support. When used with free-threaded CPython
+    (e.g., ``python3.14t.exe``), it ensures ``list2bin`` speed gain
+    proportional to number of CPU cores.
+
+    Free-threaded Python detection is performed upon module import
+    and is based solely on ``sys._is_gil_enabled()`` function. Any
+    Python implementation missing this function is considered
+    GIL-enabled regardless of end user opinion, and module falls back
+    to importing classic 2.x.x.x version automatically.
+
+.. data:: SUBVERSION
+
+    For developers, current PyPNM version returns **SUBVERSION** ``str``,
+    equal to either ``'MT'`` (multithreaded) or ``'ST'`` (single threaded),
+    depending on what ``list2bin`` version is *actually* used right now.
+
 Copyright and redistribution
 ----------------------------
 
 Written by Ilya Razmanov (https://dnyarri.github.io) to facilitate developing
-image editing programs in Python by simplifying work with PPM/PGM files
-and displaying arbitrary image-like data with Tkinter ``PhotoImage`` class.
+image editing programs in Python by simplifying displaying image-like data
+with Tkinter ``PhotoImage`` class, and providing support for PPM/PGM files.
 
 Module is supposed to be used and redistributed freely, and modified at will.
 
@@ -74,7 +91,12 @@ In case of introducing useful modifications it's your duty to all human race
 (and probably some other ones) to share it.
 
 ----
-`PyPNM Documentation`_ (PDF)
+References:
+
+1. `PyPNM Documentation`_ (PDF)
+2. `PPM`_ specification
+3. `PGM`_ specification
+4. `PBM`_ specification
 
 .. _PyPNM Documentation: https://dnyarri.github.io/pypnm/pypnm.pdf
 
@@ -96,10 +118,24 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2024-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '2.33.3.34'  # 3 Sep 2026
+__version__ = '3.34.24.34'  # 24 Oct 2026
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
 __all__ = ['list2bin', 'list2pnm', 'pnm2list']
 
-from .pnmlpnm import list2bin, list2pnm, pnm2list
+from .pnmlpnm import list2pnm, pnm2list
+
+try:
+    from sys import _is_gil_enabled
+
+    if _is_gil_enabled():
+        SUBVERSION = 'ST'
+        from .pnmlpnm import list2bin
+    else:
+        SUBVERSION = 'MT'
+        from .bint import list2bin
+
+except ImportError:
+    SUBVERSION = 'ST'
+    from .pnmlpnm import list2bin
