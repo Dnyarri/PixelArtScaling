@@ -63,7 +63,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '26.10.1.312'
+__version__ = '26.10.26.10'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -509,11 +509,16 @@ if __name__ == '__main__':
 
     # ↓ Binding mouseover function
     def _buttOver(button_name):
+        button_name.config()
         button_name.bind('<Enter>', lambda event=None: button_name.config(foreground=butt['activeforeground'], background=butt['activebackground']))
         button_name.bind('<Leave>', lambda event=None: button_name.config(foreground=butt['foreground'], background=butt['background']))
 
+    # ↓ Bulk button appearance reconfigure
+    def _buttConfig(button_name):
+        button_name.config(font=butt['font'], cursor=butt['cursor'], state='normal', border=butt['border'], relief=butt['relief'], overrelief=butt['overrelief'])
+
     # ↓ Widgets
-    butt99 = Button(sortir, text='Exit', font=(butt['font'][0], butt['font'][1] + 2), cursor=butt['cursor'], state='normal', border=butt['border'], relief=butt['relief'], overrelief=butt['overrelief'], command=DisMiss)
+    butt99 = Button(sortir, text='Exit', font=(butt['font'][0], butt['font'][1] + 6), cursor=butt['cursor'], state='normal', border=butt['border'], relief=butt['relief'], overrelief=butt['overrelief'], command=DisMiss)
     butt99.pack(side='bottom', padx=2, pady=(4, 2), fill='both')
     _buttOver(butt99)
 
@@ -537,24 +542,28 @@ if __name__ == '__main__':
     label01 = Label(frame_left, text='ScaleNx', width=blue['width'], font=blue['font'], borderwidth=2, relief='flat', foreground=blue['foreground'], background=blue['background'])
     label01.pack(side='top', pady=blue['pady'], fill='both')
 
-    butt01 = Button(frame_left, text='Open file ➔ 2x', font=butt['font'], cursor=butt['cursor'], state='normal', border=butt['border'], relief=butt['relief'], overrelief=butt['overrelief'], command=lambda: FileNx(2, False))
+    butt01 = Button(frame_left, text='Open file ➔ 2x', command=lambda: FileNx(2, False))
     butt01.pack(side='top', padx=4, pady=2, fill='both')
     _buttOver(butt01)
+    _buttConfig(butt01)
 
-    butt02 = Button(frame_left, text='Open file ➔ 3x', font=butt['font'], cursor=butt['cursor'], state='normal', border=butt['border'], relief=butt['relief'], overrelief=butt['overrelief'], command=lambda: FileNx(3, False))
+    butt02 = Button(frame_left, text='Open file ➔ 3x', command=lambda: FileNx(3, False))
     butt02.pack(side='top', padx=4, pady=2, fill='both')
     _buttOver(butt02)
+    _buttConfig(butt02)
 
     label11 = Label(frame_left, text='ScaleNxSFX', font=blue['font'], borderwidth=2, relief='flat', foreground=blue['foreground'], background=blue['background'])
     label11.pack(side='top', pady=blue['pady'], fill='both')
 
-    butt11 = Button(frame_left, text='Open file ➔ 2xSFX', font=butt['font'], cursor=butt['cursor'], state='normal', border=butt['border'], relief=butt['relief'], overrelief=butt['overrelief'], command=lambda: FileNx(2, True))
+    butt11 = Button(frame_left, text='Open file ➔ 2xSFX', command=lambda: FileNx(2, True))
     butt11.pack(side='top', padx=4, pady=2, fill='both')
     _buttOver(butt11)
+    _buttConfig(butt11)
 
-    butt12 = Button(frame_left, text='Open file ➔ 3xSFX', font=butt['font'], cursor=butt['cursor'], state='normal', border=butt['border'], relief=butt['relief'], overrelief=butt['overrelief'], command=lambda: FileNx(3, True))
+    butt12 = Button(frame_left, text='Open file ➔ 3xSFX', command=lambda: FileNx(3, True))
     butt12.pack(side='top', padx=4, pady=2, fill='both')
     _buttOver(butt12)
+    _buttConfig(butt12)
 
     frame_right = Frame(sortir, borderwidth=2, relief='groove')
     frame_right.pack(side='right', anchor='ne', padx=(6, 2), pady=0)
@@ -566,24 +575,28 @@ if __name__ == '__main__':
     label12 = Label(frame_right, text='ScaleNx', width=blue['width'], font=blue['font'], borderwidth=2, relief='flat', foreground=blue['foreground'], background=blue['background'])
     label12.pack(side='top', pady=blue['pady'], fill='both')
 
-    butt03 = Button(frame_right, text='Select folder ➔ 2x', font=butt['font'], cursor=butt['cursor'], state='normal', border=butt['border'], relief=butt['relief'], overrelief=butt['overrelief'], command=lambda: FolderNx(2, False))
+    butt03 = Button(frame_right, text='Select folder ➔ 2x', command=lambda: FolderNx(2, False))
     butt03.pack(side='top', padx=4, pady=2, fill='both')
     _buttOver(butt03)
+    _buttConfig(butt03)
 
-    butt04 = Button(frame_right, text='Select folder ➔ 3x', font=butt['font'], cursor=butt['cursor'], state='normal', border=butt['border'], relief=butt['relief'], overrelief=butt['overrelief'], command=lambda: FolderNx(3, False))
+    butt04 = Button(frame_right, text='Select folder ➔ 3x', command=lambda: FolderNx(3, False))
     butt04.pack(side='top', padx=4, pady=2, fill='both')
     _buttOver(butt04)
+    _buttConfig(butt04)
 
     label02 = Label(frame_right, text='ScaleNxSFX', font=blue['font'], borderwidth=2, relief='flat', foreground=blue['foreground'], background=blue['background'])
     label02.pack(side='top', pady=blue['pady'], fill='both')
 
-    butt13 = Button(frame_right, text='Select folder ➔ 2xSFX', font=butt['font'], cursor=butt['cursor'], state='normal', border=butt['border'], relief=butt['relief'], overrelief=butt['overrelief'], command=lambda: FolderNx(2, True))
+    butt13 = Button(frame_right, text='Select folder ➔ 2xSFX', command=lambda: FolderNx(2, True))
     butt13.pack(side='top', padx=4, pady=2, fill='both')
     _buttOver(butt13)
+    _buttConfig(butt13)
 
-    butt14 = Button(frame_right, text='Select folder ➔ 3xSFX', font=butt['font'], cursor=butt['cursor'], state='normal', border=butt['border'], relief=butt['relief'], overrelief=butt['overrelief'], command=lambda: FolderNx(3, True))
+    butt14 = Button(frame_right, text='Select folder ➔ 3xSFX', command=lambda: FolderNx(3, True))
     butt14.pack(side='top', padx=4, pady=2, fill='both')
     _buttOver(butt14)
+    _buttConfig(butt14)
 
     """ ┌────────────────────────┐
         │ Saving formats options │
@@ -614,8 +627,8 @@ if __name__ == '__main__':
         *['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
     )
     options_left_png.grid(row=0, column=1, sticky='e')
-    options_left_png.configure(font=option['font_menu'], width=1, relief=option['relief'], activebackground=option['activebackground'])
-    options_left_png['menu'].configure(font=options_left_png['font'])
+    options_left_png.config(font=option['font_menu'], width=1, relief=option['relief'], activebackground=option['activebackground'])
+    options_left_png['menu'].config(font=options_left_png['font'])
 
     options_left_pnm_label = Label(options_left, text='PNM Type:', font=('helvetica', 10))
     options_left_pnm_label.grid(row=1, column=0, sticky='w')
@@ -627,8 +640,8 @@ if __name__ == '__main__':
         *['bin', 'ascii'],
     )
     options_left_pnm.grid(row=1, column=1, sticky='e')
-    options_left_pnm.configure(font=option['font_menu'], width=5, relief=option['relief'], activebackground=option['activebackground'])
-    options_left_pnm['menu'].configure(font=options_left_pnm['font'])
+    options_left_pnm.config(font=option['font_menu'], width=5, relief=option['relief'], activebackground=option['activebackground'])
+    options_left_pnm['menu'].config(font=options_left_pnm['font'])
 
     # ↓ Right frame file output options
     options_right = LabelFrame(
@@ -649,8 +662,8 @@ if __name__ == '__main__':
         *['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
     )
     options_right_png.grid(row=0, column=1, sticky='e')
-    options_right_png.configure(font=option['font_menu'], width=1, relief=option['relief'], activebackground=option['activebackground'])
-    options_right_png['menu'].configure(font=options_right_png['font'])
+    options_right_png.config(font=option['font_menu'], width=1, relief=option['relief'], activebackground=option['activebackground'])
+    options_right_png['menu'].config(font=options_right_png['font'])
 
     options_right_pnm_label = Label(options_right, text='PNM Type:', font=option['font_label'])
     options_right_pnm_label.grid(row=1, column=0, sticky='w')
@@ -662,8 +675,8 @@ if __name__ == '__main__':
         *['bin', 'ascii'],
     )
     options_right_pnm.grid(row=1, column=1, sticky='e')
-    options_right_pnm.configure(font=option['font_menu'], width=5, relief=option['relief'], activebackground=option['activebackground'])
-    options_right_pnm['menu'].configure(font=options_right_pnm['font'])
+    options_right_pnm.config(font=option['font_menu'], width=5, relief=option['relief'], activebackground=option['activebackground'])
+    options_right_pnm['menu'].config(font=options_right_pnm['font'])
 
     # ↓ Loading file formats prefs from ini file to dict
     IniFileLoad()

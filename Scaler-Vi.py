@@ -65,7 +65,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '26.10.16.24'
+__version__ = '26.10.26.10'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -75,7 +75,7 @@ from copy import deepcopy
 from pathlib import Path
 from random import randbytes  # Used for random icon only
 from time import ctime, time
-from tkinter import Button, Canvas, Frame, Label, Menu, Menubutton, OptionMenu, PhotoImage, StringVar, Tk, Toplevel
+from tkinter import Button, Canvas, Frame, Label, LabelFrame, Menu, Menubutton, OptionMenu, PhotoImage, StringVar, TclError, Tk, Toplevel
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 from tkinter.messagebox import showinfo
 
@@ -117,7 +117,7 @@ def ShowHelp(event=None) -> None:
 
     showinfo(
         title=f'{product_name} quick help',
-        message=f'{product_name} {__version__} is a visual GUI shell for `ScaleNx`_ module, equipped with preview widget.\nMain GUI functions are listed below:',
+        message=f'{product_name} {__version__} is a visual GUI shell for ScaleNx module, equipped with preview widget.\nMain GUI functions are listed below:',
         detail=help_str,
     )
 
@@ -135,7 +135,10 @@ def UIBusy() -> None:
     """Busy UI state, buttons disabled."""
 
     info_string.config(text=info_busy['txt'], foreground=info_busy['fg'], background=info_busy['bg'])
-    whoever['cursor'] = sortir['cursor'] = zanyato['cursor'] = 'wait'
+    try:  # trying to be cross-platform, based on ``Python312\tcl\tk8.6\ttk\cursors.tcl``
+        whoever['cursor'] = sortir['cursor'] = zanyato['cursor'] = 'wait'
+    except TclError:
+        whoever['cursor'] = sortir['cursor'] = zanyato['cursor'] = 'watch'
     method_menu['state'] = info_method['state'] = zanyato['state'] = 'disabled'
     sortir.update()
 
@@ -176,7 +179,7 @@ def ShowPreview(preview_choice: PhotoImage, caption: str) -> None:
     global preview
 
     preview = preview_choice
-
+    frame_preview.config(text=f'{caption}')
     if zoom_factor > 0:
         preview = preview.zoom(zoom_factor + 1)
         label_zoom['text'] = f'{caption} {zoom_factor + 1}:1'
@@ -225,6 +228,8 @@ def SwitchView(event=None) -> None:
         ShowPreview(preview_filtered, 'Result')  # switch to result
         canvas.xview_moveto(xr)  # restore x, y for result image after switch to result
         canvas.yview_moveto(yr)
+    UIFit()
+    sortir.geometry(f'{sortir.winfo_reqwidth()}x{sortir.winfo_reqheight()}')
 
 
 def GetSource(event=None) -> None:
@@ -298,19 +303,6 @@ def GetSource(event=None) -> None:
     ShowPreview(preview, 'Source')
 
     # ↓ Binding preview click and mouse drag
-    bind = {
-        '<Motion>': canvasCoord,
-        '<B1-Motion>': canvasDrag,
-        '<Control-Button-1>': zoomIn,
-        '<Double-Control-Button-1>': zoomIn,
-        '<Control-+>': zoomIn,
-        '<Control-=>': zoomIn,
-        '<Alt-Button-1>': zoomOut,
-        '<Double-Alt-Button-1>': zoomOut,
-        '<Control-minus>': zoomOut,
-        '<Control-Key-1>': zoomOne,
-        '<Control-Alt-Key-0>': zoomOne,
-    }
     for happens, function in bind.items():
         zanyato.bind(happens, function)
     zanyato.bind('<ButtonRelease-1>', lambda event: canvas.config(cursor='arrow'))  # cursor back after drag
@@ -338,11 +330,11 @@ def GetSource(event=None) -> None:
         color_mode_str = f' (RGBA:{"8" if maxcolors < 256 else "16"})'
     else:
         color_mode_str = ''  # Just in case
-    sortir.title(f'{"" if makeup else f"{product_name}: "}{Path(sourcefilename).name}{color_mode_str}{"*" if is_filtered else ""}')
+    sortir.title(f'{"" if makeup else f"{product_name}: "}{Path(sourcefilename).name}{color_mode_str}{"*" if is_filtered else ""}{f" | {product_name}" if makeup else ""}')
     info_normal = {'txt': f'{Path(sourcefilename).name}{"*" if is_filtered else ""} X={X} Y={Y} Z={Z} maxcolors={maxcolors}', 'fg': 'grey', 'bg': 'grey90'}
     UINormal()
     UIFit()
-    sortir.geometry(f'{sortir.winfo_reqwidth()}x{sortir.winfo_reqheight()}+{(sortir.winfo_screenwidth() - sortir.winfo_reqwidth()) // 2}+{64 + makeup * 64}')
+    sortir.geometry(f'{sortir.winfo_reqwidth()}x{sortir.winfo_reqheight()}')
 
 
 def RunFilter(event=None) -> None:
@@ -423,7 +415,7 @@ def RunFilter(event=None) -> None:
         ShowPreview(preview_src, 'Source')
 
     # ↓ Adding filename, mode and status to window title a-la Photoshop
-    sortir.title(f'{"" if makeup else f"{product_name}: "}{Path(sourcefilename).name}{color_mode_str}{"*" if is_filtered else ""}')
+    sortir.title(f'{"" if makeup else f"{product_name}: "}{Path(sourcefilename).name}{color_mode_str}{"*" if is_filtered else ""}{f" | {product_name}" if makeup else ""}')
     info_normal = {'txt': f'{Path(sourcefilename).name}{"*" if is_filtered else ""} X={XNEW if is_filtered else X} Y={YNEW if is_filtered else Y} Z={Z} maxcolors={maxcolors}', 'fg': 'grey', 'bg': 'grey90'}
     UINormal()
     UIFit()
@@ -521,7 +513,7 @@ def onSave() -> None:
     # ↓ Preview source
     ShowPreview(preview_src, 'Source')
     # ↓ Adding filename, mode and status to window title a-la Photoshop
-    sortir.title(f'{"" if makeup else f"{product_name}: "}{Path(sourcefilename).name}{color_mode_str}{"*" if is_filtered else ""}')
+    sortir.title(f'{"" if makeup else f"{product_name}: "}{Path(sourcefilename).name}{color_mode_str}{"*" if is_filtered else ""}{f" | {product_name}" if makeup else ""}')
     info_normal = {'txt': f'{Path(sourcefilename).name}{"*" if is_filtered else ""} X={X} Y={Y} Z={Z} maxcolors={maxcolors}', 'fg': 'grey', 'bg': 'grey90'}
     UINormal()
 
@@ -658,6 +650,8 @@ minizoom, maxizoom = (-19, 4)  # Zoom from 1:20 to 5:1
 xr = xs = yr = ys = 0
 """Viewpoint coordinates in source and result images.
    Used for syncing viewpoint between source and scaled."""
+color_mode_str = ' '
+"""Info on the top of main `sortir` window"""
 
 some_help = (
     'Preview area:',
@@ -678,13 +672,50 @@ some_help = (
 help_str = '\n'.join(some_help)
 """Help str to be used for both main window and F1."""
 
+""" ╒═ Dictionaries ═════════════╕
+    │ Bindings, properties, etc. │
+    ╰────────────────────────────╯ """
+# ↓ Most common bindings dictionaries
+bind_all = {
+    '<Button-3>': ShowMenu,
+    '<Alt-f>': ShowMenu,
+    '<Alt-F>': ShowMenu,
+    '<F1>': ShowHelp,
+    '<Control-o>': GetSource,
+    '<Control-O>': GetSource,
+    '<Control-q>': DisMiss,
+    '<Control-Q>': DisMiss,
+    '<Control-w>': DisMiss,
+    '<Control-W>': DisMiss,
+}
+"""Main window bindings before image open."""
+bind = {
+    '<Motion>': canvasCoord,
+    '<B1-Motion>': canvasDrag,
+    '<Control-Button-1>': zoomIn,
+    '<Double-Control-Button-1>': zoomIn,
+    '<Control-+>': zoomIn,
+    '<Control-=>': zoomIn,
+    '<Alt-Button-1>': zoomOut,
+    '<Double-Alt-Button-1>': zoomOut,
+    '<Control-minus>': zoomOut,
+    '<Control-Key-1>': zoomOne,
+    '<Control-Alt-Key-0>': zoomOne,
+}
+"""Image Label bindings after image open."""
 # ↓ Info statuses dictionaries
-info_normal = {'txt': f'{product_name} {__version__}', 'fg': 'grey', 'bg': 'grey90'}
+info_normal = {
+    'txt': f'{product_name} {__version__}',
+    'fg': 'grey',
+    'bg': 'grey90',
+}
 """`info_string` properties in normal state"""
-info_busy = {'txt': 'BUSY, PLEASE WAIT', 'fg': 'red', 'bg': 'yellow'}
+info_busy = {
+    'txt': 'BUSY, PLEASE WAIT',
+    'fg': 'red',
+    'bg': 'yellow',
+}
 """`info_string` properties in busy state"""
-color_mode_str = ' '
-"""Info on the top of main `sortir` window"""
 
 # ↓ Command line options parsing, figuring out appropriate `makeup` value.
 parser = argparse.ArgumentParser(
@@ -733,7 +764,7 @@ if makeup:
 info_string = Label(
     sortir,
     text=info_normal['txt'],
-    font=('courier', 7),
+    font=('helvetica', 8),
     foreground=info_normal['fg'],
     background=info_normal['bg'],
     relief='groove',
@@ -827,7 +858,13 @@ if makeup:
 """ ┌──────────────────────────────┐
     │ Center frame (image preview) │
     └─────────────────────────────-┘ """
-frame_preview = Frame(sortir, borderwidth=2, relief='groove')
+frame_preview = LabelFrame(
+    sortir,
+    text='Preview area',
+    font=('helvetica', 8),
+    borderwidth=2,
+    relief='groove',
+)
 """Frame containing main label (image preview) and zoom control subframe."""
 frame_preview.pack(side='top', anchor='center', expand=True)
 
@@ -893,18 +930,6 @@ info_string.bind('<Control-Button-1>', lambda event=None: [sortir.clipboard_clea
 zanyato.bind('<Double-Button-1>', GetSource)
 frame_preview.bind('<Double-Button-1>', GetSource)
 # ↓ Whole sortir binding menu, "Open..." and "Exit"
-bind_all = {
-    '<Button-3>': ShowMenu,
-    '<Alt-f>': ShowMenu,
-    '<Alt-F>': ShowMenu,
-    '<F1>': ShowHelp,
-    '<Control-o>': GetSource,
-    '<Control-O>': GetSource,
-    '<Control-q>': DisMiss,
-    '<Control-Q>': DisMiss,
-    '<Control-w>': DisMiss,
-    '<Control-W>': DisMiss,
-}
 for happens, function in bind_all.items():
     sortir.bind_all(happens, function)
 
@@ -914,11 +939,11 @@ sortir.minsize(zanyato.winfo_width(), sortir.winfo_height())
 sortir.maxsize(9 * sortir.winfo_screenwidth() // 10, 9 * sortir.winfo_screenheight() // 10)
 if makeup:
     whoever.update()
-    whoever.geometry(f'{whoever.winfo_reqwidth()}x{whoever.winfo_reqheight()}+{(sortir.winfo_screenwidth() - sortir.winfo_width() + whoever.winfo_width() - 128) // 2}+192')
     sortir.geometry(f'{sortir.winfo_reqwidth()}x{sortir.winfo_reqheight()}+{(sortir.winfo_screenwidth() - sortir.winfo_width() - whoever.winfo_width() + 128) // 2}+64')
+    sortir.update()
+    whoever.geometry(f'{whoever.winfo_reqwidth()}x{whoever.winfo_reqheight()}+{sortir.winfo_rootx() + sortir.winfo_width() - 64}+{sortir.winfo_rooty() + 96}')
     whoever.resizable(False, False)
     whoever.transient(sortir)  # sets 'whoever' to be always above 'sortir'
-    sortir.update()  # for unknown reason doesn't work without it
     whoever.focus_set()
 else:
     sortir.geometry(f'{sortir.winfo_reqwidth()}x{sortir.winfo_reqheight()}+{(sortir.winfo_screenwidth() - sortir.winfo_reqwidth()) // 2}+64')
