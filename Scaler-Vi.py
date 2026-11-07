@@ -65,7 +65,7 @@ __author__ = 'Ilya Razmanov'
 __copyright__ = '(c) 2025-2026 Ilya Razmanov'
 __credits__ = 'Ilya Razmanov'
 __license__ = 'unlicense'
-__version__ = '26.10.26.10'
+__version__ = '26.11.7.17'
 __maintainer__ = 'Ilya Razmanov'
 __email__ = 'ilyarazmanov@gmail.com'
 __status__ = 'Production'
@@ -197,6 +197,7 @@ def ShowPreview(preview_choice: PhotoImage, caption: str) -> None:
     zanyato.config(
         image=preview,
         relief='flat',
+        borderwidth=0,
     )
     canvas.config(
         width=preview_width,
@@ -401,7 +402,7 @@ def RunFilter(event=None) -> None:
         ShowPreview(preview_filtered, 'Result')
 
         # ↓ Binding preview switch
-        zanyato.bind('<space>', SwitchView)  # # "Space" key. May be worth binding whole sortir?
+        sortir.bind_all('<space>', SwitchView)  # "Space" key
 
     else:
         is_filtered = False
@@ -409,8 +410,7 @@ def RunFilter(event=None) -> None:
         # ↓ Disabling save
         menu_file.entryconfig('Save', state='disabled')
         sortir.unbind_all('<Control-s>')
-        # ↓ Binding preview switch
-        zanyato.unbind('<space>')  # # "Space" key. May be worth binding whole sortir?
+        sortir.unbind_all('<space>')  # "Space" key
         # ↓ Preview source
         ShowPreview(preview_src, 'Source')
 
@@ -509,7 +509,7 @@ def onSave() -> None:
     sortir.unbind_all('<Control-s>')
     # ↓ Binding switch on preview click
     # zanyato.unbind('<Button-1>')  # left click
-    zanyato.unbind('<space>')  # # "Space" key. May be worth binding whole sortir?
+    sortir.unbind_all('<space>')  # "Space" key
     # ↓ Preview source
     ShowPreview(preview_src, 'Source')
     # ↓ Adding filename, mode and status to window title a-la Photoshop
